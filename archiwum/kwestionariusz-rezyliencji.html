@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odporni i Gotowi - Kwestionariusz Rezyliencji</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005664;
+            --secondary: #ff845b;
+            --accent: #f3f4f6;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .border-primary { border-color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .text-secondary { color: var(--secondary); }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        input[type="radio"]:checked + label {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-primary text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white p-1 rounded">
+                   <span class="text-primary font-bold text-xl px-2">LYRA</span>
+                </div>
+                <h1 class="text-lg font-semibold hidden md:block">Odporni i Gotowi</h1>
+            </div>
+            
+            <button id="menu-btn" class="md:hidden text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="hidden md:flex space-x-6">
+                <a href="#" onclick="showSection('intro')" class="hover:text-secondary transition">Start</a>
+                <a href="#" onclick="showSection('selection')" class="hover:text-secondary transition">Wybierz Test</a>
+                <a href="https://lyrapolska.pl/" target="_blank" class="hover:text-secondary transition">Strona Lyra</a>
+            </nav>
+        </div>
+        
+        <div id="mobile-menu" class="hidden md:hidden bg-primary pb-4 px-4 border-t border-teal-800">
+            <a href="#" onclick="showSection('intro')" class="block py-2 hover:text-secondary">Start</a>
+            <a href="#" onclick="showSection('selection')" class="block py-2 hover:text-secondary">Wybierz Test</a>
+            <a href="mailto:jaroslaw.chybicki@lyrapolska.pl" class="block py-2 hover:text-secondary">Kontakt</a>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+        
+        <section id="section-intro" class="space-y-6">
+            <div class="card p-8 text-center space-y-6">
+                <h2 class="text-3xl font-bold text-primary">Twoja rezyliencja to Twój kapitał</h2>
+                <p class="text-gray-600 text-lg">
+                    Witaj w interaktywnym narzędziu samooceny opartym na modelu 12 wewnętrznych zasobów Ricka Hansona. 
+                    Niniejszy kwestionariusz pozwoli Ci zidentyfikować fundamenty Twojej odporności psychicznej.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="p-4 bg-teal-50 rounded-lg border border-teal-100">
+                        <i class="fas fa-shield-alt text-primary text-2xl mb-2"></i>
+                        <h3 class="font-bold">Bezpieczeństwo</h3>
+                        <p>Współczucie, Wytrwałość, Spokój, Odwaga</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                        <i class="fas fa-smile text-secondary text-2xl mb-2"></i>
+                        <h3 class="font-bold">Satysfakcja</h3>
+                        <p>Uważność, Wdzięczność, Motywacja, Aspiracja</p>
+                    </div>
+                    <div class="p-4 bg-teal-50 rounded-lg border border-teal-100">
+                        <i class="fas fa-users text-primary text-2xl mb-2"></i>
+                        <h3 class="font-bold">Powiązanie</h3>
+                        <p>Uczenie się, Pewność siebie, Bliskość, Wielkoduszność</p>
+                    </div>
+                </div>
+                <button onclick="showSection('selection')" class="btn-primary px-8 py-3 rounded-full text-lg font-bold">Rozpocznij badanie</button>
+            </div>
+        </section>
+
+        <section id="section-selection" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold text-primary text-center">Wybierz wersję kwestionariusza</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 flex flex-col justify-between border-t-4 border-primary">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Profil Osobisty</h3>
+                        <p class="text-gray-600 mb-4">Poznaj swoją indywidualną odporność psychiczną i zasoby wewnętrzne.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <button onclick="startQuiz('self_full')" class="w-full btn-primary py-2 rounded">Pełna wersja (36 pytań)</button>
+                        <button onclick="startQuiz('self_short')" class="w-full border border-primary text-primary py-2 rounded hover:bg-teal-50">Wersja skrócona (12 pytań)</button>
+                    </div>
+                </div>
+                <div class="card p-6 flex flex-col justify-between border-t-4 border-secondary">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-secondary">Mapa Zespołu</h3>
+                        <p class="text-gray-600 mb-4">Oceń odporność zespołu, którym zarządzasz lub w którym pracujesz.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <button onclick="startQuiz('team_full')" class="w-full bg-secondary text-white py-2 rounded hover:opacity-90">Pełna wersja (12 pytań)</button>
+                        <button onclick="startQuiz('team_short')" class="w-full border border-secondary text-secondary py-2 rounded hover:bg-orange-50">Wersja skrócona (3 pytania)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-quiz" class="hidden">
+            <div class="card p-4 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="quiz-title" class="text-xl font-bold text-primary">Kwestionariusz</h2>
+                    <span id="quiz-progress" class="text-sm font-medium text-gray-500">Krok 1</span>
+                </div>
+                
+                <div id="questions-container" class="space-y-8"></div>
+
+                <div class="mt-10 flex justify-between">
+                    <button onclick="showSection('selection')" class="text-gray-500 hover:text-primary transition">Anuluj</button>
+                    <button id="submit-btn" onclick="calculateResults()" class="btn-primary px-8 py-3 rounded-lg font-bold shadow-lg">Oblicz wyniki</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-results" class="hidden space-y-8">
+            <div id="printable-area" class="card p-6 md:p-10 space-y-8">
+                <div class="text-center border-b pb-6">
+                    <h2 class="text-3xl font-bold text-primary mb-2">Twoje Wyniki Rezyliencji</h2>
+                    <p class="text-gray-500" id="result-date"></p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="h-80 w-full">
+                        <canvas id="resultsChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold">Podsumowanie potrzeb</h3>
+                        <div id="needs-summary" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <h3 class="text-xl font-bold mb-4">Szczegółowa Tabela Filarów</h3>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-primary text-white">
+                                <th class="p-3 rounded-tl">Filar</th>
+                                <th class="p-3 text-center">Punkty</th>
+                                <th class="p-3 text-center rounded-tr">Strefa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold">Rozbudowane rekomendacje rozwojowe</h3>
+                    <p class="text-sm text-gray-600 mb-4">Kliknij w filar, aby rozwinąć spersonalizowane wskazówki terapeutyczne i coachingowe.</p>
+                    <div id="recommendations-container" class="space-y-3"></div>
+                </div>
+
+                <div class="pt-8 border-t text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="text-center md:text-left">
+                        <strong>Jarosław Chybicki</strong><br>
+                        Psycholog | Coach | Psychoterapeuta CBT/ACT<br>
+                        jaroslaw.chybicki@lyrapolska.pl
+                    </div>
+                    <div class="text-center md:text-right">
+                        <strong>Lyra Polska</strong><br>
+                        <a href="https://lyrapolska.pl" class="text-primary hover:underline">www.lyrapolska.pl</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-center gap-4 no-print pb-10">
+                <button onclick="downloadPDF()" class="bg-gray-800 text-white px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2">
+                    <i class="fas fa-file-pdf"></i> Pobierz Raport PDF
+                </button>
+                <button onclick="window.location.reload()" class="btn-primary px-6 py-3 rounded-lg font-bold">Wypełnij ponownie</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-100 border-t py-8 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-600 mb-2 font-semibold">Jarosław Chybicki | Lyra Polska</p>
+            <p class="text-gray-500 text-sm mb-4">Opracowanie na podstawie modelu Ricka Hansona (Resilient, 2018)</p>
+            <p class="text-xs text-gray-400">&copy; 2024-2025 Lyra Polska. Materiał warsztatowy.</p>
+        </div>
+    </footer>
+
+    <script>
+        const pillars = [
+            { id: 'compassion', name: 'Współczucie', need: 'Bezpieczeństwo', path: 'Rozpoznawanie' },
+            { id: 'grit', name: 'Wytrwałość', need: 'Bezpieczeństwo', path: 'Zasobność' },
+            { id: 'calm', name: 'Spokój', need: 'Bezpieczeństwo', path: 'Regulacja' },
+            { id: 'courage', name: 'Odwaga', need: 'Bezpieczeństwo', path: 'Relacyjność' },
+            { id: 'mindfulness', name: 'Uważność', need: 'Satysfakcja', path: 'Rozpoznawanie' },
+            { id: 'gratitude', name: 'Wdzięczność', need: 'Satysfakcja', path: 'Zasobność' },
+            { id: 'motivation', name: 'Motywacja', need: 'Satysfakcja', path: 'Regulacja' },
+            { id: 'aspiration', name: 'Aspiracja', need: 'Satysfakcja', path: 'Relacyjność' },
+            { id: 'learning', name: 'Uczenie się', need: 'Powiązanie', path: 'Rozpoznawanie' },
+            { id: 'confidence', name: 'Pewność siebie', need: 'Powiązanie', path: 'Zasobność' },
+            { id: 'intimacy', name: 'Bliskość', need: 'Powiązanie', path: 'Regulacja' },
+            { id: 'generosity', name: 'Wielkoduszność', need: 'Powiązanie', path: 'Relacyjność' }
+        ];
+
+        const selfQuestions = [
+            { id: 1, pillar: 'compassion', text: "Kiedy popełniam błąd, potrafię potraktować siebie z wyrozumiałością zamiast z samokrytyką." },
+            { id: 2, pillar: 'compassion', text: "Zauważam, kiedy ktoś w moim otoczeniu przeżywa trudności, i naturalnie chcę pomóc." },
+            { id: 3, pillar: 'compassion', text: "Potrafię uznać swoje cierpienie bez minimalizowania go ani przesadnego dramatyzowania." },
+            { id: 4, pillar: 'grit', text: "Kiedy napotykam poważną przeszkodę, szukam alternatywnych rozwiązań zamiast się poddawać." },
+            { id: 5, pillar: 'grit', text: "Potrafię działać skutecznie nawet wtedy, gdy nie mam pełnej kontroli nad sytuacją." },
+            { id: 6, pillar: 'grit', text: "Po porażce stosunkowo szybko odzyskuję równowagę i gotowość do działania." },
+            { id: 7, pillar: 'calm', text: "W stresujących sytuacjach potrafię świadomie zwolnić i nie reagować impulsywnie." },
+            { id: 8, pillar: 'calm', text: "Mam skuteczne sposoby na uspokajanie się, gdy czuję narastające napięcie." },
+            { id: 9, pillar: 'calm', text: "Potrafię oddzielić poczucie zagrożenia od realnej oceny sytuacji." },
+            { id: 10, pillar: 'courage', text: "Potrafię wyrazić swoje zdanie, nawet gdy wiem, że będzie ono niepopularne." },
+            { id: 11, pillar: 'courage', text: "Stawiam granice, kiedy ktoś przekracza moje potrzeby lub wartości." },
+            { id: 12, pillar: 'courage', text: "Jestem gotów/gotowa podjąć trudne decyzje, nie odkładając ich w nieskończoność." },
+            { id: 13, pillar: 'mindfulness', text: "Potrafię być obecny/obecna w chwili, zamiast automatycznie martwić się o przyszłość lub ruminować o przeszłości." },
+            { id: 14, pillar: 'mindfulness', text: "Zauważam swoje myśli i emocje bez natychmiastowego reagowania na nie." },
+            { id: 15, pillar: 'mindfulness', text: "Regularnie poświęcam czas na świadome zatrzymanie się i „check-in” z samym/samą sobą." },
+            { id: 16, pillar: 'gratitude', text: "Regularnie zauważam i doceniam pozytywne aspekty mojego życia, nawet te drobne." },
+            { id: 17, pillar: 'gratitude', text: "Potrafię czuć satysfakcję z tego, co mam, zamiast stale porównywać się z innymi." },
+            { id: 18, pillar: 'gratitude', text: "Wyrażam wdzięczność innym — mówię ludziom, gdy doceniam to, co robią." },
+            { id: 19, pillar: 'motivation', text: "Mam jasne poczucie sensu i kierunku w tym, co robię zawodowo." },
+            { id: 20, pillar: 'motivation', text: "Potrafię utrzymać motywację do długoterminowych celów, nawet gdy brakuje szybkich rezultatów." },
+            { id: 21, pillar: 'motivation', text: "Umiem różnicować między zdrowym dążeniem a kompulsywnym „pushowaniem się”." },
+            { id: 22, pillar: 'aspiration', text: "Mam jasną wizję tego, dokąd zmierzam w życiu zawodowym i osobistym." },
+            { id: 23, pillar: 'aspiration', text: "Jestem gotów/gotowa ryzykować porażkę, jeśli cel jest naprawdę dla mnie ważny." },
+            { id: 24, pillar: 'aspiration', text: "Regularnie weryfikuję swoje cele i dostosowuję je do zmieniających się okoliczności." },
+            { id: 25, pillar: 'learning', text: "Aktywnie szukam okazji do nauki — z książek, od ludzi, z doświadczeń." },
+            { id: 26, pillar: 'learning', text: "Potrafię wyciągać wnioski z trudnych sytuacji i wykorzystywać je w przyszłości." },
+            { id: 27, pillar: 'learning', text: "Jestem otwarty/otwarta na feedback i potrafię go przyjąć bez nadmiernej defensywności." },
+            { id: 28, pillar: 'confidence', text: "Czuję się kompetentny/kompetentna w swojej roli, nawet gdy staję przed nowymi wyzwaniami." },
+            { id: 29, pillar: 'confidence', text: "Moja samoocena nie jest całkowicie zależna od zewnętrznego uznania i wyników." },
+            { id: 30, pillar: 'confidence', text: "Potrafię uznać, że czegoś nie wiem, bez poczucia, że to podważa moją wartość." },
+            { id: 31, pillar: 'intimacy', text: "Mam w swoim życiu osoby, z którymi mogę być w pełni sobą." },
+            { id: 32, pillar: 'intimacy', text: "Potrafię dzielić się trudnościami z innymi, zamiast dźwigać wszystko sam/sama." },
+            { id: 33, pillar: 'intimacy', text: "Aktywnie buduję i pielęgnuję relacje, które są dla mnie ważne." },
+            { id: 34, pillar: 'generosity', text: "Chętnie dzielę się swoją wiedzą, czasem i zasobami z innymi." },
+            { id: 35, pillar: 'generosity', text: "Potrafię wybaczyć — zarówno innym, jak i sobie." },
+            { id: 36, pillar: 'generosity', text: "Staram się rozumieć perspektywę drugiego człowieka, nawet gdy się z nią nie zgadzam." }
+        ];
+
+        const teamQuestions = [
+            { id: 1, pillar: 'compassion', text: "[Współczucie] W moim zespole ludzie traktują siebie i siebie nawzajem z wyrozumiałością, gdy ktoś popełni błąd lub przeżywa trudny moment." },
+            { id: 2, pillar: 'grit', text: "[Wytrwałość] Mój zespół potrafi działać skutecznie w warunkach niepewności — ludzie szukają rozwiązań, zamiast czekać na idealne warunki." },
+            { id: 3, pillar: 'calm', text: "[Spokój] W sytuacjach kryzysowych mój zespół zachowuje spokój i podejmuje przemyślane decyzje, zamiast wpadać w reaktywność." },
+            { id: 4, pillar: 'courage', text: "[Odwaga] W moim zespole ludzie otwarcie mówią o problemach i podejmują trudne rozmowy, zamiast unikać konfliktów." },
+            { id: 5, pillar: 'mindfulness', text: "[Uważność] W moim zespole jest przestrzeń na refleksję i zatrzymanie się — nie działamy wyłącznie w trybie reaktywnym." },
+            { id: 6, pillar: 'gratitude', text: "[Wdzięczność] W moim zespole ludzie doceniają wzajemny wkład pracy — sukcesy są zauważane i celebrowane." },
+            { id: 7, pillar: 'motivation', text: "[Motywacja] Ludzie w moim zespole mają poczucie sensu w swojej pracy i rozumieją, jak ich działania wpisują się w szerszy cel organizacji." },
+            { id: 8, pillar: 'aspiration', text: "[Aspiracja] Mój zespół ma wspólną, inspirującą wizję przyszłości i ludzie rozumieją, dokąd zmierzamy." },
+            { id: 9, pillar: 'learning', text: "[Uczenie się] Mój zespół regularnie wyciąga wnioski z doświadczeń (zarówno sukcesów, jak i porażek) i wdraża je w działanie." },
+            { id: 10, pillar: 'confidence', text: "[Pewność siebie] Ludzie w moim zespole czują się bezpiecznie, by przyznać się do błędu lub niewiedzy — bez obawy o utratę szacunku." },
+            { id: 11, pillar: 'intimacy', text: "[Bliskość] W moim zespole ludzie znają się nie tylko zawodowo — jest przestrzeń na autentyczność i osobiste relacje." },
+            { id: 12, pillar: 'generosity', text: "[Wielkoduszność] W moim zespole ludzie chętnie dzielą się wiedzą i wspierają nawzajem — nie działają w silosach." }
+        ];
+
+        const recommendations = {
+            compassion: {
+                low: "<strong>Filar Rozpoznawania (Bezpieczeństwo):</strong><br><br>Obecnie Twój wewnętrzny system krytyczny jest bardzo aktywny. Neurobiologia pokazuje, że samokrytyka aktywuje ciało migdałowate, wprowadzając Cię w tryb 'walcz-uciekaj'.<br><br><strong>Działanie:</strong> Zacznij od 'Przerwy na Samowspółczucie' (K. Neff). Gdy poczujesz błąd, połóż rękę na sercu (to uwalnia oksytocynę) i powiedz: 'To jest chwila cierpienia. Cierpienie jest częścią życia. Niech będę dla siebie życzliwy'. Ćwicz zauważanie 'wspólnego człowieczeństwa' – świadomość, że inni też popełniają błędy. W pracy z terapeutą warto skupić się na deidentyfikacji z 'Wewnętrznym Krytykiem' (techniki ACT).",
+                mid: "<strong>Filar Rozpoznawania (Bezpieczeństwo):</strong><br><br>Masz solidną świadomość własnych ograniczeń, ale w sytuacjach wysokiego stresu wciąż zdarza Ci się wpadać w automatyczne osądzanie siebie.<br><br><strong>Działanie:</strong> Pogłęb praktykę uważności na subtelne komunikaty ciała. Kiedy czujesz napięcie, zapytaj: 'Czego teraz potrzebuję, aby poczuć się bezpieczniej?'. Pracuj nad 'życzliwą obecnością' – staraj się obserwować swoje myśli o błędach tak, jakbyś obserwował chmury na niebie. W zespole zacznij otwarcie pytać innych o ich samopoczucie, nie tylko o status zadań, budując kulturę psychologicznego bezpieczeństwa.",
+                high: "<strong>Twój Zasób:</strong> Współczucie jest Twoją supermocą. Potrafisz przekształcać cierpienie w mądrość.<br><br><strong>Działanie:</strong> Wykorzystaj ten zasób do modelowania postawy lidera wspierającego. Ucz innych, że błędy są 'złotem' procesu uczenia się. Rozważ prowadzenie krótkich praktyk Loving-Kindness (Metta) dla siebie i bliskich, aby jeszcze bardziej wzmocnić ścieżki neuronalne odpowiedzialne za empatię. Pamiętaj jednak o 'równowadze współczucia' – dbaj o własne granice, by nie ulec wypaleniu empatycznemu."
+            },
+            grit: {
+                low: "<strong>Filar Zasobności (Bezpieczeństwo):</strong><br><br>Możesz czuć się przytłoczony przez poczucie braku sprawczości. To naturalna reakcja mózgu na chroniczny stres.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Micro-wins'. Każdego wieczoru zapisz 3 mikrosukcesy (np. 'odpisałem na trudnego maila'). To buduje dopaminowe pętle nagrody. W sytuacjach trudnych używaj pytania: 'Na co mam wpływ w tej sekundzie?'. Skupienie się na 1% postępu jest ważniejsze niż myślenie o całości projektu. Rozważ audyt wartości (ACT) – co jest tak ważne, że warto dla tego znosić trud?",
+                mid: "<strong>Filar Zasobności (Bezpieczeństwo):</strong><br><br>Potrafisz przetrwać burze, ale koszt energetyczny bywa u Ciebie wysoki.<br><br><strong>Działanie:</strong> Pracuj nad elastycznością wytrwałości. Wytrwałość to nie tylko parcie naprzód, to także mądre odpoczywanie. Wprowadź 'strategiczne regeneracje' po każdym dużym wyzwaniu. Ćwicz tolerancję na dyskomfort w kontrolowanych warunkach (np. zimny prysznic lub trudne zadanie fizyczne), aby pokazać układowi nerwowemu, że jesteś w stanie wytrzymać napięcie bez ucieczki.",
+                high: "<strong>Twój Zasób:</strong> Twoja determinacja jest godna podziwu. Jesteś 'kotwicą' dla zespołu w czasie niepewności.<br><br><strong>Działanie:</strong> Uważaj na pułapkę 'toksycznej wytrwałości' – parcia naprzód za cenę zdrowia. Twoim zadaniem rozwojowym jest teraz nauka 'odpuszczania' tam, gdzie wysiłek jest nieproporcjonalny do celu. Jako lider, ucz zespół, jak odróżniać wytrwałość od uporu. Modeluj kulturę, w której odpoczynek jest uznawany za integralną część wysokiej efektywności."
+            },
+            calm: {
+                low: "<strong>Filar Regulacji (Bezpieczeństwo):</strong><br><br>Twój układ współczulny jest w stanie permanentnego pobudzenia (hiper-arousal).<br><br><strong>Działanie:</strong> Twoim priorytetem jest biofeedback i regulacja dolna. Ćwicz 'oddech pudełkowy' (4-4-4-4) minimum 10 minut dziennie. W sytuacjach stresowych stosuj technikę 'STOP'. Naucz się rozpoznawać fizjologiczne sygnały stresu (np. ucisk w gardle) zanim przejmą kontrolę. W terapii warto popracować nad 'bezpiecznym miejscem' i technikami uziemiającymi (5-4-3-2-1).",
+                mid: "<strong>Filar Regulacji (Bezpieczeństwo):</strong><br><br>Masz narzędzia do uspokajania się, ale wciąż bywasz reaktywny pod silną presją.<br><br><strong>Działanie:</strong> Pogłęb praktykę 'uważności otwartej'. Zamiast skupiać się na problemie, staraj się zauważyć przestrzeń wokół niego. Wprowadź rytuały przejścia między pracą a domem (np. 15 minut spaceru bez telefonu). W pracy zespołowej modeluj 'pauzowanie' – zanim odpowiesz na agresywny feedback, weź jeden świadomy wdech. Twoja mowa ciała reguluje innych.",
+                high: "<strong>Twój Zasób:</strong> Twoja obecność emanuje spokojem. Jesteś naturalnym regulatorem emocji w swoim otoczeniu.<br><br><strong>Działanie:</strong> Wykorzystaj ten zasób do 'ko-regulacji' zespołu. Twoja stabilność pozwala innym myśleć racjonalnie w kryzysie. Pamiętaj jednak, że spokój to nie brak emocji. Pozwalaj sobie na autentyczne przeżywanie złości czy smutku w bezpiecznych warunkach, aby nie zamienić spokoju w emocjonalne odcięcie."
+            },
+            courage: {
+                low: "<strong>Filar Relacyjności (Bezpieczeństwo):</strong><br><br>Lęk przed oceną lub konfliktem blokuje Twoje działanie. Możesz unikać trudnych rozmów kosztem swoich wartości.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Eksperymentów Behawioralnych'. Wybierz jedną małą rzecz (np. zgłoszenie innej opinii na spotkaniu o niskiej wadze). Obserwuj, że 'katastrofa', której się obawiałeś, nie nastąpiła. Ustal swoje 'nienegocjowalne granice'. Pamiętaj, że odwaga to działanie Mimo lęku, a nie jego brak. Praca z ACT nad akceptacją nieprzyjemnych myśli o ryzyku pomoże Ci ruszyć z miejsca.",
+                mid: "<strong>Filar Relacyjności (Bezpieczeństwo):</strong><br><br>Potrafisz być odważny, gdy sytuacja tego wymaga, ale często płacisz za to dużym stresem wewnętrznym.<br><br><strong>Działanie:</strong> Pracuj nad 'radykalną szczerością' połączoną z empatią. Ćwicz odważne komunikowanie potrzeb za pomocą 'komunikatu JA'. W zespole proś o feedback dotyczący Twoich decyzji – to też akt odwagi. Szukaj 'sojuszników' dla swoich idei, aby odwaga nie oznaczała osamotnienia. Pytaj siebie: 'Co jest ważniejsze od mojego strachu?'",
+                high: "<strong>Twój Zasób:</strong> Jesteś katalizatorem zmian. Twoja gotowość do ochrony wartości inspiruje innych.<br><br><strong>Działanie:</strong> Twoim wyzwaniem jest teraz dbanie o to, by odwaga nie stała się brawurą lub agresją. Jako lider, promuj psychologiczne bezpieczeństwo, chroniąc tych, którzy myślą inaczej. Wykorzystuj swoją odwagę do kwestionowania status quo tam, gdzie organizacja przestaje być ludzka. Modeluj 'odwagę bycia kruchym' (vulnerability), co paradoksalnie wzmacnia autorytet."
+            },
+            mindfulness: {
+                low: "<strong>Filar Rozpoznawania (Satysfakcja):</strong><br><br>Twój umysł jest często w trybie 'autopilota' lub ruminacji (rozpamiętywania).<br><br><strong>Działanie:</strong> Zacznij od 1 minuty medytacji dziennie – nic więcej. Skup się na odczuwaniu ciężaru ciała na krześle. W ciągu dnia stosuj 'kotwice uważności' (np. dotyk klamki przed wejściem do pokoju). Uważność to nie relaksacja, to trenowanie mięśnia powrotu do 'tu i teraz'. W zespole zacznij od eliminacji multitaskingu na spotkaniach – bądź obecny na jednej rzeczy na raz.",
+                mid: "<strong>Filar Rozpoznawania (Satysfakcja):</strong><br><br>Praktykujesz uważność, ale bywa ona 'fragmentaryczna'. Gubisz ją, gdy tempo życia przyspiesza.<br><br><strong>Działanie:</strong> Wprowadź uważność w ruch (mindful walking) oraz w codzienne czynności (uważne jedzenie). Naucz się rozpoznawać moment, w którym tracisz kontakt z teraźniejszością – to jest kluczowy moment rozwoju. W pracy stosuj 'pauzy na oddech' przed przejściem do kolejnego zadania. Pytaj siebie: 'O czym teraz zapominam, bo jestem w przyszłości?'",
+                high: "<strong>Twój Zasób:</strong> Twoja jasność umysłu jest imponująca. Potrafisz widzieć fakty takimi, jakimi są.<br><br><strong>Działanie:</strong> Wykorzystaj uważność do głębokiego słuchania innych. Twoja pełna obecność jest najcenniejszym darem, jaki możesz dać współpracownikom. Modeluj 'kulturę refleksji' – zachęcaj zespół do zadawania pytań zanim przejdziecie do rozwiązań. Rozważ pogłębienie praktyki o medytację wglądu, aby zrozumieć głębsze mechanizmy Twoich reakcji."
+            },
+            gratitude: {
+                low: "<strong>Filar Zasobności (Satysfakcja):</strong><br><br>Ewolucyjny 'bias negatywności' dominuje w Twoim postrzeganiu świata. Widzisz głównie braki.<br><br><strong>Działanie:</strong> Zastosuj procedurę HEAL (Rick Hanson): Have (Miej pozytywne doświadczenie), Enrich (Wzbogać je – poczuj je mocniej przez 10-20 sekund), Absorb (Wchłoń je – wyobraź sobie, że staje się częścią Ciebie), Link (Połącz z negatywnym – opcjonalnie). Zapisuj 3 dobre rzeczy przed snem. To fizycznie zmienia strukturę hipokampu i obniża poziom kortyzolu.",
+                mid: "<strong>Filar Zasobności (Satysfakcja):</strong><br><br>Zauważasz pozytywy, ale rzadko pozwalasz im naprawdę 'osiąść' w Twoim układzie nerwowym.<br><br><strong>Działanie:</strong> Pracuj nad celebrowaniem małych zwycięstw. Kiedy coś pójdzie dobrze, zatrzymaj się na chwilę i powiedz: 'Tak, to jest to'. Wprowadź w zespole rytuał doceniania wysiłku, a nie tylko efektów. Wyrażaj wdzięczność publicznie. Szukaj wdzięczności w trudnościach – co ta lekcja Ci dała? To buduje rezyliencję post-traumatyczną.",
+                high: "<strong>Twój Zasób:</strong> Jesteś naturalnym optymistą realistycznym. Twoja energia buduje zaangażowanie innych.<br><br><strong>Działanie:</strong> Twoim zadaniem jest teraz poszerzanie wdzięczności na poziom systemowy. Jak możesz sprawić, by cała organizacja była bardziej wdzięczna? Modeluj wdzięczność bez oczekiwania wzajemności. Pamiętaj, że wdzięczność to postawa, nie tylko emocja. Ćwicz ją nawet w dniach, gdy 'nic nie idzie', szukając podstawowych zasobów jak oddech czy bezpieczeństwo."
+            },
+            motivation: {
+                low: "<strong>Filar Regulacji (Satysfakcja):</strong><br><br>Możesz czuć wypalenie lub brak jasnego sensu. Motywacja zewnętrzna (marchewka/kij) przestała działać.<br><br><strong>Działanie:</strong> Wróć do podstaw. Wykonaj audyt wartości 'Bull's Eye' (ACT) – gdzie w Twoim życiu jest teraz największy dystans między wartościami a działaniem? Skup się na motywacji autonomicznej. Co chciałbyś robić, nawet gdyby nikt nie patrzył? Znajdź jeden element w pracy, który daje Ci radość i poświęć mu 20% więcej czasu.",
+                mid: "<strong>Filar Regulacji (Satysfakcja):</strong><br><br>Twoja motywacja jest silna, ale często oparta na 'powinienem' zamiast 'chcę'.<br><br><strong>Działanie:</strong> Naucz się różnicować między dążeniem a kompulsją. Jeśli nie potrafisz odpoczywać bez poczucia winy, Twoja motywacja jest podszyta lękiem. Pracuj nad motywacją zorientowaną na proces, a nie tylko na cel. W zespole rozmawiaj o 'misji' – dlaczego robicie to, co robicie? Buduj poczucie kompetencji i autonomii u swoich ludzi.",
+                high: "<strong>Twój Zasób:</strong> Masz niespożytą energię i jasny kompas wewnętrzny.<br><br><strong>Działanie:</strong> Uważaj na pułapkę 'wiecznego głodu' osiągnięć. Celebruj zakończenia projektów zanim rzucisz się w nowe. Twoja pasja może przytłaczać innych – ucz się tempa, które jest zrównoważone dla całego zespołu. Jako lider, pomagaj innym odkrywać ich własne 'Dlaczego', zamiast narzucać im swoje cele."
+            },
+            aspiration: {
+                low: "<strong>Filar Relacyjności (Satysfakcja):</strong><br><br>Możesz czuć się zagubiony lub bać się marzyć o dużych rzeczach. Strach przed porażką paraliżuje wizję.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Odysei' – nakreśl trzy alternatywne scenariusze swojej przyszłości. Co zrobiłbyś, gdyby pieniądze i opinia innych nie grały roli? Wybierz jedną wartość (np. rozwój) i zaplanuj jedno działanie na ten tydzień. Aspiracja to nie fantazja, to kierunek podróży. Zacznij od zdefiniowania, czym jest dla Ciebie 'dobre życie'.",
+                mid: "<strong>Filar Relacyjności (Satysfakcja):</strong><br><br>Masz cele, ale bywają one reaktywne (odpowiedź na oczekiwania rynku/innych).<br><br><strong>Działanie:</strong> Pracuj nad aspiracjami opartymi na tożsamości. Kim chcesz SIĘ STAĆ, a nie tylko co chcesz OSIĄGNĄĆ? W zespole stwórz przestrzeń na wizjonerstwo. Zachęcaj ludzi do 'wychodzenia poza pudełko'. Pamiętaj, że wielkie cele wymagają małych kroków. Ćwicz wytrwałość w dążeniu do długoterminowych marzeń pomimo chwilowych spadków formy.",
+                high: "<strong>Twój Zasób:</strong> Jesteś inspirującym wizjonerem. Potrafisz nadawać kierunek i sens działaniom.<br><br><strong>Działanie:</strong> Dbaj o to, by Twoje aspiracje były etyczne i zrównoważone. Czy Twoja wizja przyszłości jest dobra dla świata? Jako lider, łącz aspiracje indywidualne pracowników z celami organizacji. Pamiętaj o pokorze – wizja bez egzekucji to halucynacja. Upewnij się, że fundujesz swoje sny na solidnych fundamentach codziennej pracy."
+            },
+            learning: {
+                low: "<strong>Filar Rozpoznawania (Powiązanie):</strong><br><br>Możesz czuć, że stoisz w miejscu lub boisz się popełniać błędy, co blokuje rozwój.<br><br><strong>Działanie:</strong> Wprowadź nawyk 'Internalizacji Dobra'. Kiedy poczujesz, że coś Ci się udało, zostań z tym odczuciem przez 20 sekund. Poczuj, jak to jest być kompetentnym. Traktuj każdą trudną rozmowę jako darmowe szkolenie. Prowadź dziennik refleksji – 2 minuty dziennie: 'Czego się dziś o sobie dowiedziałem?'. Bądź ciekawy, nie oceniający.",
+                mid: "<strong>Filar Rozpoznawania (Powiązanie):</strong><br><br>Uczysz się szybko, ale często tylko na poziomie intelektualnym. Brakuje integracji z ciałem i emocjami.<br><br><strong>Działanie:</strong> Pracuj nad 'uczeniem się przez doświadczenie'. Szukaj informacji zwrotnej, nawet jeśli jest bolesna. W zespole wprowadź sesje 'After Action Review' – co zrobiliśmy, co się stało, dlaczego tak się stało, co zrobimy inaczej? Ucz się od ludzi spoza swojej branży – to buduje elastyczność poznawczą.",
+                high: "<strong>Twój Zasób:</strong> Twoja otwartość na naukę i Growth Mindset są wzorcowe.<br><br><strong>Działanie:</strong> Twoim zadaniem jest teraz tworzenie 'organizacji uczącej się'. Dziel się wiedzą bez lęku o utratę pozycji. Rozważ mentoring odwrócony – ucz się od młodszych stażem. Pamiętaj, że najgłębsza nauka płynie z ciszy i refleksji, a nie tylko z kolejnych kursów. Stań się nauczycielem Zen dla swojego zespołu, ucząc ich uważności na proces."
+            },
+            confidence: {
+                low: "<strong>Filar Zasobności (Powiązanie):</strong><br><br>Silny syndrom oszusta. Poczucie, że sukcesy są dziełem przypadku, a porażki dowodem na brak wartości.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Inwentarza Kompetencji'. Wypisz 50 rzeczy, które potrafisz (od zawodowych po codzienne). W sytuacjach zwątpienia używaj techniki defuzji z ACT: 'Mam myśl, że sobie nie poradzę' zamiast 'Nie poradzę sobie'. To tylko myśl, nie fakt. Przestań porównywać swoje 'wewnątrz' do czyjegoś 'zewnątrz'.",
+                mid: "<strong>Filar Zasobności (Powiązanie):</strong><br><br>Twoja pewność siebie jest stabilna, ale zależna od wyników zewnętrznych.<br><br><strong>Działanie:</strong> Buduj pewność siebie niezależną od sukcesów. Ćwicz 'radykalną akceptację' swoich cieni i słabości. Kiedy wiesz, kim jesteś ze wszystkimi wadami, nikt nie może Cię obrazić ani zaskoczyć. W zespole dawaj innym autonomię – nic tak nie buduje pewności siebie, jak zaufanie lidera. Mów o swoich wątpliwościach, to buduje autentyczny autorytet.",
+                high: "<strong>Twój Zasób:</strong> Twoja stabilność wewnętrzna jest fundamentem, na którym inni mogą budować.<br><br><strong>Działanie:</strong> Wykorzystuj swoją pewność siebie, by chronić słabszych i promować sprawiedliwość. Pamiętaj, by Twoja pewność nie stała się arogancją. Zawsze zostawiaj 5% miejsca na to, że możesz się mylić. Jako lider, buduj pewność siebie u swoich ludzi poprzez delegowanie odpowiedzialności, a nie tylko zadań."
+            },
+            intimacy: {
+                low: "<strong>Filar Regulacji (Powiązanie):</strong><br><br>Izolacja emocjonalna lub lęk przed bliskością. Możesz dźwigać wszystko sam, wierząc, że proszenie o pomoc to słabość.<br><br><strong>Działanie:</strong> Zrozum teorię przywiązania i jej wpływ na Twoje relacje. Zacznij od 'mikro-otwarcia' – powiedz komuś: 'To był dla mnie trudny dzień'. Obserwuj reakcję. Buduj zaufanie małymi krokami. Pamiętaj o neurobiologii: bezpieczne relacje obniżają poziom kortyzolu. Szukaj grup wsparcia lub terapii relacyjnej, aby nauczyć się bycia widzianym.",
+                mid: "<strong>Filar Regulacji (Powiązanie):</strong><br><br>Masz bliskie osoby, ale w pracy zachowujesz chłodny dystans, co ogranicza zaufanie zespołu.<br><br><strong>Działanie:</strong> Pracuj nad 'autentycznym przywództwem'. Dziel się swoimi ludzkimi historiami. Ćwicz aktywne słuchanie bez oceniania. W zespole twórz przestrzenie na nieformalne rozmowy. Pamiętaj o granicach – bliskość to nie wylewność. Chodzi o to, by być 'obecnym' dla drugiego człowieka. Rozwijaj empatię poznawczą i emocjonalną.",
+                high: "<strong>Twój Zasób:</strong> Potrafisz tworzyć głębokie, bezpieczne więzi. Ludzie czują się przy Tobie słyszani.<br><br><strong>Działanie:</strong> Twoim wyzwaniem jest teraz dbanie o czystość relacji w całym zespole. Wykorzystaj swoje umiejętności do mediacji i rozwiązywania konfliktów u źródła. Pamiętaj o higienie relacyjnej – nie pozwól, byś stał się 'koszem na emocje' wszystkich dookoła. Jako lider Zen, ucz innych, jak być blisko, zachowując jednocześnie wolność i autonomię."
+            },
+            generosity: {
+                low: "<strong>Filar Relacyjności (Powiązanie):</strong><br><br>Możesz działać w paradygmacie braku – boisz się, że dzielenie się zasobami (wiedzą, czasem) osłabi Twoją pozycję.<br><br><strong>Działanie:</strong> Zacznij od 'praktyki dawania' bez żadnego celu. Podziel się wiedzą, pochwal kogoś szczerze, poświęć 5 minut na wysłuchanie. Obserwuj 'radość dawcy'. Neurobiologia mówi, że dawanie aktywuje te same ośrodki w mózgu co jedzenie czy seks. Przekształcaj konkurencję we współpracę. Pamiętaj: rezyliencja rośnie, gdy jesteśmy częścią wspierającej się społeczności.",
+                mid: "<strong>Filar Relacyjności (Powiązanie):</strong><br><br>Jesteś pomocny, ale często oczekujesz czegoś w zamian lub pomagasz tylko wybranym.<br><br><strong>Działanie:</strong> Rozszerzaj swój 'krąg troski'. Spróbuj pomóc komuś spoza Twojego działu lub kręgu znajomych. Pracuj nad przebaczaniem – to akt wielkoduszności wobec siebie samego. W zespole promuj dzielenie się sukcesami i zasobami. Ucz się przyjmowania pomocy z taką samą gracją, z jaką ją dajesz. Wielkoduszność to też pozwalanie innym, by nas wspierali.",
+                high: "<strong>Twój Zasób:</strong> Twoja hojność i altruizm budują kulturę dobrostanu wszędzie, gdzie się pojawisz.<br><br><strong>Działanie:</strong> Twoim zadaniem jest teraz wielkoduszność strategiczna. Jak możesz zmienić system, by był bardziej hojny? Wspieraj mentoring i wolontariat pracowniczy. Jako lider, bądź tym, który daje szansę tym, w których nikt inny nie wierzy. Twoja wielkoduszność to najsilniejszy sposób na budowanie trwałego dziedzictwa."
+            }
+        };
+
+        let currentType = '';
+        let activeQuestions = [];
+        let chartInstance = null;
+
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`section-${id}`).classList.remove('hidden');
+            mobileMenu.classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function startQuiz(type) {
+            currentType = type;
+            activeQuestions = [];
+            if (type === 'self_full') activeQuestions = selfQuestions;
+            else if (type === 'self_short') pillars.forEach(p => activeQuestions.push(selfQuestions.find(sq => sq.pillar === p.id)));
+            else if (type === 'team_full') activeQuestions = teamQuestions;
+            else if (type === 'team_short') ['Bezpieczeństwo', 'Satysfakcja', 'Powiązanie'].forEach(n => activeQuestions.push(teamQuestions.find(tq => pillars.find(p => p.id === tq.pillar).need === n)));
+
+            renderQuestions();
+            document.getElementById('quiz-title').innerText = getTitle(type);
+            showSection('quiz');
+        }
+
+        function getTitle(type) {
+            return { 'self_full': 'Profil Osobisty (Pełny)', 'self_short': 'Profil Osobisty (Skrócony)', 'team_full': 'Mapa Zespołu (Pełna)', 'team_short': 'Mapa Zespołu (Skrócona)' }[type];
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            activeQuestions.forEach((q, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'space-y-4 border-b pb-6 last:border-0';
+                qDiv.innerHTML = `<p class="text-lg font-medium text-gray-800">${index + 1}. ${q.text}</p><div class="flex flex-wrap gap-2 md:gap-4 justify-between max-w-lg">${[1, 2, 3, 4, 5].map(v => `<div class="flex-1 min-w-[50px]"><input type="radio" id="q${index}_v${v}" name="q${index}" value="${v}" class="hidden" required><label for="q${index}_v${v}" class="block text-center p-2 border rounded-md cursor-pointer hover:bg-gray-100 transition-colors"><span class="block text-sm font-bold">${v}</span></label></div>`).join('')}</div>`;
+                container.appendChild(qDiv);
+            });
+            document.getElementById('quiz-progress').innerText = `Liczba pytań: ${activeQuestions.length}`;
+        }
+
+        function calculateResults() {
+            let allAnswered = true;
+            activeQuestions.forEach((q, i) => { if (!document.querySelector(`input[name="q${i}"]:checked`)) allAnswered = false; });
+            if (!allAnswered) return alert("Odpowiedz na wszystkie pytania.");
+
+            const results = {};
+            pillars.forEach(p => results[p.id] = 0);
+            activeQuestions.forEach((q, i) => results[q.pillar] += parseInt(document.querySelector(`input[name="q${i}"]:checked`).value));
+
+            let mult = (currentType === 'self_short' || currentType.startsWith('team')) ? 3 : 1;
+            const scores = {};
+            pillars.forEach(p => scores[p.id] = results[p.id] * mult);
+            displayResults(scores);
+        }
+
+        function displayResults(pillarScores) {
+            const needsScores = { 'Bezpieczeństwo': 0, 'Satysfakcja': 0, 'Powiązanie': 0 };
+            const tableBody = document.getElementById('results-table-body');
+            const recContainer = document.getElementById('recommendations-container');
+            tableBody.innerHTML = ''; recContainer.innerHTML = '';
+
+            pillars.forEach(p => {
+                const score = pillarScores[p.id];
+                needsScores[p.need] += score;
+                tableBody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="p-3 font-medium">${p.name}<br><span class="text-xs text-gray-400">${p.need}</span></td><td class="p-3 text-center font-bold">${score}</td><td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold ${getZoneColor(score)}">${getZoneName(score)}</span></td></tr>`;
+                const level = score <= 6 ? 'low' : (score <= 11 ? 'mid' : 'high');
+                recContainer.innerHTML += `<div class="border rounded-xl shadow-sm overflow-hidden bg-white"><button onclick="this.nextElementSibling.classList.toggle('hidden');" class="w-full text-left p-4 flex justify-between items-center"><div class="flex flex-col"><span class="font-bold text-primary text-lg">${p.name}</span><span class="text-xs uppercase text-gray-400">${p.need} — ${getZoneName(score)}</span></div><i class="fas fa-chevron-down text-gray-300"></i></button><div class="hidden p-5 bg-teal-50/20 text-gray-700 leading-relaxed border-t border-teal-100 text-sm">${recommendations[p.id][level]}</div></div>`;
+            });
+
+            const needsDiv = document.getElementById('needs-summary');
+            needsDiv.innerHTML = '';
+            Object.entries(needsScores).forEach(([name, score]) => {
+                needsDiv.innerHTML += `<div class="space-y-1"><div class="flex justify-between text-sm font-bold"><span>${name}</span><span>${score} / 60</span></div><div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden"><div class="bg-primary h-full transition-all" style="width: ${(score/60)*100}%"></div></div></div>`;
+            });
+
+            document.getElementById('result-date').innerText = "Wygenerowano: " + new Date().toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' });
+            showSection('results');
+            initChart(pillarScores);
+        }
+
+        function getZoneName(s) { return s <= 6 ? "Strefa rozwoju" : (s <= 11 ? "Solidny fundament" : "Twój zasób"); }
+        function getZoneColor(s) { return s <= 6 ? "bg-red-100 text-red-700" : (s <= 11 ? "bg-teal-100 text-teal-700" : "bg-orange-100 text-orange-700"); }
+
+        function initChart(scores) {
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(document.getElementById('resultsChart').getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: pillars.map(p => p.name),
+                    datasets: [{
+                        data: pillars.map(p => scores[p.id]),
+                        backgroundColor: 'rgba(0, 86, 100, 0.15)',
+                        borderColor: '#005664',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ff845b',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { r: { suggestedMin: 0, suggestedMax: 15, ticks: { display: false }, pointLabels: { font: { weight: '600' } } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('printable-area');
+            const accs = document.querySelectorAll('#recommendations-container > div > div');
+            accs.forEach(a => a.classList.remove('hidden'));
+            html2pdf().set({ margin: 10, filename: 'Raport_Rezyliencji.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => accs.forEach(a => a.classList.add('hidden')));
+        }
+
+        showSection('intro');
+    </script>
+</body>
+</html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Odporni i gotowi – diagnoza Deep Dive | Lyra Polska</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23123B52%22/%3E%3Cpath%20d%3D%22M6%2050%20L24%2022%20L33%2035%20L42%2018%20L58%2050%20Z%22%20fill%3D%22%23177E89%22/%3E%3Cpath%20d%3D%22M42%2018%20L48.5%2031%20L44%2028%20L40%2031%20L37.5%2027.5%20Z%22%20fill%3D%22%23fff%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<style>
+:root{
+  --navy:#123B52; --deep:#084C61; --teal:#177E89; --teal-2:#5FA8AF; --mist:#E6F0F1; --mist-2:#CFE2E4;
+  --peach:#F7E2D7; --peach-2:#F1C9B6; --paper:#FBFAF8; --ink:#1B2A33; --muted:#5B6B74; --line:#DDE5E7;
+  --red:#db3a34; --white:#fff;
+  --r-s:6px; --r-m:12px; --r-l:20px;
+  --font:'Figtree', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom)}
+a{color:var(--deep)}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+/* header */
+.top{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;position:sticky;top:0;z-index:20}
+.top-in{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff}
+.brand img{height:30px;width:auto;display:block}
+.brand span{font-weight:600;font-size:15px;opacity:.85;border-left:1px solid rgba(255,255,255,.3);padding-left:14px}
+.top a.site{color:#cfe6e8;font-size:14px;text-decoration:none}
+.top a.site:hover{color:#fff;text-decoration:underline}
+@media (max-width:480px){.top a.site{display:none}.brand span{font-size:14px}}
+
+/* ridge progress */
+.ridge-wrap{background:var(--navy);padding:0 20px 10px}
+.ridge{max-width:980px;margin:0 auto;display:none}
+.ridge.on{display:block}
+.ridge svg{width:100%;height:auto;display:block}
+.ridge .lbl{font:600 13px var(--font);fill:#9fc3c8}
+.ridge .lbl.on{fill:#fff}
+
+main{max-width:760px;margin:0 auto;padding:36px 20px 80px}
+main.wide{max-width:980px}
+h1{font-size:clamp(32px,5.5vw,52px);line-height:1.04;letter-spacing:-.02em;font-weight:800;color:var(--navy);margin:0 0 18px}
+h2{font-size:clamp(24px,3.4vw,32px);line-height:1.15;letter-spacing:-.015em;font-weight:800;color:var(--navy);margin:0 0 12px}
+h3{font-size:19px;font-weight:700;color:var(--navy);margin:0 0 8px}
+p{margin:0 0 14px}
+.lead{font-size:19px;color:#34464f;max-width:62ch}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.hidden{display:none!important}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font-size:17px;font-weight:700;cursor:pointer;background:var(--deep);color:#fff;text-decoration:none}
+.btn:hover{background:var(--navy)}
+.btn.ghost{background:transparent;color:var(--deep);box-shadow:inset 0 0 0 2px var(--deep)}
+.btn.ghost:hover{background:var(--mist)}
+.btn.quiet{background:transparent;color:var(--muted);padding:14px 8px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:36px;gap:12px}
+
+/* intro */
+.path{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:34px 0;border-top:2px solid var(--navy)}
+.path > div{padding:16px 18px 4px 0}
+.path b{display:block;font-size:14px;color:var(--teal);font-weight:700;margin-bottom:2px}
+.path h3{margin-bottom:4px}
+.path p{font-size:15px;color:var(--muted)}
+@media (max-width:640px){.path{grid-template-columns:1fr}.path>div{border-bottom:1px solid var(--line);padding-right:0}}
+.note{background:var(--peach);border-radius:var(--r-m);padding:16px 18px;font-size:15px;margin:22px 0}
+.note.teal{background:var(--mist)}
+.resume{border:2px solid var(--teal);border-radius:var(--r-m);padding:16px 18px;margin:0 0 24px;background:#fff}
+
+/* form */
+label.field{display:block;font-weight:600;margin:18px 0 6px}
+input[type=text],input[type=password]{width:100%;max-width:340px;font:inherit;font-size:18px;padding:12px 14px;border:2px solid var(--line);border-radius:var(--r-s);background:#fff}
+input[type=text]:focus,input[type=password]:focus{border-color:var(--teal);outline:none}
+.check{display:flex;gap:12px;align-items:flex-start;margin:14px 0;font-size:15px;cursor:pointer}
+.check input{width:22px;height:22px;flex:0 0 22px;margin-top:2px;accent-color:var(--deep)}
+.err{color:var(--red);font-size:14px;font-weight:600;min-height:20px;margin-top:6px}
+
+/* questionnaire */
+.mod-head{margin-bottom:26px}
+.mod-head .kicker{color:var(--teal);font-weight:700;font-size:15px;margin-bottom:6px}
+.instr{background:#fff;border-left:4px solid var(--teal);padding:14px 18px;border-radius:0 var(--r-s) var(--r-s) 0;font-size:16px;margin-bottom:10px}
+.legend{font-size:14px;color:var(--muted);margin:6px 0 0}
+.item{padding:22px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item.missing .q,.item.missing .adj,.tp.missing h3{color:var(--red)}
+.item.missing .scale button,.tp.missing{border-color:#efb3b0}
+.q{font-size:18px;font-weight:600;margin-bottom:12px;color:var(--ink)}
+.q .n{color:var(--teal);font-weight:700;margin-right:6px}
+.scale{display:flex;gap:6px}
+.scale button{flex:1 1 0;min-width:0;min-height:48px;border:2px solid var(--line);background:#fff;border-radius:var(--r-s);font-size:16px;font-weight:700;color:var(--ink);cursor:pointer;padding:6px 4px;line-height:1.15}
+.scale button:hover{border-color:var(--teal-2)}
+.scale button.sel{background:var(--deep);border-color:var(--deep);color:#fff}
+.scale.words button{font-size:14px;font-weight:600}
+.anchors{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px;gap:12px}
+.chosen{font-size:13px;color:var(--teal);font-weight:600;margin-top:6px;min-height:18px}
+.adj{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px}
+
+/* sliders */
+.traj{display:grid;grid-template-columns:1fr;gap:18px;margin-top:10px}
+.tp{background:#fff;border-radius:var(--r-m);padding:18px 20px;border:1px solid var(--line)}
+.tp h3{margin-bottom:12px}
+.sl{margin:10px 0 4px}
+.sl-top{display:flex;justify-content:space-between;font-weight:600;font-size:15px}
+.sl-top output{color:var(--deep);font-weight:800;min-width:2ch;text-align:right}
+.sl-top output.unset{color:var(--muted);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--deep);height:30px}
+.sl-ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+
+/* results */
+.res-head{border-bottom:2px solid var(--navy);padding-bottom:18px;margin-bottom:28px}
+.res-meta{color:var(--muted);font-size:15px}
+.synth{font-size:20px;line-height:1.5;color:var(--navy);font-weight:500;max-width:68ch;margin:0 0 10px}
+.block{margin:44px 0}
+.block > h2{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.block > h2 small{font-size:15px;font-weight:600;color:var(--teal);letter-spacing:0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:var(--r-m);padding:20px 22px;border:1px solid var(--line)}
+.state-name{font-size:26px;font-weight:800;color:var(--deep);margin:0 0 6px;letter-spacing:-.01em}
+ul.clean{margin:8px 0 0;padding-left:20px}
+ul.clean li{margin:6px 0}
+svg text{font-family:var(--font)}
+
+.bar{margin:18px 0 22px}
+.bar-top{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}
+.bar-top span:last-child{color:var(--deep)}
+.track{position:relative;height:16px;border-radius:8px;display:flex;overflow:visible}
+.track i{display:block;height:100%}
+.track i:nth-child(1){background:var(--mist);border-radius:8px 0 0 8px}
+.track i:nth-child(2){background:var(--mist-2)}
+.track i:nth-child(3){background:var(--teal-2);border-radius:0 8px 8px 0}
+.track .dot{position:absolute;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:var(--navy);border:4px solid #fff;box-shadow:0 0 0 2px var(--navy)}
+.bar-ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+.band{font-size:14px;color:var(--muted);margin-top:2px}
+
+.needs{margin-top:14px}
+.need{margin:12px 0}
+.need-top{display:flex;justify-content:space-between;font-weight:700;font-size:15px}
+.need-track{height:10px;background:var(--mist);border-radius:5px;overflow:hidden;margin-top:4px}
+.need-track b{display:block;height:100%;background:var(--deep)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{background:var(--mist);color:var(--deep);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600}
+.chip.warm{background:var(--peach);color:#7a3b22}
+
+.acc{border:1px solid var(--line);border-radius:var(--r-s);background:#fff;margin:8px 0}
+.acc > button{width:100%;text-align:left;background:none;border:0;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;font-size:16px}
+.acc > button b{color:var(--navy)}
+.acc > button span.z{font-size:13px;color:var(--muted);font-weight:600;white-space:nowrap}
+.acc > div{padding:0 18px 16px;font-size:15px;color:#33444c;display:none}
+.acc.open > div{display:block}
+
+.tiers{display:grid;gap:18px}
+.tier{border-left:4px solid var(--teal);background:#fff;padding:18px 20px;border-radius:0 var(--r-m) var(--r-m) 0}
+.tier.warm{border-left-color:var(--red);background:#fff7f4}
+.tier h3{margin-bottom:6px}
+.tier ol,.tier ul{margin:6px 0 0;padding-left:22px}
+.tier li{margin:8px 0}
+
+.actions{background:var(--navy);color:#fff;border-radius:var(--r-l);padding:26px 26px 22px;margin-top:50px}
+.actions h2{color:#fff}
+.actions .check{color:#e6f0f1}
+.actions .btn{background:#fff;color:var(--navy)}
+.actions .btn:hover{background:var(--mist)}
+.actions .btn.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+.actions .btn.ghost:hover{background:rgba(255,255,255,.1)}
+.actions .btn.quiet{background:transparent;box-shadow:none;text-decoration:underline}
+.actions .btn.quiet:hover{background:rgba(255,255,255,.08)}
+.howto{background:rgba(255,255,255,.09);border-radius:var(--r-m);padding:16px 20px;margin-top:18px}
+.howto ol{margin:0;padding-left:22px}.howto li{margin:6px 0}.howto p{margin:10px 0 0}
+.linkbtn{background:none;border:0;color:#9fe0e4;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0 0 0 6px}
+.actions .status.ok{color:#9fe0c7}.actions .status.bad{color:#ffb4ae}
+
+footer{border-top:1px solid var(--line);padding:26px 20px 40px;font-size:14px;color:var(--muted)}
+footer .in{max-width:980px;margin:0 auto;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+footer b{color:var(--navy)}
+
+/* PDF */
+.pdf-only{display:none}
+.pdf-mode .pdf-only{display:block}
+.pdf-mode .no-pdf{display:none!important}
+.pdf-mode .acc > div{display:block}
+.pdf-mode .acc > button span.z{display:none}
+.avoid-break{break-inside:avoid;page-break-inside:avoid}
+@media print{
+  .top,.ridge-wrap,.actions,footer .no-pdf,.no-pdf{display:none!important}
+  .acc > div{display:block!important}
+  body{background:#fff}
+  main{padding-top:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="https://lyrapolska.pl" target="_blank" rel="noopener">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAAAiCAYAAADSx77pAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAc2SURBVGhD7ZhtjB5VFcexlkp9pZV3tUB9AVHQqggfSIyKWltptRVbSRX6QUUDJhDSaNCWYlWiIr5gW0oQMFWbCmlB6QsWtlqRhG6QNFtEaLK4sNDdmXNmnn2eued/7lPnmjO7U2dH/LRLE2R+X3bnnnPf/nPuuWeeo45qaGhoaGhoaGho+P8nhPDKetv/IoQwLYTwinr7EeO5kZHjE9XlUZZ9oG57KZBoPoeAmyPgzLqtTuTcMnZ+w7Ot1hvrtiNGW/XdLHiIMyys214KkB5aEjvtb3l/ft1Wh7V7E4sOxVn2prrtiEGq72Lo9ijz59ZtR5LeEI6ut1UJIUzdvHnzf6UORncBieYtdOdX280/hDCl2hY5/QJBdw91OidV20MIR9d9e3t7rW3yU08peJz5D9pznueviUWWpyJvq/rlef4qcnoxe38BuzArARYPhfDaEYQzSXXJwMDAdPOLR3AWqV6cqi5l5y+ojlGlBXwqAT4TAWeQ6GqGvzXO5IrhTufkql9/6D8m9f5ydljH0HUs/op2np9Q2scEP9RCd549P1+s31/JTteTw8/MftjX4RsM3dFu5yfaswlN4r/Koj8YCeE4a0tU55Dodxn+NnL68+FO531l/0mhLnhfX980EvkJi/7IFlT6pd6fS9A9trFUup8g6AOJ6moWbCLxd5oIJP7LJPoHEr2bRLeQ0122eBNh3KS2MemuiR32xYK/sug2Et0cQwdIsGe4hbebTwhhRizyW1b/LAF3EvztDN+fqt+ViJxmPnXBSWQNq3+cHdaT4NcE30/AJ4s50V1L4h8dGQnHPVkEEH7BTp9IgM/axcuan8PiH2fRvQn05hi6g0T3Jx2dPNHrghupHlrCoveVG7eXkGgh0K1FVHRkrkUKid6TSnduEsKxcZadTzCBLRrzU8m5t9iJiJ32kOrnxk1aCOVXsWibRL8X5/nrrY2AeQwdih3Wjj77q0n806y6rDzyoz5+iER/vCqEKaXgNCY4Qx+26Lb/La1EDiti6V5Y2ERvZOiBJM9PJ9XvEzRi4D8nAP7rBP+YnVJ7jvL8FIL+MwZWlj4T5oUEb7fbJ5LIXUmGRfZs6YWhOy11FH06hTD3xxkWl33sqFtaGMjzIrWUJKKrCX5jCOHY8e3d61n8k0Pp+NTF0PXs9P40pDNiwW6G7qqWfZZXGXoLCR6zaoOA+VXBSfR3DP+UpcVW5s/bXOmboHsLQZ9h8VsIyonoZaVtbOwpaZrPTDo6h5wujZ27lMX3WSqr+k2IFxK8aB8V6lf9/f3HkPiv2EbK272IMtFtUZadYs8mAkHXJsBV1TEMFn9lon7rCPDOajuJfocEf0tFZo9rd7iGRP9MbT2bRR8ih9urdiOGv4rF97by/LDgZUo5mMpsS4cMfZCgT5HovVELZ5iNRW8iwUGLWhbdz/AbBgcHX12Oa5VO7PQ+cvogw28n8fey+Cdihw3V+SfEmOA76lVK1JYPW7tFMQEbE/gVh/uMCX6w3S4uH4Phv8kOv+QQ3nB4kNEIv57V393CaHoqGRVc91cFtxRgqYwFf3luJD+e7S6A7q5/2MTwG1j04TTPZ1YF7+npmTqQpjOLv3k+fXTt+rQJa/1Y9YcsGsUZFsWiy0f+lQc7meW4Nje54iSfbfvo6wvTCNhHIj+tzj8hLEpJ9C7LpRYJ5UdBFEWvS6DrYoftFiWs+p6yTyl4tbyyioSgO1m7N7DqOYmE08jpJWMC/ibL83G1Lzu/ikSFgQ2phNmW9xm4lgRCzl9jPqke+jyJMjusHOqEk9i5WUVVAY1j0RtH08toWWh3yXCen0yCfSx6g/UvLkLoAyS6tRhP/NdYdOD5dvsE++JkYFMCP5h09L3FmuB7Wfym8gWPFQFtcrituvYJYYOT0yUWzZZa2OHasv4k4GoS/MleRjXKoixbQA491RLO8h+ju5CcbrWXwaJbEvX32MWaiP5+BKMXUQmJXkfQQRLdw6KPsPi/EzQx/zjL3mw+Voqy9ysJeoCge0n0H/Z/An/HwbHSLkF3EYlmbel+pEhtomsIPmL4nbYfgj9gJaz5RplcTqLJM2PjW6XD6PZahZTn+fSk2G9xInYR9I8EfSQW3UpO+0lwBzt3anUPE8I+7WNgsdWhZVvclo/ZxMNOl1Z9bWIGLhoM4XD+K7HUYTarsa2UtOgZ7mBe/dIcSyl74yw7j4GF7PSLjO5F1ZxqmIjmEzldFoteFotcaNFZ2u10xNL9eBhbSxHVzn+IVS+1tGF52aoss3EIswjd+dV1x8BZUYYFVoJaSiORudaXVC8ZbuEdllqSDJ+2PaVpmFH2e1GIHb5Fgo2tVj7pvz2MCu4fTUROr9tellDxG4vflqh+6cX4xE1Er7NKI5X8rXXbyxKCXxE73Wo1ed02GTD8ty13pyKN4IaVRlHm319vnyzsroja8tGe0DO1bmtoaGhoaGhoaGhoaGhoaKjyb6PXTsfIESLrAAAAAElFTkSuQmCC" alt="Lyra Polska">
+      <span>Odporni i gotowi</span>
+    </a>
+    <a class="site" href="https://lyrapolska.pl" target="_blank" rel="noopener">lyrapolska.pl</a>
+  </div>
+</header>
+<div class="ridge-wrap"><div class="ridge" id="ridge"></div></div>
+
+<main id="main"></main>
+
+<footer>
+  <div class="in">
+    <div><b>Jarosław Chybicki</b><br>Psycholog, psychoterapeuta CBT/ACT, coach<br>
+      <a href="mailto:jaroslaw.chybicki@lyrapolska.pl">jaroslaw.chybicki@lyrapolska.pl</a></div>
+    <div><b>Lyra Polska</b><br><a href="https://lyrapolska.pl" target="_blank" rel="noopener">lyrapolska.pl</a><br>
+      Program „Odporni i gotowi” – diagnoza Deep Dive</div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   KONFIGURACJA
+   ============================================================ */
+const CONFIG = {
+  client: 'Fortum',
+  version: 'deepdive-1.0',
+  contactName: 'Jarosław Chybicki',
+  contactEmail: 'jaroslaw.chybicki@lyrapolska.pl',
+  mailSubject: 'Raport',
+  storageKey: 'lyra_deepdive_v1'
+};
+
+/* ============================================================
+   MODUŁ 1 – ENERGIA I NAPIĘCIE (AD ACL, Thayer; tłumaczenie robocze)
+   sub: EN energia, TI zmęczenie, TE napięcie, CA spokój; rev = odwrotne
+   ============================================================ */
+const ENERGY_ITEMS = [
+  {id:'E1', t:'aktywny / aktywna', sub:'EN'},
+  {id:'E2', t:'spokojny / spokojna', sub:'CA'},
+  {id:'E3', t:'senny / senna', sub:'TI'},
+  {id:'E4', t:'spięty / spięta', sub:'TE'},
+  {id:'E5', t:'pełen / pełna energii', sub:'EN'},
+  {id:'E6', t:'odprężony / odprężona', sub:'CA'},
+  {id:'E7', t:'zmęczony / zmęczona', sub:'TI'},
+  {id:'E8', t:'roztrzęsiony / roztrzęsiona', sub:'TE'},
+  {id:'E9', t:'ożywiony / ożywiona', sub:'EN'},
+  {id:'E10', t:'wyciszony / wyciszona', sub:'CA'},
+  {id:'E11', t:'rozbudzony / rozbudzona', sub:'TI', rev:true},
+  {id:'E12', t:'zalękniony / zalękniona', sub:'TE'},
+  {id:'E13', t:'pełen / pełna wigoru', sub:'EN'},
+  {id:'E14', t:'niewzruszony / niewzruszona', sub:'CA'},
+  {id:'E15', t:'ospały / ospała', sub:'TI'},
+  {id:'E16', t:'nakręcony / nakręcona', sub:'TE'},
+  {id:'E17', t:'pełen / pełna zapału', sub:'EN'},
+  {id:'E18', t:'wewnętrznie cichy / cicha', sub:'CA'},
+  {id:'E19', t:'czujny / czujna', sub:'TI', rev:true},
+  {id:'E20', t:'ściśnięty / ściśnięta w środku', sub:'TE'}
+];
+const ENERGY_SCALE = [
+  {v:1, l:'Zdecydowanie nie'}, {v:2, l:'Trudno powiedzieć'}, {v:3, l:'Raczej tak'}, {v:4, l:'Zdecydowanie tak'}
+];
+
+/* ============================================================
+   MODUŁ 2 – BAROMETR WYPALENIA BW-15 (autorski, niewalidowany;
+   inspirowany trójczynnikowym modelem Ch. Maslach)
+   EX wyczerpanie, CY cynizm/dystans, EF poczucie skuteczności (odwracane do „obniżonego”)
+   ============================================================ */
+const BW_ITEMS = [
+  {id:'B1', sub:'EX', t:'Pod koniec tygodnia pracy mam poczucie, że moje rezerwy są na wyczerpaniu.'},
+  {id:'B2', sub:'CY', t:'Łapię się na tym, że sprawy moich współpracowników przestają mnie obchodzić.'},
+  {id:'B3', sub:'EF', t:'Skutecznie rozwiązuję problemy, które pojawiają się w mojej pracy.'},
+  {id:'B4', sub:'EX', t:'Budzę się zmęczony/zmęczona już na samą myśl o nadchodzącym dniu pracy.'},
+  {id:'B5', sub:'CY', t:'Mam wątpliwości, czy to, co robię w pracy, naprawdę ma znaczenie.'},
+  {id:'B6', sub:'EF', t:'Czuję satysfakcję z tego, co udaje mi się osiągnąć w pracy.'},
+  {id:'B7', sub:'EX', t:'Nawet po dniach wolnych nie odzyskuję pełni sił.'},
+  {id:'B8', sub:'CY', t:'Reaguję na ludzi w pracy z ironią lub zniecierpliwieniem.'},
+  {id:'B9', sub:'EF', t:'Mam realny, pozytywny wpływ na to, jak działa moja organizacja.'},
+  {id:'B10', sub:'EX', t:'Praca pochłania tyle mojej energii, że na życie prywatne zostaje jej niewiele.'},
+  {id:'B11', sub:'CY', t:'Emocjonalnie odcinam się od pracy, żeby jakoś przez nią przejść.'},
+  {id:'B12', sub:'EF', t:'W trudnych sytuacjach zawodowych mogę polegać na swoich kompetencjach.'},
+  {id:'B13', sub:'EX', t:'Działam „na rezerwie”, a nie z pełnych zasobów.'},
+  {id:'B14', sub:'CY', t:'Traktuję ludzi, z którymi pracuję, bardziej jak zasoby do zadań niż jak osoby.'},
+  {id:'B15', sub:'EF', t:'Widzę konkretne efekty swojej pracy, z których mogę być dumny/dumna.'}
+];
+const BW_SCALE = [
+  {v:0, l:'nigdy'}, {v:1, l:'kilka razy w roku'}, {v:2, l:'raz w miesiącu'}, {v:3, l:'kilka razy w miesiącu'},
+  {v:4, l:'raz w tygodniu'}, {v:5, l:'kilka razy w tygodniu'}, {v:6, l:'codziennie'}
+];
+
+/* ============================================================
+   MODUŁ 3 – 12 FILARÓW REZYLIENCJI (model R. Hansona; wersja J. Chybicki)
+   ============================================================ */
+const PILLARS = [
+  { id: 'compassion', name: 'Współczucie', need: 'Bezpieczeństwo' },
+  { id: 'grit', name: 'Wytrwałość', need: 'Bezpieczeństwo' },
+  { id: 'calm', name: 'Spokój', need: 'Bezpieczeństwo' },
+  { id: 'courage', name: 'Odwaga', need: 'Bezpieczeństwo' },
+  { id: 'mindfulness', name: 'Uważność', need: 'Satysfakcja' },
+  { id: 'gratitude', name: 'Wdzięczność', need: 'Satysfakcja' },
+  { id: 'motivation', name: 'Motywacja', need: 'Satysfakcja' },
+  { id: 'aspiration', name: 'Aspiracja', need: 'Satysfakcja' },
+  { id: 'learning', name: 'Uczenie się', need: 'Powiązanie' },
+  { id: 'confidence', name: 'Pewność siebie', need: 'Powiązanie' },
+  { id: 'intimacy', name: 'Bliskość', need: 'Powiązanie' },
+  { id: 'generosity', name: 'Wielkoduszność', need: 'Powiązanie' }
+];
+const NEEDS = ['Bezpieczeństwo','Satysfakcja','Powiązanie'];
+const HANSON_SCALE = [{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:4,l:'4'},{v:5,l:'5'}];
+
+const HANSON_ITEMS = [
+    { id: 1, pillar: 'compassion', text: "Kiedy popełniam błąd, potrafię potraktować siebie z wyrozumiałością zamiast z samokrytyką." },
+    { id: 2, pillar: 'compassion', text: "Zauważam, kiedy ktoś w moim otoczeniu przeżywa trudności, i naturalnie chcę pomóc." },
+    { id: 3, pillar: 'compassion', text: "Potrafię uznać swoje cierpienie bez minimalizowania go ani przesadnego dramatyzowania." },
+    { id: 4, pillar: 'grit', text: "Kiedy napotykam poważną przeszkodę, szukam alternatywnych rozwiązań zamiast się poddawać." },
+    { id: 5, pillar: 'grit', text: "Potrafię działać skutecznie nawet wtedy, gdy nie mam pełnej kontroli nad sytuacją." },
+    { id: 6, pillar: 'grit', text: "Po porażce stosunkowo szybko odzyskuję równowagę i gotowość do działania." },
+    { id: 7, pillar: 'calm', text: "W stresujących sytuacjach potrafię świadomie zwolnić i nie reagować impulsywnie." },
+    { id: 8, pillar: 'calm', text: "Mam skuteczne sposoby na uspokajanie się, gdy czuję narastające napięcie." },
+    { id: 9, pillar: 'calm', text: "Potrafię oddzielić poczucie zagrożenia od realnej oceny sytuacji." },
+    { id: 10, pillar: 'courage', text: "Potrafię wyrazić swoje zdanie, nawet gdy wiem, że będzie ono niepopularne." },
+    { id: 11, pillar: 'courage', text: "Stawiam granice, kiedy ktoś przekracza moje potrzeby lub wartości." },
+    { id: 12, pillar: 'courage', text: "Jestem gotów/gotowa podjąć trudne decyzje, nie odkładając ich w nieskończoność." },
+    { id: 13, pillar: 'mindfulness', text: "Potrafię być obecny/obecna w chwili, zamiast automatycznie martwić się o przyszłość lub ruminować o przeszłości." },
+    { id: 14, pillar: 'mindfulness', text: "Zauważam swoje myśli i emocje bez natychmiastowego reagowania na nie." },
+    { id: 15, pillar: 'mindfulness', text: "Regularnie poświęcam czas na świadome zatrzymanie się i „check-in” z samym/samą sobą." },
+    { id: 16, pillar: 'gratitude', text: "Regularnie zauważam i doceniam pozytywne aspekty mojego życia, nawet te drobne." },
+    { id: 17, pillar: 'gratitude', text: "Potrafię czuć satysfakcję z tego, co mam, zamiast stale porównywać się z innymi." },
+    { id: 18, pillar: 'gratitude', text: "Wyrażam wdzięczność innym — mówię ludziom, gdy doceniam to, co robią." },
+    { id: 19, pillar: 'motivation', text: "Mam jasne poczucie sensu i kierunku w tym, co robię zawodowo." },
+    { id: 20, pillar: 'motivation', text: "Potrafię utrzymać motywację do długoterminowych celów, nawet gdy brakuje szybkich rezultatów." },
+    { id: 21, pillar: 'motivation', text: "Umiem różnicować między zdrowym dążeniem a kompulsywnym „pushowaniem się”." },
+    { id: 22, pillar: 'aspiration', text: "Mam jasną wizję tego, dokąd zmierzam w życiu zawodowym i osobistym." },
+    { id: 23, pillar: 'aspiration', text: "Jestem gotów/gotowa ryzykować porażkę, jeśli cel jest naprawdę dla mnie ważny." },
+    { id: 24, pillar: 'aspiration', text: "Regularnie weryfikuję swoje cele i dostosowuję je do zmieniających się okoliczności." },
+    { id: 25, pillar: 'learning', text: "Aktywnie szukam okazji do nauki — z książek, od ludzi, z doświadczeń." },
+    { id: 26, pillar: 'learning', text: "Potrafię wyciągać wnioski z trudnych sytuacji i wykorzystywać je w przyszłości." },
+    { id: 27, pillar: 'learning', text: "Jestem otwarty/otwarta na feedback i potrafię go przyjąć bez nadmiernej defensywności." },
+    { id: 28, pillar: 'confidence', text: "Czuję się kompetentny/kompetentna w swojej roli, nawet gdy staję przed nowymi wyzwaniami." },
+    { id: 29, pillar: 'confidence', text: "Moja samoocena nie jest całkowicie zależna od zewnętrznego uznania i wyników." },
+    { id: 30, pillar: 'confidence', text: "Potrafię uznać, że czegoś nie wiem, bez poczucia, że to podważa moją wartość." },
+    { id: 31, pillar: 'intimacy', text: "Mam w swoim życiu osoby, z którymi mogę być w pełni sobą." },
+    { id: 32, pillar: 'intimacy', text: "Potrafię dzielić się trudnościami z innymi, zamiast dźwigać wszystko sam/sama." },
+    { id: 33, pillar: 'intimacy', text: "Aktywnie buduję i pielęgnuję relacje, które są dla mnie ważne." },
+    { id: 34, pillar: 'generosity', text: "Chętnie dzielę się swoją wiedzą, czasem i zasobami z innymi." },
+    { id: 35, pillar: 'generosity', text: "Potrafię wybaczyć — zarówno innym, jak i sobie." },
+    { id: 36, pillar: 'generosity', text: "Staram się rozumieć perspektywę drugiego człowieka, nawet gdy się z nią nie zgadzam." }
+];
+
+const HANSON_RECS = {
+    compassion: {
+        low: "<strong>Filar Rozpoznawania (Bezpieczeństwo):</strong><br><br>Obecnie Twój wewnętrzny system krytyczny jest bardzo aktywny. Neurobiologia pokazuje, że samokrytyka aktywuje ciało migdałowate, wprowadzając Cię w tryb 'walcz-uciekaj'.<br><br><strong>Działanie:</strong> Zacznij od 'Przerwy na Samowspółczucie' (K. Neff). Gdy poczujesz błąd, połóż rękę na sercu (to uwalnia oksytocynę) i powiedz: 'To jest chwila cierpienia. Cierpienie jest częścią życia. Niech będę dla siebie życzliwy'. Ćwicz zauważanie 'wspólnego człowieczeństwa' – świadomość, że inni też popełniają błędy. W pracy z terapeutą warto skupić się na deidentyfikacji z 'Wewnętrznym Krytykiem' (techniki ACT).",
+        mid: "<strong>Filar Rozpoznawania (Bezpieczeństwo):</strong><br><br>Masz solidną świadomość własnych ograniczeń, ale w sytuacjach wysokiego stresu wciąż zdarza Ci się wpadać w automatyczne osądzanie siebie.<br><br><strong>Działanie:</strong> Pogłęb praktykę uważności na subtelne komunikaty ciała. Kiedy czujesz napięcie, zapytaj: 'Czego teraz potrzebuję, aby poczuć się bezpieczniej?'. Pracuj nad 'życzliwą obecnością' – staraj się obserwować swoje myśli o błędach tak, jakbyś obserwował chmury na niebie. W zespole zacznij otwarcie pytać innych o ich samopoczucie, nie tylko o status zadań, budując kulturę psychologicznego bezpieczeństwa.",
+        high: "<strong>Twój Zasób:</strong> Współczucie jest Twoją supermocą. Potrafisz przekształcać cierpienie w mądrość.<br><br><strong>Działanie:</strong> Wykorzystaj ten zasób do modelowania postawy lidera wspierającego. Ucz innych, że błędy są 'złotem' procesu uczenia się. Rozważ prowadzenie krótkich praktyk Loving-Kindness (Metta) dla siebie i bliskich, aby jeszcze bardziej wzmocnić ścieżki neuronalne odpowiedzialne za empatię. Pamiętaj jednak o 'równowadze współczucia' – dbaj o własne granice, by nie ulec wypaleniu empatycznemu."
+    },
+    grit: {
+        low: "<strong>Filar Zasobności (Bezpieczeństwo):</strong><br><br>Możesz czuć się przytłoczony przez poczucie braku sprawczości. To naturalna reakcja mózgu na chroniczny stres.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Micro-wins'. Każdego wieczoru zapisz 3 mikrosukcesy (np. 'odpisałem na trudnego maila'). To buduje dopaminowe pętle nagrody. W sytuacjach trudnych używaj pytania: 'Na co mam wpływ w tej sekundzie?'. Skupienie się na 1% postępu jest ważniejsze niż myślenie o całości projektu. Rozważ audyt wartości (ACT) – co jest tak ważne, że warto dla tego znosić trud?",
+        mid: "<strong>Filar Zasobności (Bezpieczeństwo):</strong><br><br>Potrafisz przetrwać burze, ale koszt energetyczny bywa u Ciebie wysoki.<br><br><strong>Działanie:</strong> Pracuj nad elastycznością wytrwałości. Wytrwałość to nie tylko parcie naprzód, to także mądre odpoczywanie. Wprowadź 'strategiczne regeneracje' po każdym dużym wyzwaniu. Ćwicz tolerancję na dyskomfort w kontrolowanych warunkach (np. zimny prysznic lub trudne zadanie fizyczne), aby pokazać układowi nerwowemu, że jesteś w stanie wytrzymać napięcie bez ucieczki.",
+        high: "<strong>Twój Zasób:</strong> Twoja determinacja jest godna podziwu. Jesteś 'kotwicą' dla zespołu w czasie niepewności.<br><br><strong>Działanie:</strong> Uważaj na pułapkę 'toksycznej wytrwałości' – parcia naprzód za cenę zdrowia. Twoim zadaniem rozwojowym jest teraz nauka 'odpuszczania' tam, gdzie wysiłek jest nieproporcjonalny do celu. Jako lider, ucz zespół, jak odróżniać wytrwałość od uporu. Modeluj kulturę, w której odpoczynek jest uznawany za integralną część wysokiej efektywności."
+    },
+    calm: {
+        low: "<strong>Filar Regulacji (Bezpieczeństwo):</strong><br><br>Twój układ współczulny jest w stanie permanentnego pobudzenia (hiper-arousal).<br><br><strong>Działanie:</strong> Twoim priorytetem jest biofeedback i regulacja dolna. Ćwicz 'oddech pudełkowy' (4-4-4-4) minimum 10 minut dziennie. W sytuacjach stresowych stosuj technikę 'STOP'. Naucz się rozpoznawać fizjologiczne sygnały stresu (np. ucisk w gardle) zanim przejmą kontrolę. W terapii warto popracować nad 'bezpiecznym miejscem' i technikami uziemiającymi (5-4-3-2-1).",
+        mid: "<strong>Filar Regulacji (Bezpieczeństwo):</strong><br><br>Masz narzędzia do uspokajania się, ale wciąż bywasz reaktywny pod silną presją.<br><br><strong>Działanie:</strong> Pogłęb praktykę 'uważności otwartej'. Zamiast skupiać się na problemie, staraj się zauważyć przestrzeń wokół niego. Wprowadź rytuały przejścia między pracą a domem (np. 15 minut spaceru bez telefonu). W pracy zespołowej modeluj 'pauzowanie' – zanim odpowiesz na agresywny feedback, weź jeden świadomy wdech. Twoja mowa ciała reguluje innych.",
+        high: "<strong>Twój Zasób:</strong> Twoja obecność emanuje spokojem. Jesteś naturalnym regulatorem emocji w swoim otoczeniu.<br><br><strong>Działanie:</strong> Wykorzystaj ten zasób do 'ko-regulacji' zespołu. Twoja stabilność pozwala innym myśleć racjonalnie w kryzysie. Pamiętaj jednak, że spokój to nie brak emocji. Pozwalaj sobie na autentyczne przeżywanie złości czy smutku w bezpiecznych warunkach, aby nie zamienić spokoju w emocjonalne odcięcie."
+    },
+    courage: {
+        low: "<strong>Filar Relacyjności (Bezpieczeństwo):</strong><br><br>Lęk przed oceną lub konfliktem blokuje Twoje działanie. Możesz unikać trudnych rozmów kosztem swoich wartości.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Eksperymentów Behawioralnych'. Wybierz jedną małą rzecz (np. zgłoszenie innej opinii na spotkaniu o niskiej wadze). Obserwuj, że 'katastrofa', której się obawiałeś, nie nastąpiła. Ustal swoje 'nienegocjowalne granice'. Pamiętaj, że odwaga to działanie Mimo lęku, a nie jego brak. Praca z ACT nad akceptacją nieprzyjemnych myśli o ryzyku pomoże Ci ruszyć z miejsca.",
+        mid: "<strong>Filar Relacyjności (Bezpieczeństwo):</strong><br><br>Potrafisz być odważny, gdy sytuacja tego wymaga, ale często płacisz za to dużym stresem wewnętrznym.<br><br><strong>Działanie:</strong> Pracuj nad 'radykalną szczerością' połączoną z empatią. Ćwicz odważne komunikowanie potrzeb za pomocą 'komunikatu JA'. W zespole proś o feedback dotyczący Twoich decyzji – to też akt odwagi. Szukaj 'sojuszników' dla swoich idei, aby odwaga nie oznaczała osamotnienia. Pytaj siebie: 'Co jest ważniejsze od mojego strachu?'",
+        high: "<strong>Twój Zasób:</strong> Jesteś katalizatorem zmian. Twoja gotowość do ochrony wartości inspiruje innych.<br><br><strong>Działanie:</strong> Twoim wyzwaniem jest teraz dbanie o to, by odwaga nie stała się brawurą lub agresją. Jako lider, promuj psychologiczne bezpieczeństwo, chroniąc tych, którzy myślą inaczej. Wykorzystuj swoją odwagę do kwestionowania status quo tam, gdzie organizacja przestaje być ludzka. Modeluj 'odwagę bycia kruchym' (vulnerability), co paradoksalnie wzmacnia autorytet."
+    },
+    mindfulness: {
+        low: "<strong>Filar Rozpoznawania (Satysfakcja):</strong><br><br>Twój umysł jest często w trybie 'autopilota' lub ruminacji (rozpamiętywania).<br><br><strong>Działanie:</strong> Zacznij od 1 minuty medytacji dziennie – nic więcej. Skup się na odczuwaniu ciężaru ciała na krześle. W ciągu dnia stosuj 'kotwice uważności' (np. dotyk klamki przed wejściem do pokoju). Uważność to nie relaksacja, to trenowanie mięśnia powrotu do 'tu i teraz'. W zespole zacznij od eliminacji multitaskingu na spotkaniach – bądź obecny na jednej rzeczy na raz.",
+        mid: "<strong>Filar Rozpoznawania (Satysfakcja):</strong><br><br>Praktykujesz uważność, ale bywa ona 'fragmentaryczna'. Gubisz ją, gdy tempo życia przyspiesza.<br><br><strong>Działanie:</strong> Wprowadź uważność w ruch (mindful walking) oraz w codzienne czynności (uważne jedzenie). Naucz się rozpoznawać moment, w którym tracisz kontakt z teraźniejszością – to jest kluczowy moment rozwoju. W pracy stosuj 'pauzy na oddech' przed przejściem do kolejnego zadania. Pytaj siebie: 'O czym teraz zapominam, bo jestem w przyszłości?'",
+        high: "<strong>Twój Zasób:</strong> Twoja jasność umysłu jest imponująca. Potrafisz widzieć fakty takimi, jakimi są.<br><br><strong>Działanie:</strong> Wykorzystaj uważność do głębokiego słuchania innych. Twoja pełna obecność jest najcenniejszym darem, jaki możesz dać współpracownikom. Modeluj 'kulturę refleksji' – zachęcaj zespół do zadawania pytań zanim przejdziecie do rozwiązań. Rozważ pogłębienie praktyki o medytację wglądu, aby zrozumieć głębsze mechanizmy Twoich reakcji."
+    },
+    gratitude: {
+        low: "<strong>Filar Zasobności (Satysfakcja):</strong><br><br>Ewolucyjny 'bias negatywności' dominuje w Twoim postrzeganiu świata. Widzisz głównie braki.<br><br><strong>Działanie:</strong> Zastosuj procedurę HEAL (Rick Hanson): Have (Miej pozytywne doświadczenie), Enrich (Wzbogać je – poczuj je mocniej przez 10-20 sekund), Absorb (Wchłoń je – wyobraź sobie, że staje się częścią Ciebie), Link (Połącz z negatywnym – opcjonalnie). Zapisuj 3 dobre rzeczy przed snem. To fizycznie zmienia strukturę hipokampu i obniża poziom kortyzolu.",
+        mid: "<strong>Filar Zasobności (Satysfakcja):</strong><br><br>Zauważasz pozytywy, ale rzadko pozwalasz im naprawdę 'osiąść' w Twoim układzie nerwowym.<br><br><strong>Działanie:</strong> Pracuj nad celebrowaniem małych zwycięstw. Kiedy coś pójdzie dobrze, zatrzymaj się na chwilę i powiedz: 'Tak, to jest to'. Wprowadź w zespole rytuał doceniania wysiłku, a nie tylko efektów. Wyrażaj wdzięczność publicznie. Szukaj wdzięczności w trudnościach – co ta lekcja Ci dała? To buduje rezyliencję post-traumatyczną.",
+        high: "<strong>Twój Zasób:</strong> Jesteś naturalnym optymistą realistycznym. Twoja energia buduje zaangażowanie innych.<br><br><strong>Działanie:</strong> Twoim zadaniem jest teraz poszerzanie wdzięczności na poziom systemowy. Jak możesz sprawić, by cała organizacja była bardziej wdzięczna? Modeluj wdzięczność bez oczekiwania wzajemności. Pamiętaj, że wdzięczność to postawa, nie tylko emocja. Ćwicz ją nawet w dniach, gdy 'nic nie idzie', szukając podstawowych zasobów jak oddech czy bezpieczeństwo."
+    },
+    motivation: {
+        low: "<strong>Filar Regulacji (Satysfakcja):</strong><br><br>Możesz czuć wypalenie lub brak jasnego sensu. Motywacja zewnętrzna (marchewka/kij) przestała działać.<br><br><strong>Działanie:</strong> Wróć do podstaw. Wykonaj audyt wartości 'Bull's Eye' (ACT) – gdzie w Twoim życiu jest teraz największy dystans między wartościami a działaniem? Skup się na motywacji autonomicznej. Co chciałbyś robić, nawet gdyby nikt nie patrzył? Znajdź jeden element w pracy, który daje Ci radość i poświęć mu 20% więcej czasu.",
+        mid: "<strong>Filar Regulacji (Satysfakcja):</strong><br><br>Twoja motywacja jest silna, ale często oparta na 'powinienem' zamiast 'chcę'.<br><br><strong>Działanie:</strong> Naucz się różnicować między dążeniem a kompulsją. Jeśli nie potrafisz odpoczywać bez poczucia winy, Twoja motywacja jest podszyta lękiem. Pracuj nad motywacją zorientowaną na proces, a nie tylko na cel. W zespole rozmawiaj o 'misji' – dlaczego robicie to, co robicie? Buduj poczucie kompetencji i autonomii u swoich ludzi.",
+        high: "<strong>Twój Zasób:</strong> Masz niespożytą energię i jasny kompas wewnętrzny.<br><br><strong>Działanie:</strong> Uważaj na pułapkę 'wiecznego głodu' osiągnięć. Celebruj zakończenia projektów zanim rzucisz się w nowe. Twoja pasja może przytłaczać innych – ucz się tempa, które jest zrównoważone dla całego zespołu. Jako lider, pomagaj innym odkrywać ich własne 'Dlaczego', zamiast narzucać im swoje cele."
+    },
+    aspiration: {
+        low: "<strong>Filar Relacyjności (Satysfakcja):</strong><br><br>Możesz czuć się zagubiony lub bać się marzyć o dużych rzeczach. Strach przed porażką paraliżuje wizję.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Odysei' – nakreśl trzy alternatywne scenariusze swojej przyszłości. Co zrobiłbyś, gdyby pieniądze i opinia innych nie grały roli? Wybierz jedną wartość (np. rozwój) i zaplanuj jedno działanie na ten tydzień. Aspiracja to nie fantazja, to kierunek podróży. Zacznij od zdefiniowania, czym jest dla Ciebie 'dobre życie'.",
+        mid: "<strong>Filar Relacyjności (Satysfakcja):</strong><br><br>Masz cele, ale bywają one reaktywne (odpowiedź na oczekiwania rynku/innych).<br><br><strong>Działanie:</strong> Pracuj nad aspiracjami opartymi na tożsamości. Kim chcesz SIĘ STAĆ, a nie tylko co chcesz OSIĄGNĄĆ? W zespole stwórz przestrzeń na wizjonerstwo. Zachęcaj ludzi do 'wychodzenia poza pudełko'. Pamiętaj, że wielkie cele wymagają małych kroków. Ćwicz wytrwałość w dążeniu do długoterminowych marzeń pomimo chwilowych spadków formy.",
+        high: "<strong>Twój Zasób:</strong> Jesteś inspirującym wizjonerem. Potrafisz nadawać kierunek i sens działaniom.<br><br><strong>Działanie:</strong> Dbaj o to, by Twoje aspiracje były etyczne i zrównoważone. Czy Twoja wizja przyszłości jest dobra dla świata? Jako lider, łącz aspiracje indywidualne pracowników z celami organizacji. Pamiętaj o pokorze – wizja bez egzekucji to halucynacja. Upewnij się, że fundujesz swoje sny na solidnych fundamentach codziennej pracy."
+    },
+    learning: {
+        low: "<strong>Filar Rozpoznawania (Powiązanie):</strong><br><br>Możesz czuć, że stoisz w miejscu lub boisz się popełniać błędy, co blokuje rozwój.<br><br><strong>Działanie:</strong> Wprowadź nawyk 'Internalizacji Dobra'. Kiedy poczujesz, że coś Ci się udało, zostań z tym odczuciem przez 20 sekund. Poczuj, jak to jest być kompetentnym. Traktuj każdą trudną rozmowę jako darmowe szkolenie. Prowadź dziennik refleksji – 2 minuty dziennie: 'Czego się dziś o sobie dowiedziałem?'. Bądź ciekawy, nie oceniający.",
+        mid: "<strong>Filar Rozpoznawania (Powiązanie):</strong><br><br>Uczysz się szybko, ale często tylko na poziomie intelektualnym. Brakuje integracji z ciałem i emocjami.<br><br><strong>Działanie:</strong> Pracuj nad 'uczeniem się przez doświadczenie'. Szukaj informacji zwrotnej, nawet jeśli jest bolesna. W zespole wprowadź sesje 'After Action Review' – co zrobiliśmy, co się stało, dlaczego tak się stało, co zrobimy inaczej? Ucz się od ludzi spoza swojej branży – to buduje elastyczność poznawczą.",
+        high: "<strong>Twój Zasób:</strong> Twoja otwartość na naukę i Growth Mindset są wzorcowe.<br><br><strong>Działanie:</strong> Twoim zadaniem jest teraz tworzenie 'organizacji uczącej się'. Dziel się wiedzą bez lęku o utratę pozycji. Rozważ mentoring odwrócony – ucz się od młodszych stażem. Pamiętaj, że najgłębsza nauka płynie z ciszy i refleksji, a nie tylko z kolejnych kursów. Stań się nauczycielem Zen dla swojego zespołu, ucząc ich uważności na proces."
+    },
+    confidence: {
+        low: "<strong>Filar Zasobności (Powiązanie):</strong><br><br>Silny syndrom oszusta. Poczucie, że sukcesy są dziełem przypadku, a porażki dowodem na brak wartości.<br><br><strong>Działanie:</strong> Zastosuj technikę 'Inwentarza Kompetencji'. Wypisz 50 rzeczy, które potrafisz (od zawodowych po codzienne). W sytuacjach zwątpienia używaj techniki defuzji z ACT: 'Mam myśl, że sobie nie poradzę' zamiast 'Nie poradzę sobie'. To tylko myśl, nie fakt. Przestań porównywać swoje 'wewnątrz' do czyjegoś 'zewnątrz'.",
+        mid: "<strong>Filar Zasobności (Powiązanie):</strong><br><br>Twoja pewność siebie jest stabilna, ale zależna od wyników zewnętrznych.<br><br><strong>Działanie:</strong> Buduj pewność siebie niezależną od sukcesów. Ćwicz 'radykalną akceptację' swoich cieni i słabości. Kiedy wiesz, kim jesteś ze wszystkimi wadami, nikt nie może Cię obrazić ani zaskoczyć. W zespole dawaj innym autonomię – nic tak nie buduje pewności siebie, jak zaufanie lidera. Mów o swoich wątpliwościach, to buduje autentyczny autorytet.",
+        high: "<strong>Twój Zasób:</strong> Twoja stabilność wewnętrzna jest fundamentem, na którym inni mogą budować.<br><br><strong>Działanie:</strong> Wykorzystuj swoją pewność siebie, by chronić słabszych i promować sprawiedliwość. Pamiętaj, by Twoja pewność nie stała się arogancją. Zawsze zostawiaj 5% miejsca na to, że możesz się mylić. Jako lider, buduj pewność siebie u swoich ludzi poprzez delegowanie odpowiedzialności, a nie tylko zadań."
+    },
+    intimacy: {
+        low: "<strong>Filar Regulacji (Powiązanie):</strong><br><br>Izolacja emocjonalna lub lęk przed bliskością. Możesz dźwigać wszystko sam, wierząc, że proszenie o pomoc to słabość.<br><br><strong>Działanie:</strong> Zrozum teorię przywiązania i jej wpływ na Twoje relacje. Zacznij od 'mikro-otwarcia' – powiedz komuś: 'To był dla mnie trudny dzień'. Obserwuj reakcję. Buduj zaufanie małymi krokami. Pamiętaj o neurobiologii: bezpieczne relacje obniżają poziom kortyzolu. Szukaj grup wsparcia lub terapii relacyjnej, aby nauczyć się bycia widzianym.",
+        mid: "<strong>Filar Regulacji (Powiązanie):</strong><br><br>Masz bliskie osoby, ale w pracy zachowujesz chłodny dystans, co ogranicza zaufanie zespołu.<br><br><strong>Działanie:</strong> Pracuj nad 'autentycznym przywództwem'. Dziel się swoimi ludzkimi historiami. Ćwicz aktywne słuchanie bez oceniania. W zespole twórz przestrzenie na nieformalne rozmowy. Pamiętaj o granicach – bliskość to nie wylewność. Chodzi o to, by być 'obecnym' dla drugiego człowieka. Rozwijaj empatię poznawczą i emocjonalną.",
+        high: "<strong>Twój Zasób:</strong> Potrafisz tworzyć głębokie, bezpieczne więzi. Ludzie czują się przy Tobie słyszani.<br><br><strong>Działanie:</strong> Twoim wyzwaniem jest teraz dbanie o czystość relacji w całym zespole. Wykorzystaj swoje umiejętności do mediacji i rozwiązywania konfliktów u źródła. Pamiętaj o higienie relacyjnej – nie pozwól, byś stał się 'koszem na emocje' wszystkich dookoła. Jako lider Zen, ucz innych, jak być blisko, zachowując jednocześnie wolność i autonomię."
+    },
+    generosity: {
+        low: "<strong>Filar Relacyjności (Powiązanie):</strong><br><br>Możesz działać w paradygmacie braku – boisz się, że dzielenie się zasobami (wiedzą, czasem) osłabi Twoją pozycję.<br><br><strong>Działanie:</strong> Zacznij od 'praktyki dawania' bez żadnego celu. Podziel się wiedzą, pochwal kogoś szczerze, poświęć 5 minut na wysłuchanie. Obserwuj 'radość dawcy'. Neurobiologia mówi, że dawanie aktywuje te same ośrodki w mózgu co jedzenie czy seks. Przekształcaj konkurencję we współpracę. Pamiętaj: rezyliencja rośnie, gdy jesteśmy częścią wspierającej się społeczności.",
+        mid: "<strong>Filar Relacyjności (Powiązanie):</strong><br><br>Jesteś pomocny, ale często oczekujesz czegoś w zamian lub pomagasz tylko wybranym.<br><br><strong>Działanie:</strong> Rozszerzaj swój 'krąg troski'. Spróbuj pomóc komuś spoza Twojego działu lub kręgu znajomych. Pracuj nad przebaczaniem – to akt wielkoduszności wobec siebie samego. W zespole promuj dzielenie się sukcesami i zasobami. Ucz się przyjmowania pomocy z taką samą gracją, z jaką ją dajesz. Wielkoduszność to też pozwalanie innym, by nas wspierali.",
+        high: "<strong>Twój Zasób:</strong> Twoja hojność i altruizm budują kulturę dobrostanu wszędzie, gdzie się pojawisz.<br><br><strong>Działanie:</strong> Twoim zadaniem jest teraz wielkoduszność strategiczna. Jak możesz zmienić system, by był bardziej hojny? Wspieraj mentoring i wolontariat pracowniczy. Jako lider, bądź tym, który daje szansę tym, w których nikt inny nie wierzy. Twoja wielkoduszność to najsilniejszy sposób na budowanie trwałego dziedzictwa."
+    }
+};
+
+/* ============================================================
+   TEKSTY INTERPRETACYJNE
+   ============================================================ */
+const QUADRANTS = {
+  q2:{name:'Spokojna energia', thayer:'relaxed energy',
+    desc:'Dużo energii przy niskim napięciu. To stan najlepszej koncentracji, otwartości i elastyczności myślenia – tu możliwe jest doświadczenie flow. W rytmie dnia to Twój „prime time”.',
+    tips:['Chroń swój najlepszy czas dnia: zadania o największym znaczeniu wykonuj właśnie wtedy, bez poczty i komunikatorów.',
+          'Ogranicz przerywanie – powrót mózgu do trybu skupienia kosztuje czas i energię.',
+          'Traktuj przerwy i regenerację jako warunek wydajności, a nie jej przeciwieństwo.']},
+  q3:{name:'Napięta energia', thayer:'tense energy',
+    desc:'Organizm jest pobudzony jednocześnie pozytywnie i negatywnie: dużo do zrobienia, częste przerwania, poczucie pośpiechu. Krótkoterminowo to napędza, długoterminowo drenuje. Rośnie reaktywność i zniecierpliwienie, maleje elastyczność myślenia i samoświadomość.',
+    tips:['Wprowadź strategiczne wysepki: 3–5 minut między blokami pracy bez ekranu, z wydłużonym wydechem (wdech 4, wydech 6–8).',
+          'Po każdym intensywnym bloku zaplanuj świadome zejście z pobudzenia – krótki spacer, ruch, zmiana miejsca.',
+          'Sprawdź, ile przerwań jest naprawdę koniecznych; zgrupuj komunikację w stałe okna czasowe.']},
+  q4:{name:'Napięte zmęczenie', thayer:'tense tiredness',
+    desc:'Zmęczenie połączone z napięciem: trudno się wyciszyć i zasnąć, oddech bywa płytki, myśli krążą. To stan, w którym organizm zużywa rezerwy. Łatwiej wtedy o zniechęcenie i reaktywność. Priorytetem jest regulacja i regeneracja, nie wydajność.',
+    tips:['Przez 7 dni utrzymuj stałą porę pobudki i 45 minut bez ekranów przed snem; zanotuj, jak zmienia się poranna energia.',
+          'Codziennie 10 minut praktyki obniżającej pobudzenie: oddech z wydłużonym wydechem, trening Jacobsona lub body scan.',
+          'Rytuał zamknięcia dnia: zapisz otwarte sprawy i jeden następny krok, zamknij laptop, dopiero potem ruch lub dom.']},
+  q1:{name:'Spokojne zmęczenie', thayer:'relaxed tiredness',
+    desc:'Niski poziom energii przy dobrym nastroju i braku napięcia. Naturalny po wymagającym, ale bezstresowym dniu albo na urlopie. Jeśli opisuje Twój typowy dzień pracy, warto sprawdzić, co obniża energię: sen, ruch, odżywianie, sens zadań.',
+    tips:['Sprawdź podstawy: sen, regularne posiłki (unikanie spadków z głodu), ruch w ciągu dnia.',
+          'Zidentyfikuj jedno zadanie w tygodniu, które daje Ci poczucie sensu, i daj mu najlepszą porę dnia.',
+          'Wpleć krótką aktywność fizyczną przed zadaniami wymagającymi skupienia.']}
+};
+
+const BW_LABELS = {EX:'Wyczerpanie', CY:'Cynizm i dystans', EFR:'Obniżone poczucie skuteczności'};
+const BW_BANDS = [{max:2, name:'niskie'},{max:3.5, name:'umiarkowane'},{max:6.01, name:'podwyższone'}];
+
+const BW_PROFILES = {
+  engaged:{name:'Zaangażowanie',
+    desc:'Żaden z trzech wymiarów nie jest podwyższony. Energia, zaangażowanie i poczucie skuteczności pozostają w równowadze. Warto rozpoznać, co ten stan podtrzymuje, i chronić to w okresach większej presji.'},
+  engaged_warn:{name:'Zaangażowanie z sygnałami ostrzegawczymi',
+    desc:'Żaden wymiar nie przekracza progu uwagi, ale co najmniej dwa są w strefie umiarkowanej. To dobry moment na profilaktykę – zanim obciążenie zacznie się kumulować.'},
+  overextended:{name:'Przeciążenie',
+    desc:'Podwyższone jest wyczerpanie, przy zachowanym zaangażowaniu. To typowy wzorzec osób ambitnych i odpowiedzialnych: wyniki są, ale finansowane z rezerw. Bez regeneracji to najczęstsza droga w stronę wypalenia.'},
+  disengaged:{name:'Zdystansowanie',
+    desc:'Podwyższony jest cynizm i dystans wobec pracy. Często pełni funkcję ochronną – odcięcie się pozwala przetrwać trudny okres – ale z czasem obniża poczucie sensu i jakość relacji w zespole.'},
+  ineffective:{name:'Obniżone poczucie skuteczności',
+    desc:'Energia i zaangażowanie są zachowane, ale słabnie poczucie wpływu i satysfakcji z efektów. Warto sprawdzić, na ile to realny brak efektów, a na ile surowość, z jaką oceniasz własną pracę.'},
+  burnout:{name:'Wzorzec wypalenia',
+    desc:'Równocześnie podwyższone są wyczerpanie i cynizm. W modelu Maslach to konfiguracja odpowiadająca wypaleniu zawodowemu. Wynik nie jest diagnozą, ale jest wyraźnym sygnałem, by zadbać o siebie teraz, a nie po zakończeniu kolejnego projektu.'}
+};
+
+const REFLECTION = [
+  'W którym momencie typowego dnia przekraczasz „czerwoną linię” napięcia – i co się wtedy dzieje z Twoim myśleniem i zachowaniem?',
+  'Co mogłoby dać Ci więcej doświadczeń spokojnej energii w ciągu tygodnia?',
+  'Który wewnętrzny nakaz („bądź perfekcyjny”, „śpiesz się”, „bądź silny”, „zadowalaj innych”, „staraj się bardziej”) najmocniej podnosi Twoje napięcie?',
+  'Po czym poznasz, że trzy sesje coachingowe były dla Ciebie warte czasu?'
+];
+
+/* ============================================================
+   KROKI
+   ============================================================ */
+const MODULES = [
+  {name:'Energia', kicker:'Część 1 z 3', title:'Energia i napięcie w typowym dniu pracy'},
+  {name:'Obciążenie', kicker:'Część 2 z 3', title:'Barometr wypalenia'},
+  {name:'Zasoby', kicker:'Część 3 z 3', title:'12 filarów rezyliencji'}
+];
+const chunk = (a,n)=>{const r=[];for(let i=0;i<a.length;i+=n)r.push(a.slice(i,i+n));return r;};
+const STEPS = [
+  {id:'intro'},
+  ...chunk(ENERGY_ITEMS,10).map((it,i)=>({id:'e'+i, mod:0, kind:'energy', items:it, first:i===0})),
+  {id:'traj', mod:0, kind:'traj'},
+  ...chunk(BW_ITEMS,5).map((it,i)=>({id:'b'+i, mod:1, kind:'bw', items:it, first:i===0})),
+  ...chunk(HANSON_ITEMS,6).map((it,i)=>({id:'h'+i, mod:2, kind:'hanson', items:it, first:i===0})),
+  {id:'results'}
+];
+const QSTEPS = STEPS.filter(s=>s.kind);
+
+/* ============================================================
+   STAN
+   ============================================================ */
+const TIMES = [{k:'m',n:'Rano',d:'pierwsza godzina pracy'},{k:'d',n:'Środek dnia',d:'około 13:00'},{k:'e',n:'Koniec dnia',d:'ostatnia godzina pracy'}];
+let S = freshState();
+function freshState(){return {v:CONFIG.version, step:0, ans:{}, traj:{}, started:null, finished:null};}
+function save(){try{localStorage.setItem(CONFIG.storageKey, JSON.stringify(S));}catch(e){}}
+function load(){try{const r=localStorage.getItem(CONFIG.storageKey); if(r){const o=JSON.parse(r); if(o&&o.v===CONFIG.version) return o;}}catch(e){} return null;}
+function clearSaved(){try{localStorage.removeItem(CONFIG.storageKey);}catch(e){}}
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ============================================================
+   RIDGE PROGRESS
+   ============================================================ */
+const RIDGE_D='M0,70 L40,62 L70,50 L100,20 L125,38 L150,46 L185,58 L220,48 L260,30 L300,8 L330,26 L360,40 L400,52 L440,44 L470,28 L500,14 L525,30 L560,50 L600,66';
+function renderRidge(){
+  const el=$('#ridge'); const st=STEPS[S.step];
+  if(!st.kind){el.classList.remove('on'); el.innerHTML=''; return;}
+  el.classList.add('on');
+  const idx=QSTEPS.indexOf(st); const frac=(idx)/(QSTEPS.length);
+  el.innerHTML=`<svg viewBox="0 0 600 96" role="img" aria-label="Postęp: krok ${idx+1} z ${QSTEPS.length}">
+    <defs><clipPath id="cp"><rect x="0" y="0" width="${Math.max(2,frac*600)}" height="96"/></clipPath></defs>
+    <path d="${RIDGE_D} L600,74 L0,74Z" fill="rgba(255,255,255,.07)"/>
+    <path d="${RIDGE_D}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="${RIDGE_D}" fill="none" stroke="#7fd0d6" stroke-width="3.5" stroke-linejoin="round" clip-path="url(#cp)"/>
+    <path id="rp" d="${RIDGE_D}" fill="none" stroke="none"/>
+    <circle id="rdot" r="7" fill="#fff" stroke="#177E89" stroke-width="3"/>
+    ${[100,300,500].map((x,i)=>`<text x="${x}" y="92" text-anchor="middle" class="lbl ${st.mod===i?'on':''}">${MODULES[i].name}</text>`).join('')}
+  </svg>`;
+  const p=$('#rp'), L=p.getTotalLength(), tx=frac*600;
+  let lo=0,hi=L; for(let i=0;i<24;i++){const m=(lo+hi)/2; if(p.getPointAtLength(m).x<tx)lo=m; else hi=m;}
+  const pt=p.getPointAtLength(lo); const d=$('#rdot'); d.setAttribute('cx',pt.x); d.setAttribute('cy',pt.y);
+}
+
+/* ============================================================
+   RENDER KROKÓW
+   ============================================================ */
+function go(i){S.step=Math.max(0,Math.min(STEPS.length-1,i)); save(); render(); window.scrollTo(0,0);}
+function render(){
+  renderRidge();
+  const st=STEPS[S.step];
+  $('#main').className = st.id==='results' ? 'wide' : '';
+  if(st.id==='intro') return renderIntro();
+  if(st.id==='results') return renderResults();
+  return renderQuestions(st);
+}
+
+function renderIntro(){
+  const saved=load();
+  const resumable = saved && saved.step>0 && !saved.finished;
+  $('#main').innerHTML=`
+    ${resumable?`<div class="resume"><h3>Masz niedokończoną diagnozę</h3><p class="small muted">Odpowiedzi zapisały się w tej przeglądarce.</p>
+      <div class="row"><button class="btn" id="resume">Wróć do miejsca, w którym skończyłeś/skończyłaś</button><button class="btn quiet" id="restart">Zacznij od nowa</button></div></div>`:''}
+    ${saved&&saved.finished?`<div class="resume"><h3>Twoje wyniki są zapisane w tej przeglądarce</h3>
+      <div class="row"><button class="btn" id="showres">Zobacz wyniki</button><button class="btn quiet" id="restart">Wypełnij ponownie</button></div></div>`:''}
+    <h1>Zanim zaczniesz pracę nad odpornością, zobacz, skąd startujesz.</h1>
+    <p class="lead">Diagnoza Deep Dive łączy trzy perspektywy: jak rozkłada się Twoja energia w ciągu dnia, na ile praca Cię obciąża i jakie zasoby psychiczne masz do dyspozycji. Wyniki staną się punktem wyjścia do Twoich sesji coachingowych.</p>
+    <div class="path">
+      <div><b>Część 1, ok. 4 min</b><h3>Energia i napięcie</h3><p>Model czterech stanów energii R.E. Thayera: 20 określeń i krótka mapa dnia.</p></div>
+      <div><b>Część 2, ok. 3 min</b><h3>Barometr wypalenia</h3><p>15 stwierdzeń w trzech wymiarach: wyczerpanie, dystans, poczucie skuteczności.</p></div>
+      <div><b>Część 3, ok. 7 min</b><h3>12 filarów rezyliencji</h3><p>36 stwierdzeń opartych na modelu wewnętrznych zasobów Ricka Hansona.</p></div>
+    </div>
+    <div class="note"><b>Poufność.</b> Odpowiedzi zostają w Twojej przeglądarce i nie są nigdzie automatycznie wysyłane. Na końcu otrzymasz raport, który sam/sama przesyłasz prowadzącemu ze swojej skrzynki pocztowej. Pracodawca nie otrzymuje wyników indywidualnych – wyłącznie zanonimizowany raport zbiorczy grupy.</div>
+    <p class="small muted">To narzędzie rozwojowe, a nie diagnoza kliniczna. Nie ma dobrych ani złych odpowiedzi – najwięcej zyskasz, odpowiadając zgodnie z tym, jak jest, a nie jak „powinno być”.</p>
+    <div class="nav"><span></span><button class="btn" id="start">Rozpocznij</button></div>`;
+  $('#start').onclick=()=>{ if(saved){clearSaved();} S=freshState(); S.started=new Date().toISOString(); go(1); };
+  if($('#resume')) $('#resume').onclick=()=>{S=saved; render();};
+  if($('#showres')) $('#showres').onclick=()=>{S=saved; S.step=STEPS.length-1; render();};
+  if($('#restart')) $('#restart').onclick=()=>{clearSaved(); S=freshState(); render();};
+}
+
+function scaleHtml(name, scale, cur, cls=''){
+  return `<div class="scale ${cls}" role="radiogroup" data-name="${name}">${scale.map(o=>
+    `<button type="button" role="radio" aria-checked="${cur===o.v}" class="${cur===o.v?'sel':''}" data-v="${o.v}" title="${esc(o.l)}">${esc(o.l)}</button>`).join('')}</div>`;
+}
+
+function renderQuestions(st){
+  const mod=MODULES[st.mod];
+  let head=`<div class="mod-head"><div class="kicker">${mod.kicker}: ${mod.name}</div><h2>${mod.title}</h2>`;
+  let body='';
+  if(st.kind==='energy'){
+    head+= st.first
+      ? `<div class="instr">Pomyśl o <b>typowym dniu pracy w ostatnich dwóch tygodniach</b>. Przy każdym określeniu zaznacz, na ile opisuje ono, jak się wtedy zwykle czujesz. Odpowiadaj szybko – liczy się pierwsze skojarzenie.</div>`
+      : `<p class="muted">Ciąg dalszy: jak zwykle czujesz się w typowym dniu pracy?</p>`;
+    body=st.items.map(it=>`<div class="item" data-id="${it.id}"><div class="adj">${esc(it.t)}</div>${scaleHtml(it.id,ENERGY_SCALE,S.ans[it.id],'words')}</div>`).join('');
+  } else if(st.kind==='traj'){
+    head+=`<div class="instr">Teraz rozłóż typowy dzień pracy w czasie. Dla każdej pory dnia oceń <b>poziom energii</b> (od wyczerpania do pełni sił) i <b>poziom napięcia</b> (od pełnego spokoju do silnego napięcia).</div>`;
+    body=`<div class="traj">${TIMES.map(t=>`<div class="tp" data-t="${t.k}"><h3>${t.n} <span class="small muted">(${t.d})</span></h3>
+      ${slider(t.k+'_e','Energia','wyczerpanie','pełnia sił')}
+      ${slider(t.k+'_t','Napięcie','pełen spokój','silne napięcie')}</div>`).join('')}</div>`;
+  } else if(st.kind==='bw'){
+    head+= st.first
+      ? `<div class="instr">Jak często poniższe stwierdzenia opisują Twoje doświadczenia w pracy <b>w ostatnich trzech miesiącach</b>?</div>`
+      : `<p class="muted">Jak często w ostatnich trzech miesiącach…</p>`;
+    head+=`<p class="legend">0 – nigdy, 1 – kilka razy w roku, 2 – raz w miesiącu, 3 – kilka razy w miesiącu, 4 – raz w tygodniu, 5 – kilka razy w tygodniu, 6 – codziennie</p>`;
+    body=st.items.map(it=>`<div class="item" data-id="${it.id}"><div class="q"><span class="n">${it.id.slice(1)}.</span>${esc(it.t)}</div>
+      ${scaleHtml(it.id,BW_SCALE.map(o=>({v:o.v,l:String(o.v),full:o.l})),S.ans[it.id])}
+      <div class="chosen" id="ch_${it.id}">${S.ans[it.id]!==undefined?BW_SCALE[S.ans[it.id]].l:''}</div></div>`).join('');
+  } else if(st.kind==='hanson'){
+    head+= st.first
+      ? `<div class="instr">Oceń, w jakim stopniu każde stwierdzenie Cię opisuje: od <b>1 – zupełnie mnie nie opisuje</b> do <b>5 – całkowicie mnie opisuje</b>.</div>`
+      : `<p class="muted">1 – zupełnie mnie nie opisuje, 5 – całkowicie mnie opisuje</p>`;
+    body=st.items.map(it=>`<div class="item" data-id="H${it.id}"><div class="q"><span class="n">${it.id}.</span>${esc(it.text)}</div>
+      ${scaleHtml('H'+it.id,HANSON_SCALE,S.ans['H'+it.id])}
+      <div class="anchors"><span>zupełnie mnie nie opisuje</span><span>całkowicie mnie opisuje</span></div></div>`).join('');
+  }
+  head+='</div>';
+  const isLastQ = QSTEPS.indexOf(st)===QSTEPS.length-1;
+  $('#main').innerHTML = head + `<div>${body}</div><div class="err" id="qerr"></div>
+    <div class="nav"><button class="btn quiet" id="back">Wstecz</button><button class="btn" id="next">${isLastQ?'Zobacz wyniki':'Dalej'}</button></div>`;
+
+  document.querySelectorAll('.scale').forEach(g=>g.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    const name=g.dataset.name, v=+b.dataset.v; S.ans[name]=v; save();
+    g.querySelectorAll('button').forEach(x=>{const on=x===b; x.classList.toggle('sel',on); x.setAttribute('aria-checked',on);});
+    const item=g.closest('.item'); item.classList.remove('missing');
+    const ch=$('#ch_'+name); if(ch) ch.textContent=BW_SCALE[v].l;
+  }));
+  document.querySelectorAll('input[type=range]').forEach(r=>{
+    const upd=()=>{S.traj[r.id]=+r.value; save(); const o=$('#o_'+r.id); o.textContent=r.value; o.classList.remove('unset'); r.closest('.tp').classList.remove('missing');};
+    r.addEventListener('input',upd); r.addEventListener('change',upd);
+  });
+  $('#back').onclick=()=>go(S.step-1);
+  $('#next').onclick=()=>{
+    let missing=[];
+    if(st.kind==='traj'){ TIMES.forEach(t=>['e','t'].forEach(k=>{if(S.traj[t.k+'_'+k]===undefined) missing.push(document.querySelector(`.tp[data-t="${t.k}"]`));})); }
+    else { st.items.forEach(it=>{const id=st.kind==='hanson'?'H'+it.id:it.id; if(S.ans[id]===undefined) missing.push(document.querySelector(`.item[data-id="${id}"]`));}); }
+    if(missing.length){
+      missing.forEach(m=>m&&m.classList.add('missing'));
+      $('#qerr').textContent = st.kind==='traj' ? 'Ustaw oba suwaki dla każdej pory dnia – przesuń je choćby o jedną pozycję.' : `Brakuje odpowiedzi: ${new Set(missing).size}. Zaznaczono je na czerwono.`;
+      missing[0]&&missing[0].scrollIntoView({behavior:'smooth',block:'center'}); return;
+    }
+    if(isLastQ){S.finished=new Date().toISOString();}
+    go(S.step+1);
+  };
+}
+function slider(id,label,lo,hi){
+  const v=S.traj[id];
+  return `<div class="sl"><div class="sl-top"><label for="${id}">${label}</label><output id="o_${id}" class="${v===undefined?'unset':''}">${v===undefined?'–':v}</output></div>
+    <input type="range" id="${id}" min="0" max="10" step="1" value="${v===undefined?5:v}">
+    <div class="sl-ends"><span>0 – ${lo}</span><span>10 – ${hi}</span></div></div>`;
+}
+
+/* ============================================================
+   SCORING
+   ============================================================ */
+function scoreAll(){
+  const A=S.ans;
+  // Energia
+  const sub={EN:0,TI:0,TE:0,CA:0};
+  ENERGY_ITEMS.forEach(it=>{const x=A[it.id]; sub[it.sub]+= it.rev ? (5-x) : x;});
+  const EA=sub.EN-sub.TI, TA=sub.TE-sub.CA;
+  const quad = EA>=0 ? (TA<0?'q2':'q3') : (TA<0?'q1':'q4');
+  const traj = TIMES.map(t=>({k:t.k, n:t.n, e:S.traj[t.k+'_e'], t:S.traj[t.k+'_t']}));
+  const redline = traj.find(p=>p.t>5);
+  // BW-15
+  const bw={EX:[],CY:[],EF:[]};
+  BW_ITEMS.forEach(it=>bw[it.sub].push(A[it.id]));
+  const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+  const EX=mean(bw.EX), CY=mean(bw.CY), EF=mean(bw.EF), EFR=6-EF;
+  const band=v=>BW_BANDS.findIndex(b=>v<b.max);
+  const bands={EX:band(EX),CY:band(CY),EFR:band(EFR)};
+  let profile;
+  if(bands.EX===2 && bands.CY===2) profile='burnout';
+  else if(bands.EX===2) profile='overextended';
+  else if(bands.CY===2) profile='disengaged';
+  else if(bands.EFR===2) profile='ineffective';
+  else profile = Object.values(bands).filter(b=>b===1).length>=2 ? 'engaged_warn' : 'engaged';
+  // Hanson
+  const pil={}; PILLARS.forEach(p=>pil[p.id]=0);
+  HANSON_ITEMS.forEach(it=>pil[it.pillar]+=A['H'+it.id]);
+  const needs={}; NEEDS.forEach(n=>needs[n]=0);
+  PILLARS.forEach(p=>needs[p.need]+=pil[p.id]);
+  const sorted=[...PILLARS].sort((a,b)=>pil[b.id]-pil[a.id]);
+  const top3=sorted.slice(0,3), low3=sorted.slice(-3).reverse();
+  const needSorted=[...NEEDS].sort((a,b)=>needs[b]-needs[a]);
+  return {energy:{sub,EA,TA,quad,traj,redline:redline?redline.n:null},
+          bw:{EX,CY,EF,EFR,bands,profile},
+          hanson:{pillars:pil,needs,top3:top3.map(p=>p.id),low3:low3.map(p=>p.id),strongNeed:needSorted[0],weakNeed:needSorted[2]}};
+}
+const pName=id=>PILLARS.find(p=>p.id===id).name;
+const zone=s=>s<=6?'Strefa rozwoju':(s<=11?'Solidny fundament':'Twój zasób');
+const level=s=>s<=6?'low':(s<=11?'mid':'high');
+
+/* ============================================================
+   REKOMENDACJE (reguły krzyżowe)
+   ============================================================ */
+const HEAL_HINT = {
+  compassion:'chwile, w których ktoś był dla Ciebie życzliwy albo Ty byłeś/byłaś życzliwy/życzliwa dla siebie',
+  grit:'momenty, w których udało Ci się coś doprowadzić do końca mimo trudności',
+  calm:'chwile, w których ciało było naprawdę spokojne – choćby kilka oddechów',
+  courage:'sytuacje, w których powiedziałeś/powiedziałaś coś ważnego mimo obawy',
+  mindfulness:'momenty pełnej obecności przy jednej czynności',
+  gratitude:'drobne dobre rzeczy dnia, które zwykle umykają uwadze',
+  motivation:'chwile, w których praca była zgodna z tym, co dla Ciebie ważne',
+  aspiration:'moment, w którym poczułeś/poczułaś, dokąd chcesz zmierzać',
+  learning:'sytuacje, z których dziś czegoś się nauczyłeś/nauczyłaś',
+  confidence:'chwile, w których poczułeś/poczułaś się kompetentny/kompetentna',
+  intimacy:'kontakt z osobą, przy której możesz być sobą',
+  generosity:'sytuacje, w których coś komuś dałeś/dałaś – czas, uwagę, wiedzę'
+};
+function buildRecs(R){
+  const q=R.energy.quad, prof=R.bw.profile, weak=R.hanson.low3[0], H=R.hanson.pillars;
+  const now=[];
+  now.push(QUADRANTS[q].tips[0]);
+  now.push(`HEAL dla filaru <b>${pName(weak)}</b>: raz dziennie zatrzymaj się na 20–30 sekund przy doświadczeniu, które go karmi (${HEAL_HINT[weak]}). Pozwól mu wybrzmieć w ciele, zanim wrócisz do działania.`);
+  if(prof==='overextended'||prof==='burnout') now.push('Wybierz jedno zobowiązanie w tym tygodniu, które możesz oddać, przesunąć lub zmniejszyć – i zrób to świadomie.');
+  else if(prof==='disengaged') now.push('Jedna rozmowa w tym tygodniu z osobą z zespołu, która nie dotyczy statusu zadań – z ciekawością, bez agendy.');
+  else if(prof==='ineffective') now.push('Każdego wieczoru zapisz jeden konkretny efekt swojej pracy z danego dnia, nawet mały. Po tygodniu przeczytaj całą listę.');
+
+  const topics=[];
+  const T={
+    burnout:'Mapa źródeł wyczerpania i dystansu: co jest do zmiany, co do zaakceptowania, co do oddania.',
+    overextended:'Granice i priorytety: gdzie Twoje wyniki są finansowane z rezerw i co to kosztuje.',
+    disengaged:'Powrót do sensu: Twoje wartości a obecna rola (praca z wartościami w podejściu ACT).',
+    ineffective:'Poczucie wpływu: realna skuteczność a surowość wewnętrznego krytyka.',
+    engaged_warn:'Wczesne sygnały przeciążenia: co u Ciebie pojawia się jako pierwsze i jak na to reagować.',
+    engaged:'Zaangażowanie w długim dystansie: co podtrzymuje Twoją energię i jak to chronić.'
+  };
+  topics.push(T[prof]);
+  if(q==='q3'||q==='q4') topics.push('Regulacja pobudzenia pod presją: Twoja „czerwona linia” napięcia i sposoby powrotu do równowagi.');
+  else if(q==='q1') topics.push('Źródła energii: co ją obniża w typowym dniu pracy, a co mogłoby ją odbudować.');
+  const NT={
+    'Bezpieczeństwo':'Obszar Bezpieczeństwa: spokój, samowspółczucie i odwaga w sytuacjach wysokiej stawki.',
+    'Satysfakcja':'Obszar Satysfakcji: uważność, docenianie i motywacja płynąca z wartości, nie z przymusu.',
+    'Powiązanie':'Obszar Powiązania: relacje, wsparcie i samotność w roli lidera.'
+  };
+  topics.push(NT[R.hanson.weakNeed]);
+  if(R.bw.bands.EX>=1 && (H.motivation>=12||H.grit>=12)) topics.push('Wewnętrzne drivery: kiedy Twoja siła i wytrwałość zaczynają być kosztem.');
+
+  const safety = prof==='burnout' || (q==='q4' && R.bw.bands.EX===2);
+  return {now:now.slice(0,3), topics:topics.slice(0,4), safety};
+}
+function synthesis(R){
+  const q=QUADRANTS[R.energy.quad].name;
+  const p=BW_PROFILES[R.bw.profile].name;
+  let s=`Twój typowy dzień pracy przebiega najczęściej w stanie <b>„${q}”</b>, a obraz obciążenia odpowiada profilowi <b>„${p}”</b>. `;
+  s+=`Twoje najmocniejsze filary to <b>${pName(R.hanson.top3[0])}</b> i <b>${pName(R.hanson.top3[1])}</b>. Spośród trzech obszarów najsilniejszy jest obszar ${R.hanson.strongNeed}, a najwięcej uwagi potrzebuje obszar <b>${R.hanson.weakNeed}</b>.`;
+  return s;
+}
+
+/* ============================================================
+   WIZUALIZACJE
+   ============================================================ */
+function energyMap(R){
+  const W=380, pad=34, S0=W-2*pad, c=W/2;
+  const X=v=>c+ v/15*(S0/2), Y=v=>c- v/15*(S0/2);
+  const pts=R.energy.traj.map(p=>({x:X((p.t-5)*3), y:Y((p.e-5)*3), n:p.n}));
+  const me={x:X(R.energy.TA), y:Y(R.energy.EA)};
+  const Q=(x,y,t,num,hl)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="13" font-weight="${hl?800:600}" fill="${hl?'#084C61':'#6b7c84'}">${t}</text><text x="${x}" y="${y+16}" text-anchor="middle" font-size="11" fill="#8a9aa1">stan ${num}</text>`;
+  const hq=R.energy.quad;
+  return `<svg viewBox="0 0 ${W} ${W}" width="100%" role="img" aria-label="Mapa energii i napięcia">
+    <rect x="${pad}" y="${pad}" width="${S0/2}" height="${S0/2}" fill="${hq==='q2'?'#E6F0F1':'#F5F8F8'}"/>
+    <rect x="${c}" y="${pad}" width="${S0/2}" height="${S0/2}" fill="${hq==='q3'?'#E6F0F1':'#FAF6F4'}"/>
+    <rect x="${pad}" y="${c}" width="${S0/2}" height="${S0/2}" fill="${hq==='q1'?'#E6F0F1':'#F7F8F8'}"/>
+    <rect x="${c}" y="${c}" width="${S0/2}" height="${S0/2}" fill="${hq==='q4'?'#E6F0F1':'#FAF3F0'}"/>
+    <line x1="${pad}" y1="${c}" x2="${W-pad}" y2="${c}" stroke="#c9d6d9" stroke-width="1.5"/>
+    <line x1="${c}" y1="${pad-6}" x2="${c}" y2="${W-pad+6}" stroke="#db3a34" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="${c+6}" y="${pad-10}" font-size="11" font-weight="700" fill="#db3a34">czerwona linia napięcia</text>
+    ${Q(pad+S0/4, pad+26,'Spokojna energia',2,hq==='q2')}
+    ${Q(c+S0/4, pad+26,'Napięta energia',3,hq==='q3')}
+    ${Q(pad+S0/4, W-pad-30,'Spokojne zmęczenie',1,hq==='q1')}
+    ${Q(c+S0/4, W-pad-30,'Napięte zmęczenie',4,hq==='q4')}
+    <text x="${pad}" y="${W-pad+22}" font-size="11" fill="#5B6B74">← spokój</text>
+    <text x="${W-pad}" y="${W-pad+22}" font-size="11" fill="#5B6B74" text-anchor="end">napięcie →</text>
+    <text x="14" y="${c}" font-size="11" fill="#5B6B74" transform="rotate(-90 14 ${c})" text-anchor="middle">zmęczenie ← → energia</text>
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#177E89"/></marker></defs>
+    ${pts.slice(0,-1).map((a,i)=>{const b=pts[i+1],dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1; if(L<28) return ''; const ux=dx/L,uy=dy/L;
+      return `<line x1="${a.x+ux*13}" y1="${a.y+uy*13}" x2="${b.x-ux*15}" y2="${b.y-uy*15}" stroke="#177E89" stroke-width="2.5" marker-end="url(#ar)"/>`;}).join('')}
+    ${pts.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="11" fill="#fff" stroke="#177E89" stroke-width="2.5"/><text x="${p.x}" y="${p.y+4}" text-anchor="middle" font-size="11" font-weight="800" fill="#177E89">${['R','P','W'][i]}</text>`).join('')}
+    <circle cx="${me.x}" cy="${me.y}" r="10" fill="#123B52" stroke="#fff" stroke-width="3"/>
+  </svg>
+  <p class="small muted" style="margin:4px 0 0"><span style="color:#123B52;font-size:16px">●</span> Twój typowy dzień pracy (20 określeń). <b style="color:#177E89">R, P, W</b> – rano, środek dnia, koniec dnia.</p>`;
+}
+function bwBar(key,val,band){
+  const pct=Math.max(0,Math.min(100,val/6*100));
+  return `<div class="bar avoid-break"><div class="bar-top"><span>${BW_LABELS[key]}</span><span>${val.toFixed(1).replace('.',',')} / 6</span></div>
+    <div class="track"><i style="width:${2/6*100}%"></i><i style="width:${1.5/6*100}%"></i><i style="width:${2.5/6*100}%"></i><span class="dot" style="left:${pct}%"></span></div>
+    <div class="bar-ends"><span>niskie</span><span>umiarkowane</span><span>podwyższone</span></div>
+    <div class="band">Poziom: <b>${BW_BANDS[band].name}</b></div></div>`;
+}
+function radar(R){
+  const P=R.hanson.pillars, n=12, W=440, c=W/2, rad=150;
+  const ang=i=>-Math.PI/2 + i*2*Math.PI/n;
+  const pt=(i,v)=>[c+Math.cos(ang(i))*rad*v/15, c+Math.sin(ang(i))*rad*v/15];
+  const sectorCol=['#E6F0F1','#FBEDE6','#EEF3EA'];
+  let sectors='';
+  for(let k=0;k<3;k++){const a0=ang(k*4)-Math.PI/n, a1=ang(k*4+3)+Math.PI/n; const r=rad+6;
+    sectors+=`<path d="M${c},${c} L${c+Math.cos(a0)*r},${c+Math.sin(a0)*r} A${r},${r} 0 0 1 ${c+Math.cos(a1)*r},${c+Math.sin(a1)*r} Z" fill="${sectorCol[k]}"/>`;}
+  const rings=[6,11,15].map(v=>`<polygon points="${[...Array(n)].map((_,i)=>pt(i,v).join(',')).join(' ')}" fill="none" stroke="#c7d5d8" stroke-width="${v===15?1.5:1}" stroke-dasharray="${v===15?'':'3 4'}"/>`).join('');
+  const axes=[...Array(n)].map((_,i)=>{const [x,y]=pt(i,15);return `<line x1="${c}" y1="${c}" x2="${x}" y2="${y}" stroke="#dbe4e6"/>`;}).join('');
+  const poly=PILLARS.map((p,i)=>pt(i,P[p.id]).join(',')).join(' ');
+  const labels=PILLARS.map((p,i)=>{const [x,y]=pt(i,18.6); const a=Math.cos(ang(i)); const anchor=Math.abs(a)<.2?'middle':(a>0?'start':'end');
+    return `<text x="${x}" y="${y+4}" text-anchor="${anchor}" font-size="15" font-weight="700" fill="#123B52">${p.name}</text><text x="${x}" y="${y+20}" text-anchor="${anchor}" font-size="13" fill="#5B6B74">${P[p.id]} pkt</text>`;}).join('');
+  const needLbl=NEEDS.map((nm,k)=>{const a=ang(k*4+1.5); return `<text x="${c+Math.cos(a)*62}" y="${c+Math.sin(a)*62+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#084C61" opacity=".6">${nm}</text>`;}).join('');
+  return `<svg viewBox="-95 -24 ${W+190} ${W+48}" width="100%" role="img" aria-label="Profil 12 filarów">
+    ${sectors}${rings}${axes}${needLbl}
+    <polygon points="${poly}" fill="rgba(23,126,137,.22)" stroke="#084C61" stroke-width="2.5" stroke-linejoin="round"/>
+    ${PILLARS.map((p,i)=>{const [x,y]=pt(i,P[p.id]);return `<circle cx="${x}" cy="${y}" r="4.5" fill="#084C61" stroke="#fff" stroke-width="2"/>`;}).join('')}
+    ${labels}
+  </svg>`;
+}
+
+/* ============================================================
+   WYNIKI
+   ============================================================ */
+function renderResults(){
+  const R=scoreAll(); const rec=buildRecs(R); const Q=QUADRANTS[R.energy.quad]; const BP=BW_PROFILES[R.bw.profile];
+  const date=new Date(S.finished||Date.now()).toLocaleDateString('pl-PL',{year:'numeric',month:'long',day:'numeric'});
+  $('#main').innerHTML=`
+  <div id="report">
+    <div class="res-head">
+      <div class="pdf-only" style="margin-bottom:14px"><b style="color:#123B52;font-size:18px">Lyra Polska</b> <span class="muted">– program „Odporni i gotowi”</span></div>
+      <h1>Twój profil Deep Dive</h1>
+      <div class="res-meta">Data wypełnienia: ${date}. Raport poufny.</div>
+    </div>
+    <p class="synth">${synthesis(R)}</p>
+
+    <section class="block avoid-break">
+      <h2>Energia i napięcie <small>model R.E. Thayera</small></h2>
+      <div class="grid2">
+        <div>${energyMap(R)}</div>
+        <div>
+          <div class="state-name">${Q.name}</div>
+          <p>${Q.desc}</p>
+          ${R.energy.redline?`<p class="note" style="margin:12px 0">Według Twojej mapy dnia napięcie przekracza środek skali po raz pierwszy: <b>${R.energy.redline.toLowerCase()}</b>.</p>`:`<p class="note teal" style="margin:12px 0">Według Twojej mapy dnia napięcie nie przekracza środka skali w żadnej porze dnia.</p>`}
+          <h3>Co pomaga w tym stanie</h3>
+          <ul class="clean">${Q.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="block avoid-break">
+      <h2>Obciążenie <small>Barometr wypalenia BW-15</small></h2>
+      <div class="grid2">
+        <div>${bwBar('EX',R.bw.EX,R.bw.bands.EX)}${bwBar('CY',R.bw.CY,R.bw.bands.CY)}${bwBar('EFR',R.bw.EFR,R.bw.bands.EFR)}</div>
+        <div class="card"><div class="state-name">${BP.name}</div><p>${BP.desc}</p>
+          <p class="small muted" style="margin:0"><b>Wyczerpanie</b> to utrata energii w związku z pracą. <b>Cynizm i dystans</b> to emocjonalne odsuwanie się od pracy i ludzi. <b>Obniżone poczucie skuteczności</b> to słabnące przekonanie o własnym wpływie i efektach.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Zasoby <small>12 filarów rezyliencji, model R. Hansona</small></h2>
+      <div class="grid2 avoid-break">
+        <div>${radar(R)}<p class="small muted">Przerywane okręgi wyznaczają granice stref: rozwoju (do 6 pkt), solidnego fundamentu (7–11) i zasobu (12–15).</p></div>
+        <div>
+          <h3>Najmocniejsze filary</h3>
+          <div class="chips">${R.hanson.top3.map(id=>`<span class="chip">${pName(id)}: ${R.hanson.pillars[id]}</span>`).join('')}</div>
+          <h3 style="margin-top:18px">Filary do wzmocnienia</h3>
+          <div class="chips">${R.hanson.low3.map(id=>`<span class="chip warm">${pName(id)}: ${R.hanson.pillars[id]}</span>`).join('')}</div>
+          <div class="needs">${NEEDS.map(n=>`<div class="need"><div class="need-top"><span>${n}</span><span>${R.hanson.needs[n]} / 60</span></div><div class="need-track"><b style="width:${R.hanson.needs[n]/60*100}%"></b></div></div>`).join('')}</div>
+        </div>
+      </div>
+      <h3 style="margin-top:26px">Wskazówki dla poszczególnych filarów</h3>
+      <p class="small muted no-pdf">Rozwiń filar, aby zobaczyć wskazówki dopasowane do Twojego wyniku.</p>
+      <div id="accs">${PILLARS.map(p=>{const s=R.hanson.pillars[p.id];return `<div class="acc avoid-break"><button type="button" aria-expanded="false"><span><b>${p.name}</b> <span class="small muted">${p.need}, ${s} pkt</span></span><span class="z">${zone(s)}</span></button><div>${HANSON_RECS[p.id][level(s)]}</div></div>`;}).join('')}</div>
+    </section>
+
+    <section class="block">
+      <h2>Kierunki rozwoju</h2>
+      <div class="tiers">
+        <div class="tier avoid-break"><h3>Na najbliższy tydzień</h3><ol>${rec.now.map(t=>`<li>${t}</li>`).join('')}</ol></div>
+        <div class="tier avoid-break"><h3>Tematy na sesje coachingowe</h3><p class="small muted" style="margin:0">Propozycje do wyboru – ostateczny kierunek ustalicie wspólnie na pierwszej sesji.</p><ul>${rec.topics.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+        ${rec.safety?`<div class="tier warm avoid-break"><h3>Zadbaj o siebie teraz</h3><p>Twoje wyniki wskazują na znaczne i utrzymujące się obciążenie. To nie jest diagnoza, ale warto nie czekać z rozmową do pierwszej sesji. Możesz napisać do prowadzącego (<a href="mailto:${CONFIG.contactEmail}">${CONFIG.contactEmail}</a>) albo skorzystać z konsultacji dostępnych w programie wsparcia Lyra w Twojej organizacji. Jeśli czujesz, że trudno Ci funkcjonować na co dzień, skonsultuj się z lekarzem lub psychoterapeutą.</p></div>`:''}
+        <div class="tier avoid-break"><h3>Pytania do refleksji przed pierwszą sesją</h3><ul>${REFLECTION.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      </div>
+    </section>
+
+    <p class="small muted">Źródła: model czterech stanów energii – R.E. Thayer (w ujęciu V. Steinera); Barometr wypalenia BW-15 – narzędzie autorskie inspirowane trójczynnikowym modelem wypalenia Ch. Maslach, niewalidowane psychometrycznie, do użytku rozwojowego; 12 filarów rezyliencji – na podstawie R. Hanson, <i>Resilient</i> (2018), opracowanie J. Chybicki. Wyniki nie stanowią diagnozy klinicznej.</p>
+  </div>
+
+  <div class="actions no-pdf">
+    <h2>Wyślij raport prowadzącemu</h2>
+    <p>Przycisk przygotuje raport PDF i otworzy wiadomość w Twoim programie pocztowym, zaadresowaną do prowadzącego, z tematem „${CONFIG.mailSubject}”. Raport trafia tylko do prowadzącego, nie do Twojego pracodawcy.</p>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="send">Wyślij raport mailem</button>
+      <button class="btn ghost" id="pdf">Pobierz PDF dla siebie</button>
+      <button class="btn quiet" id="md" style="color:#cfe6e8">Pobierz wersję tekstową (.md)</button>
+    </div>
+    <div class="howto hidden" id="howto" aria-live="polite"></div>
+    <p class="small" style="margin:18px 0 0">Adres prowadzącego: <b>${CONFIG.contactEmail}</b> <button class="linkbtn" id="copy" type="button">Kopiuj adres</button></p>
+  </div>
+  <div class="nav no-pdf"><button class="btn quiet" id="again">Wypełnij od nowa</button><span></span></div>`;
+
+  document.querySelectorAll('.acc > button').forEach(b=>b.onclick=()=>{const a=b.parentElement; a.classList.toggle('open'); b.setAttribute('aria-expanded',a.classList.contains('open'));});
+  $('#send').onclick=()=>sendByMail(R);
+  $('#pdf').onclick=()=>downloadPDF();
+  $('#md').onclick=()=>downloadBlob(new Blob([reportMarkdown(R)],{type:'text/markdown;charset=utf-8'}), fileBase()+'.md');
+  $('#copy').onclick=()=>copyEmail($('#copy'));
+  $('#again').onclick=()=>{if(confirm('Usunąć zapisane odpowiedzi z tej przeglądarki i zacząć od nowa?')){clearSaved(); S=freshState(); go(0);}};
+}
+
+function fileBase(){return `Raport_DeepDive_${(S.finished||new Date().toISOString()).slice(0,10)}`;}
+const num=v=>(Math.round(v*10)/10).toFixed(1).replace('.',',');
+const stripHtml=h=>h.replace(/<br\s*\/?>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
+
+/* Kompaktowy kod danych do raportu zbiorczego (działa nawet bez załącznika) */
+function dataCode(){
+  const E=ENERGY_ITEMS.map(i=>S.ans[i.id]).join('');
+  const T=TIMES.map(t=>[S.traj[t.k+'_e'],S.traj[t.k+'_t']].map(v=>v===10?'A':v).join('')).join('');
+  const B=BW_ITEMS.map(i=>S.ans[i.id]).join('');
+  const H=HANSON_ITEMS.map(i=>S.ans['H'+i.id]).join('');
+  return `${CONFIG.version}|E${E}|T${T}|B${B}|H${H}`;
+}
+function mailBody(R,fname){
+  const e=R.energy, b=R.bw, h=R.hanson;
+  return [
+    'Dzień dobry,','',
+    `w załączniku przesyłam raport z diagnozy Deep Dive (plik ${fname||fileBase()+'.pdf'}).`,'',
+    'Podsumowanie:',
+    `- Energia: ${QUADRANTS[e.quad].name}; mapa dnia (energia/napięcie): ${e.traj.map(p=>`${p.n} ${p.e}/${p.t}`).join(', ')}`,
+    `- Obciążenie: ${BW_PROFILES[b.profile].name}; wyczerpanie ${num(b.EX)}, cynizm ${num(b.CY)}, obniżona skuteczność ${num(b.EFR)}`,
+    `- Zasoby: ${NEEDS.map(n=>`${n} ${h.needs[n]}/60`).join(', ')}; do wzmocnienia: ${h.low3.map(pName).join(', ')}`,
+    '',
+    'Kod danych (nie usuwaj – służy do raportu zbiorczego):',
+    dataCode(),'','Pozdrawiam'
+  ].join('\r\n');
+}
+function mailtoUrl(R,fname){return `mailto:${CONFIG.contactEmail}?subject=${encodeURIComponent(CONFIG.mailSubject)}&body=${encodeURIComponent(mailBody(R,fname))}`;}
+
+function reportMarkdown(R){
+  const e=R.energy, b=R.bw, h=R.hanson, rec=buildRecs(R), Q=QUADRANTS[e.quad], BP=BW_PROFILES[b.profile];
+  const date=new Date(S.finished||Date.now()).toLocaleDateString('pl-PL',{year:'numeric',month:'long',day:'numeric'});
+  let m=`# Raport Deep Dive – program „Odporni i gotowi”\n\nLyra Polska · ${date} · raport poufny\n\n${stripHtml(synthesis(R))}\n\n`;
+  m+=`## Energia i napięcie (model R.E. Thayera)\n\n**Stan dominujący: ${Q.name}**\n\n${Q.desc}\n\n`;
+  m+=`| Pora dnia | Energia (0–10) | Napięcie (0–10) |\n|---|---|---|\n${e.traj.map(p=>`| ${p.n} | ${p.e} | ${p.t} |`).join('\n')}\n\n`;
+  m+=`Energia ${e.sub.EN}, zmęczenie ${e.sub.TI}, napięcie ${e.sub.TE}, spokój ${e.sub.CA} (skale 5–20).\n`;
+  m+=e.redline?`Czerwona linia napięcia przekraczana po raz pierwszy: ${e.redline.toLowerCase()}.\n\n`:`Napięcie nie przekracza środka skali w żadnej porze dnia.\n\n`;
+  m+=`Co pomaga:\n${Q.tips.map(t=>`- ${t}`).join('\n')}\n\n`;
+  m+=`## Obciążenie (Barometr wypalenia BW-15)\n\n**Profil: ${BP.name}**\n\n${BP.desc}\n\n| Wymiar | Wynik (0–6) | Poziom |\n|---|---|---|\n`;
+  m+=[['EX',b.EX],['CY',b.CY],['EFR',b.EFR]].map(([k,v])=>`| ${BW_LABELS[k]} | ${num(v)} | ${BW_BANDS[b.bands[k]].name} |`).join('\n')+'\n\n';
+  m+=`## Zasoby (12 filarów rezyliencji, model R. Hansona)\n\n| Filar | Obszar | Punkty (3–15) | Strefa |\n|---|---|---|---|\n`;
+  m+=PILLARS.map(p=>`| ${p.name} | ${p.need} | ${h.pillars[p.id]} | ${zone(h.pillars[p.id])} |`).join('\n')+'\n\n';
+  m+=NEEDS.map(n=>`- ${n}: ${h.needs[n]} / 60`).join('\n')+'\n\n';
+  m+=`### Wskazówki dla filarów\n\n`+PILLARS.map(p=>`**${p.name}** (${zone(h.pillars[p.id])})\n\n${stripHtml(HANSON_RECS[p.id][level(h.pillars[p.id])]).trim()}\n`).join('\n')+'\n';
+  m+=`## Kierunki rozwoju\n\n### Na najbliższy tydzień\n\n${rec.now.map((t,i)=>`${i+1}. ${stripHtml(t)}`).join('\n')}\n\n### Tematy na sesje coachingowe\n\n${rec.topics.map(t=>`- ${t}`).join('\n')}\n\n`;
+  if(rec.safety) m+=`### Zadbaj o siebie teraz\n\nTwoje wyniki wskazują na znaczne i utrzymujące się obciążenie. To nie jest diagnoza, ale warto nie czekać z rozmową do pierwszej sesji: napisz do prowadzącego (${CONFIG.contactEmail}) albo skorzystaj z konsultacji w programie wsparcia Lyra.\n\n`;
+  m+=`### Pytania do refleksji przed pierwszą sesją\n\n${REFLECTION.map(t=>`- ${t}`).join('\n')}\n\n---\n\nKod danych: \`${dataCode()}\`\n\nNarzędzie rozwojowe, nie diagnoza kliniczna. Kontakt: ${CONFIG.contactName}, ${CONFIG.contactEmail}, lyrapolska.pl\n`;
+  return m;
+}
+
+function downloadBlob(blob,name){const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+async function copyEmail(btn){
+  try{await navigator.clipboard.writeText(CONFIG.contactEmail); if(btn){btn.textContent='Skopiowano'; setTimeout(()=>btn.textContent='Kopiuj adres',2000);} return true;}
+  catch(e){ if(btn) btn.textContent=CONFIG.contactEmail; return false; }
+}
+const PDF_OPTS=()=>({
+  margin:[12,12,14,12], filename:fileBase()+'.pdf',
+  image:{type:'jpeg',quality:0.92}, html2canvas:{scale:2,useCORS:true,backgroundColor:'#FBFAF8'},
+  jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+  pagebreak:{mode:['css','legacy'],avoid:['.avoid-break','.tier','.bar','.acc']}
+});
+async function makePdfBlob(){
+  if(!window.html2pdf) return null;
+  document.body.classList.add('pdf-mode');
+  try{ return await html2pdf().set(PDF_OPTS()).from($('#report')).outputPdf('blob'); }
+  catch(e){ return null; }
+  finally{ document.body.classList.remove('pdf-mode'); }
+}
+async function downloadPDF(){
+  const btn=$('#pdf'); btn.disabled=true; btn.textContent='Przygotowuję PDF…';
+  const blob=await makePdfBlob();
+  if(blob) downloadBlob(blob,fileBase()+'.pdf'); else window.print();
+  btn.disabled=false; btn.textContent='Pobierz PDF dla siebie';
+}
+const isTouch=()=>window.matchMedia('(pointer:coarse)').matches;
+
+async function sendByMail(R){
+  const btn=$('#send'), how=$('#howto');
+  btn.disabled=true; btn.textContent='Przygotowuję raport…';
+  let blob=await makePdfBlob(), ext='pdf', type='application/pdf';
+  if(!blob){ blob=new Blob([reportMarkdown(R)],{type:'text/markdown;charset=utf-8'}); ext='md'; type='text/markdown'; }
+  const name=`${fileBase()}.${ext}`;
+  const file=new File([blob],name,{type});
+  btn.disabled=false; btn.textContent='Wyślij raport mailem';
+
+  // Telefon/tablet: arkusz udostępniania z załączonym plikiem
+  if(isTouch() && navigator.canShare && navigator.canShare({files:[file]})){
+    await copyEmail();
+    try{
+      await navigator.share({files:[file], title:CONFIG.mailSubject, text:`Raport Deep Dive – do: ${CONFIG.contactEmail}`});
+      how.innerHTML=`<p><b>Gotowe, jeśli wiadomość została wysłana.</b> Po wybraniu aplikacji pocztowej wklej w polu „Do” adres <b>${CONFIG.contactEmail}</b> (jest już w schowku) i wpisz temat „${CONFIG.mailSubject}”.</p>
+        <p class="small">Nie widzisz swojej poczty na liście? <a style="color:#fff" href="${mailtoUrl(R,name)}">Otwórz wiadomość bez załącznika</a> – zawiera podsumowanie wyników.</p>`;
+      how.classList.remove('hidden'); return;
+    }catch(e){ if(e && e.name==='AbortError'){ return; } }
+  }
+  // Komputer: pobranie pliku + wiadomość w programie pocztowym
+  downloadBlob(blob,name);
+  how.innerHTML=`<ol>
+      <li>Plik <b>${name}</b> zapisał się w folderze <b>Pobrane</b>.</li>
+      <li>W programie pocztowym otwiera się wiadomość do ${CONFIG.contactEmail} z tematem „${CONFIG.mailSubject}” i podsumowaniem wyników.</li>
+      <li>Kliknij <b>Załącz</b> (ikona spinacza), wybierz plik z folderu Pobrane i wyślij.</li></ol>
+    <p class="small">Wiadomość się nie otworzyła albo używasz poczty w przeglądarce (Gmail, Outlook w sieci)? <a style="color:#fff" href="${mailtoUrl(R,name)}" id="reopen">Otwórz ponownie</a> albo skopiuj adres poniżej i napisz nową wiadomość z załączonym plikiem.</p>`;
+  how.classList.remove('hidden');
+  setTimeout(()=>{ window.location.href=mailtoUrl(R,name); }, 700);
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+function boot(){
+  const saved=load();
+  if(saved && saved.finished){S=saved; S.step=STEPS.length-1; render(); return;}
+  S=freshState(); render(); // ekran startowy sam proponuje wznowienie
+}
+boot();
+</script>
+</body>
+</html>
