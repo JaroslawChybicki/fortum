@@ -1,20 +1,23 @@
-// Gra decyzyjna „Pomyłka w zespole” – scenariusz w tresci/gra-zespol.json.
+// Silnik gier decyzyjnych. Scenariusz: plik JSON wskazany w atrybucie data-scenariusz
+// elementu #gra (domyślnie gra-zespol.json). Nazwy wskaźników, zakończenia, macierz
+// i materiały do pogłębienia są częścią scenariusza.
 
 (async function () {
   const el = document.getElementById('gra');
   const mEl = document.getElementById('mierniki');
   let G;
-  try { G = await wczytajJson('gra-zespol.json'); } catch (e) { bladWczytania(el, e); return; }
+  try { G = await wczytajJson(el.dataset.scenariusz || 'gra-zespol.json'); } catch (e) { bladWczytania(el, e); return; }
 
+  const M = Object.assign({ zaufanie: 'Zaufanie w zespole', napiecie: 'Twoje napięcie' }, G.mierniki || {});
   let stan, sciezka;
   const clamp = (x) => Math.max(0, Math.min(100, x));
 
   function mierniki(dz, dn) {
     const d = (x, dobrzeGdyRosnie) => (x ? `<span class="dlt ${(x > 0) === dobrzeGdyRosnie ? 'up' : 'down'}">${x > 0 ? '▲' : '▼'} ${Math.abs(x)}</span>` : '');
     mEl.innerHTML = `
-      <div class="meter zaufanie"><div class="lbl"><span>Zaufanie w zespole${d(dz, true)}</span><span>${stan.zaufanie}</span></div>
+      <div class="meter zaufanie"><div class="lbl"><span>${esc(M.zaufanie)}${d(dz, true)}</span><span>${stan.zaufanie}</span></div>
         <div class="trk"><span class="fil" style="width:${stan.zaufanie}%"></span></div></div>
-      <div class="meter napiecie"><div class="lbl"><span>Twoje napięcie${d(dn, false)}</span><span>${stan.napiecie}</span></div>
+      <div class="meter napiecie"><div class="lbl"><span>${esc(M.napiecie)}${d(dn, false)}</span><span>${stan.napiecie}</span></div>
         <div class="trk"><span class="fil" style="width:${stan.napiecie}%"></span></div></div>`;
   }
 
@@ -49,44 +52,39 @@
     b.focus({ preventScroll: true });
   }
 
-  function koniec() {
+  // Pierwsze zakończenie, którego warunki spełnia stan wskaźników.
+  function zakonczenie() {
     const z = stan.zaufanie, n = stan.napiecie;
-    let tytul, opis;
-    if (z >= 70 && n <= 55) {
-      tytul = 'Strefa uczenia się';
-      opis = 'Zespół wie, że o błędach można mówić, a Ty zachowałeś równowagę. To połączenie wysokiego bezpieczeństwa psychologicznego z wysokimi standardami – warunek, w którym zespoły uczą się najszybciej.';
-    } else if (z >= 70) {
-      tytul = 'Zaufanie zbudowane – kosztem Twojej energii';
-      opis = 'Zespół wyszedł z tej sytuacji z większym zaufaniem, ale Ty zapłaciłeś za to wysokim napięciem. Warto zapytać: co mogę oddać, a gdzie potrzebuję regeneracji, żeby taki styl był możliwy na dłuższą metę?';
-    } else if (z < 45) {
-      tytul = 'Strefa lęku';
-      opis = 'Wymagania są wysokie, ale bezpieczeństwo psychologiczne spadło. W takiej atmosferze ludzie częściej ukrywają błędy i rzadziej zgłaszają problemy – a to zwiększa ryzyko dla całej organizacji.';
-    } else {
-      tytul = 'Sytuacja opanowana – potencjał do wykorzystania';
-      opis = 'Problem został rozwiązany, ale zespół nie wzmocnił przekonania, że o błędach można mówić bezpiecznie. Przejrzyj swoje wybory – który jeden krok mógłby to zmienić?';
-    }
-    const wysokieBezp = z >= 60;
+    return (G.zakonczenia || []).find((k) =>
+      (k.min_zaufanie == null || z >= k.min_zaufanie) && (k.max_zaufanie == null || z < k.max_zaufanie) &&
+      (k.min_napiecie == null || n > k.min_napiecie) && (k.max_napiecie == null || n <= k.max_napiecie)
+    ) || { tytul: 'Podsumowanie', opis: '' };
+  }
+
+  function macierz() {
+    const m = G.macierz;
+    if (!m) return '';
+    const kol = stan.zaufanie >= (m.prog_zaufanie ?? 60) ? 1 : 0;
+    const wiersz = m.wiersz_wg === 'napiecie' ? (stan.napiecie > (m.prog_napiecie ?? 55) ? 0 : 1) : (m.wiersz_staly ?? 0);
+    return `${m.opis ? `<p class="muted">${esc(m.opis)}</p>` : ''}
+      <div class="macierz" role="img" aria-label="${esc(m.kolumny_tytul)} i ${esc(m.wiersze_tytul || '')}">
+        <div class="ax"></div><div class="ax span2">${esc(m.kolumny_tytul)}</div>
+        <div class="ax"></div>${m.kolumny.map((k) => `<div class="ax">${esc(k)}</div>`).join('')}
+        ${m.wiersze.map((w, i) => `<div class="ax">${esc(w.nazwa)}</div>${w.pola.map((p, j) => `<div class="${i === wiersz && j === kol ? 'on' : ''}">${esc(p)}</div>`).join('')}`).join('')}
+      </div>`;
+  }
+
+  function koniec() {
+    const k = zakonczenie();
     el.innerHTML = `<div class="final">
       <span class="krok">Podsumowanie</span>
-      <h2>${tytul}</h2>
-      <p>${opis}</p>
-      <p class="muted">Macierz Amy Edmondson: przy wysokich wymaganiach (termin, zarząd) o efekcie decyduje poziom bezpieczeństwa psychologicznego.</p>
-      <div class="macierz" role="img" aria-label="Macierz bezpieczeństwa psychologicznego i wymagań">
-        <div class="ax"></div><div class="ax span2">Bezpieczeństwo psychologiczne</div>
-        <div class="ax"></div><div class="ax">niskie</div><div class="ax">wysokie</div>
-        <div class="ax">Wymagania wysokie</div><div class="${wysokieBezp ? '' : 'on'}">Strefa lęku</div><div class="${wysokieBezp ? 'on' : ''}">Strefa uczenia się</div>
-        <div class="ax">Wymagania niskie</div><div>Strefa apatii</div><div>Strefa komfortu</div>
-      </div>
+      <h2>${esc(k.tytul)}</h2>
+      <div class="md">${renderMd(k.opis)}</div>
+      ${macierz()}
       <h3>Twoja ścieżka</h3>
-      <ol class="sciezka">${sciezka.map((k) => `<li><strong>${esc(k.krok)}:</strong> ${esc(k.tekst)}</li>`).join('')}</ol>
+      <ol class="sciezka">${sciezka.map((s) => `<li><strong>${esc(s.krok)}:</strong> ${esc(s.tekst)}</li>`).join('')}</ol>
       ${(G.pytania_do_refleksji || []).length ? `<h3>Do refleksji</h3><ul>${G.pytania_do_refleksji.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : ''}
-      <h3>Pogłębienie</h3>
-      <ul>
-        <li><a href="filmy.html#film=LhoLuui9gX8">Film: Amy Edmondson – bezpieczeństwo psychologiczne</a></li>
-        <li><a href="ksiazki.html#ksiazka=edmondson-firma">Książka: Firma bez strachu</a></li>
-        <li><a href="ksiazki.html#ksiazka=brown-odwaga">Książka: Odwaga w przywództwie</a></li>
-        <li><a href="oddech.html">Ćwiczenie: oddech z wydłużonym wydechem – na moment przed trudną rozmową</a></li>
-      </ul>
+      ${(G.poglebienie || []).length ? `<h3>Pogłębienie</h3><ul>${G.poglebienie.map((p) => `<li><a href="${esc(p.link)}">${esc(p.tekst)}</a></li>`).join('')}</ul>` : ''}
       <div class="me-actions"><button type="button" class="btn" id="g-znowu">Zagraj jeszcze raz</button><a class="btn ghost" href="cwiczenia.html">Inne ćwiczenia</a></div>
     </div>`;
     document.getElementById('g-znowu').addEventListener('click', start);

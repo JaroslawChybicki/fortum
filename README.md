@@ -13,6 +13,7 @@ mapa-energii.html     dziennik energii i napięcia (dane tylko w przeglądarce u
 oddech.html           oddech z wydłużonym wydechem + trzyminutowa przestrzeń oddechowa
 quiz.html             quiz „Mity o stresie i wypaleniu” (treść: tresci/quiz.json, edycja w CMS)
 gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci/gra-zespol.json)
+gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scenariusz: tresci/gra-sezon.json)
 kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
 tresci/               ← TREŚCI (edytowane w CMS)
@@ -60,6 +61,12 @@ panel pilnuje tego za Ciebie.
 `kalkulator.html` – absencja, prezenteizm, rotacja i zwrot z inwestycji. Wpisane wartości zapisują się w adresie strony,
 więc przycisk „Kopiuj link” pozwala wysłać gotowe wyliczenie (np. klientowi). Wartości domyślne i ich źródła:
 blok `DOMYSLNE` w `assets/kalkulator.js` oraz opisy pól w `kalkulator.html`.
+
+## Gry decyzyjne
+Silnik: `assets/gra.js`. Scenariusz to plik JSON wskazany w `data-scenariusz` elementu `#gra`: sceny z opcjami
+(`tekst`, zmiana wskaźników `zaufanie`/`napiecie`, `komentarz`, `dalej` = id następnej sceny lub `koniec`),
+nazwy wskaźników (`mierniki`), `zakonczenia` (warunki progowe, pierwsze pasujące wygrywa), `macierz`, pytania do refleksji
+i linki „Pogłębienie”. Nowa gra = nowy plik JSON + kopia `gra-sezon.html` ze zmienionym `data-scenariusz`.
 
 ## Formularz kontaktowy
 Na stronie głównej (sekcja `#napisz`), link „Napisz wiadomość” w stopce każdej podstrony. Obsługa: **Netlify Forms**

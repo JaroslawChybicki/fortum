@@ -145,3 +145,8 @@
   body{background:#fff}.box{border-color:#ccc;break-inside:avoid}.lista{max-height:none}
 }
 .macierz .span2{grid-column:span 2;padding-bottom:0}
+.k-sezon{background:#b8322d}
+.meter .lbl{gap:10px;align-items:flex-start}
+.meter .lbl span:first-child{flex:1;min-width:0}
+.meter .lbl span:last-child{font-size:1.05rem;line-height:1.2}
+@media (max-width:560px){.meter{padding:8px 10px}.meter .lbl{font-size:.76rem}}

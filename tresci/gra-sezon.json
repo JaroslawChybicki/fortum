@@ -1,0 +1,267 @@
+{
+  "tytul": "Tydzień przed sezonem grzewczym",
+  "wstep": "Scenariusz decyzyjny osadzony w realiach firmy energetycznej, tydzień przed startem sezonu grzewczego. Twoje wybory wpływają na dwa wskaźniki: **współpracę w zespole zarządzającym** i **Twoje napięcie**.\n\nHistoria i postaci są fikcyjne. Nie ma tu obszaru, który „ma rację” – liczy się to, jak Ty jako lider działasz w sytuacji sprzecznych oczekiwań. Dobrze sprawdza się jako materiał do rozmowy w parach lub w grupie.",
+  "mierniki": {
+    "zaufanie": "Współpraca w zespole zarządzającym",
+    "napiecie": "Twoje napięcie"
+  },
+  "start": {
+    "zaufanie": 55,
+    "napiecie": 50
+  },
+  "sceny": {
+    "start": {
+      "krok": "Poniedziałek, 7:40",
+      "tekst": "Za tydzień startuje sezon grzewczy. Odpowiadasz za wprowadzenie nowej oferty dla dużych klientów biznesowych – w piątek masz ją przedstawić ważnemu klientowi, operatorowi dużego kompleksu biurowego.\n\nW skrzynce trzy wiadomości:\n\n- **Compliance:** zapisy cenowe w ofercie mogą budzić wątpliwości co do zgodności z zatwierdzoną taryfą. Potrzebne są dwa tygodnie na analizę.\n- **Sprzedaż:** *„Klient czeka, obiecaliśmy piątek. Jeśli przesuniemy, odda temat konkurencji.”*\n- **Produkcja:** remont jednej z jednostek się przedłuża – w pierwszych tygodniach sezonu nie ma zapasu na dodatkowe zobowiązania.\n\nW kalendarzu dziewięć spotkań. Czujesz, jak rośnie napięcie. Od czego zaczynasz?",
+      "opcje": [
+        {
+          "tekst": "Bierzesz to na siebie: dziś wieczorem przepisujesz ofertę tak, żeby „ominąć” wątpliwości compliance.",
+          "zaufanie": -10,
+          "napiecie": 15,
+          "komentarz": "To odruch wielu ambitnych menedżerów: rozwiązać problem samodzielnie, zanim ktokolwiek zauważy trudność. Krótko działa, długo kosztuje – rośnie Twoje przeciążenie, a pozostałe obszary tracą wpływ na decyzję, która ich dotyczy. Tak wzmacnia się też **samotność lidera**.",
+          "dalej": "noc"
+        },
+        {
+          "tekst": "Piszesz stanowczego maila do sprzedaży i compliance, z kopią do prezesa: „Potrzebuję decyzji do jutra do 12:00.”",
+          "zaufanie": -15,
+          "napiecie": 5,
+          "komentarz": "Eskalacja w górę daje poczucie kontroli, ale zamienia wspólny problem w spór, który ma rozstrzygnąć przełożony. W zespole, w którym jest element rywalizacji, taki mail łatwo odczytać jako ruch w grze o to, kto ma rację.",
+          "dalej": "eskalacja"
+        },
+        {
+          "tekst": "Zapraszasz szefów sprzedaży, compliance i produkcji na 30 minut jeszcze dziś, z jednym pytaniem: „Co musi być prawdą, żebyśmy w piątek pokazali klientowi coś uczciwego i bezpiecznego?”",
+          "zaufanie": 12,
+          "napiecie": 5,
+          "komentarz": "Wspólne pytanie zamiast stanowisk przenosi uwagę z tego, *kto blokuje*, na to, *co jest wspólnym celem*. Spotkanie będzie trudne – napięcie rośnie – ale problem wraca tam, gdzie jest: między obszarami, a nie tylko na Twoim biurku.",
+          "dalej": "spotkanie"
+        },
+        {
+          "tekst": "Najpierw 5 minut dla siebie: zapisujesz, co jest faktem, a co tylko myślą („na pewno stracimy klienta”, „znowu wszystko na mojej głowie”).",
+          "zaufanie": 0,
+          "napiecie": -12,
+          "komentarz": "To prosta forma **defuzji** z ACT: „stracimy klienta” to myśl, a nie fakt. Oddzielenie faktów od interpretacji obniża pobudzenie i poszerza pole widzenia – pięć minut, które oszczędzają godziny nerwowych maili.",
+          "dalej": "po-pauzie"
+        }
+      ]
+    },
+    "po-pauzie": {
+      "krok": "Poniedziałek, 7:55",
+      "tekst": "Na kartce zostały trzy fakty: wątpliwość compliance nie jest jeszcze decyzją odmowną; klient oczekuje w piątek *rozmowy*, niekoniecznie podpisu; produkcja potrzebuje realistycznego harmonogramu. Reszta to prognozy. Co teraz?",
+      "opcje": [
+        {
+          "tekst": "Zapraszasz trzy obszary na krótkie spotkanie z pytaniem o warunki uczciwej piątkowej rozmowy z klientem.",
+          "zaufanie": 12,
+          "napiecie": 0,
+          "komentarz": "Po pauzie wchodzisz na spotkanie z jasnym celem, a nie z gotowym werdyktem. To zwiększa szansę, że inni też przyjdą z rozwiązaniami, a nie z obroną swoich stanowisk.",
+          "dalej": "spotkanie"
+        },
+        {
+          "tekst": "Uznajesz, że i tak najszybciej zrobisz to samodzielnie – tylko spokojniej.",
+          "zaufanie": -5,
+          "napiecie": 8,
+          "komentarz": "Spokojniej nie znaczy mniej samotnie. Pauza pomogła wyregulować napięcie, ale decyzja wciąż omija ludzi, których dotyczy.",
+          "dalej": "noc"
+        }
+      ]
+    },
+    "noc": {
+      "krok": "Wtorek, 8:30",
+      "tekst": "Oferta przepisana wczoraj przed północą. Rano szefowa compliance dzwoni: *„Widzę, że zapisy cenowe zostały zmienione bez mojego udziału. Nie mogę zaakceptować tego w takim trybie.”*",
+      "opcje": [
+        {
+          "tekst": "„Masz rację, to był skrót, którego nie powinno być. Usiądźmy dziś razem – z sprzedażą i produkcją.”",
+          "zaufanie": 12,
+          "napiecie": -5,
+          "komentarz": "Przyznanie się do skrótu to nie słabość, tylko sygnał, że współpraca jest ważniejsza niż wygranie potyczki. Naprawianie relacji w zespole zarządzającym jest tak samo ważne jak w zespole, którym kierujesz.",
+          "dalej": "spotkanie"
+        },
+        {
+          "tekst": "„Nie było czasu na procedury – klient czeka.”",
+          "zaufanie": -12,
+          "napiecie": 8,
+          "komentarz": "Presja czasu jest realna, ale ten argument ustawia compliance w roli przeszkody. Rośnie ryzyko, że następnym razem wątpliwości będą zgłaszane formalnie i późno – zamiast wcześnie i po partnersku.",
+          "dalej": "klient"
+        }
+      ]
+    },
+    "eskalacja": {
+      "krok": "Wtorek, 9:00",
+      "tekst": "Prezes odpisuje krótko: *„Proszę, dogadajcie się sami – od tego jesteście.”* Szef sprzedaży i szefowa compliance dzwonią do Ciebie osobno. Każde z nich jest zirytowane, że sprawa „poszła wyżej”.",
+      "opcje": [
+        {
+          "tekst": "Przepraszasz za formę maila i proponujesz wspólne spotkanie jeszcze dziś.",
+          "zaufanie": 10,
+          "napiecie": -3,
+          "komentarz": "Uznanie własnego ruchu otwiera drogę do rozmowy. Odpowiedź prezesa to też informacja: od zespołu zarządzającego oczekuje się współpracy horyzontalnej, a nie arbitrażu z góry.",
+          "dalej": "spotkanie"
+        },
+        {
+          "tekst": "Utrzymujesz presję: „Decyzja potrzebna do jutra, inaczej biorę to na siebie i działam.”",
+          "zaufanie": -10,
+          "napiecie": 8,
+          "komentarz": "Presja może przyspieszyć decyzję, ale kosztem relacji, które będą potrzebne w każdym kolejnym projekcie – zwłaszcza w sezonie grzewczym, gdy obszary muszą ze sobą ściśle współpracować.",
+          "dalej": "klient"
+        }
+      ]
+    },
+    "spotkanie": {
+      "krok": "Wtorek, 14:00 – spotkanie trzech obszarów",
+      "tekst": "Szybko robi się gorąco. Szef sprzedaży: *„Compliance zawsze hamuje, a potem to my tłumaczymy się klientom.”* Szefowa compliance: *„A sprzedaż obiecuje, zanim zapyta.”* Szef produkcji milczy i patrzy w telefon.",
+      "opcje": [
+        {
+          "tekst": "Nazywasz wspólny cel: „Oboje chronicie coś ważnego – relację z klientem i bezpieczeństwo regulacyjne firmy. Szukamy wersji, która chroni jedno i drugie.”",
+          "zaufanie": 12,
+          "napiecie": -5,
+          "komentarz": "Przeformułowanie sporu o stanowiska na rozmowę o interesach, które da się pogodzić, obniża temperaturę. Gdy ludzie słyszą, że ich perspektywa jest uprawniona, łatwiej im usłyszeć drugą stronę.",
+          "dalej": "klient"
+        },
+        {
+          "tekst": "Zwracasz się do szefa produkcji: „Nie słyszeliśmy jeszcze Ciebie. Co z perspektywy produkcji jest realne w pierwszych tygodniach sezonu?”",
+          "zaufanie": 10,
+          "napiecie": 0,
+          "komentarz": "Zaproszenie najcichszego głosu to jeden z najprostszych sposobów budowania bezpieczeństwa psychologicznego (Edmondson). Często to on ma informację, której brakuje pozostałym – tu: realne ograniczenia techniczne.",
+          "dalej": "klient"
+        },
+        {
+          "tekst": "Stajesz po stronie sprzedaży: „Klient jest najważniejszy, compliance musi się dostosować.”",
+          "zaufanie": -12,
+          "napiecie": 0,
+          "komentarz": "Szybkie rozstrzygnięcie może wydawać się efektywne, ale jedna ze stron wychodzi przegrana. W zespole z elementem rywalizacji to łatwo zamienia się w rachunek do wyrównania przy następnej okazji.",
+          "dalej": "klient"
+        }
+      ]
+    },
+    "klient": {
+      "krok": "Środa",
+      "tekst": "Rysuje się kompromis: w piątek możecie przedstawić klientowi **propozycję wstępną** z jasnym harmonogramem – ostateczne warunki cenowe po weryfikacji compliance za tydzień i realny termin rozpoczęcia dostaw uzgodniony z produkcją. Szef sprzedaży obawia się reakcji klienta. Co robisz?",
+      "opcje": [
+        {
+          "tekst": "Jedziesz na spotkanie razem z szefem sprzedaży i wspólnie uczciwie przedstawiacie harmonogram.",
+          "zaufanie": 10,
+          "napiecie": 5,
+          "komentarz": "Wspólna obecność pokazuje klientowi spójność firmy, a szefowi sprzedaży – że nie zostaje sam z trudną informacją. Uczciwy harmonogram zwykle buduje więcej zaufania niż obietnica bez pokrycia.",
+          "dalej": "wieczor"
+        },
+        {
+          "tekst": "Zostawiasz to sprzedaży: „To twój klient, ty wiesz najlepiej, jak to przekazać.”",
+          "zaufanie": -5,
+          "napiecie": -5,
+          "komentarz": "Odciążasz siebie, ale szef sprzedaży zostaje sam z najtrudniejszą częścią. To dokładnie ten mechanizm, który w zespołach zarządzających wzmacnia **samotność menedżerów**.",
+          "dalej": "wieczor"
+        },
+        {
+          "tekst": "Obiecujesz klientowi ostateczną cenę już w piątek, licząc, że compliance „jakoś to przyjmie”.",
+          "zaufanie": -15,
+          "napiecie": 10,
+          "komentarz": "Ryzyko regulacyjne i reputacyjne przerzucasz na przyszłość – i na innych. Jeśli analiza wykaże problem, trzeba będzie wycofać się z obietnicy, a zaufanie wewnątrz i na zewnątrz ucierpi podwójnie.",
+          "dalej": "wieczor"
+        }
+      ]
+    },
+    "wieczor": {
+      "krok": "Piątek, 18:30",
+      "tekst": "Spotkanie z klientem za Tobą. W poniedziałek startuje sezon grzewczy, w kalendarzu jedenaście spotkań. Czujesz zmęczenie całego tygodnia. Jak go kończysz?",
+      "opcje": [
+        {
+          "tekst": "Robisz 15-minutowy rytuał zamknięcia tygodnia: zapisujesz otwarte sprawy i pierwszy krok na poniedziałek, a szefom trzech obszarów wysyłasz krótkie podziękowanie za ten tydzień.",
+          "zaufanie": 8,
+          "napiecie": -12,
+          "komentarz": "Zamknięcie tygodnia ułatwia psychiczne odcięcie się od pracy – jeden z najsilniejszych czynników regeneracji. Krótkie podziękowanie wzmacnia relacje, które za tydzień będą potrzebne w sezonie.",
+          "dalej": "koniec"
+        },
+        {
+          "tekst": "Dzwonisz do członka zarządu z innego obszaru: „Jak Ty sobie radzisz z tym tygodniem?” – i rozmawiacie pół godziny.",
+          "zaufanie": 8,
+          "napiecie": -8,
+          "komentarz": "Rozmowa z kimś na tym samym poziomie to antidotum na samotność lidera. Wsparcie społeczne w pracy – także ze strony osób o podobnej odpowiedzialności – należy do dobrze udokumentowanych czynników chroniących przed wypaleniem.",
+          "dalej": "koniec"
+        },
+        {
+          "tekst": "Siedzisz nad mailami do 22:00, żeby w poniedziałek „wejść czysto”.",
+          "zaufanie": 0,
+          "napiecie": 12,
+          "komentarz": "Skrzynka będzie pusta, ale w sezon grzewczy wchodzisz z deficytem energii. W modelu Thayera to prosta droga do **napiętego zmęczenia** – stanu, w którym problemy wydają się większe, niż są.",
+          "dalej": "koniec"
+        }
+      ]
+    }
+  },
+  "zakonczenia": [
+    {
+      "min_zaufanie": 70,
+      "max_napiecie": 55,
+      "tytul": "Zespół liderów, nie obok siebie",
+      "opis": "Problem wrócił tam, gdzie był – między obszarami – i został rozwiązany wspólnie, a Ty wchodzisz w sezon z zachowaną energią. To wzorzec, który chroni przed wypaleniem całą kadrę zarządzającą: nikt nie dźwiga trudności sam."
+    },
+    {
+      "min_zaufanie": 70,
+      "tytul": "Współpraca zbudowana – kosztem Twojej energii",
+      "opis": "Obszary zaczęły ze sobą rozmawiać, ale w sezon wchodzisz z wysokim napięciem. Gdzie można było oddać część ciężaru innym? Co pomoże Ci zregenerować się przed poniedziałkiem?"
+    },
+    {
+      "max_zaufanie": 45,
+      "tytul": "Wyścig zamiast drużyny",
+      "opis": "Każdy obszar broni swojej racji, a decyzje zapadają przez eskalację albo samodzielne działanie. Taki wzorzec z czasem wzmacnia rywalizację, samotność liderów i ryzyko wypalenia – nawet jeśli projekt formalnie się udaje."
+    },
+    {
+      "tytul": "Sprawa załatwiona, silosy zostały",
+      "opis": "Oferta ruszyła, ale sposób współpracy między obszarami się nie zmienił – przy następnym projekcie trudność wróci. Który jeden ruch z Twojej ścieżki mógłby następnym razem zmienić dynamikę?"
+    }
+  ],
+  "macierz": {
+    "opis": "Dwa wymiary, które razem decydują o odporności kadry zarządzającej: jakość współpracy między obszarami i poziom napięcia każdego z liderów.",
+    "kolumny_tytul": "Współpraca między obszarami",
+    "kolumny": [
+      "niska",
+      "wysoka"
+    ],
+    "wiersze_tytul": "napięcie",
+    "prog_zaufanie": 60,
+    "prog_napiecie": 55,
+    "wiersz_wg": "napiecie",
+    "wiersze": [
+      {
+        "nazwa": "Napięcie wysokie",
+        "pola": [
+          "Wyścig szczurów",
+          "Drużyna na rezerwach"
+        ]
+      },
+      {
+        "nazwa": "Napięcie niskie",
+        "pola": [
+          "Obok siebie (silosy)",
+          "Zespół liderów"
+        ]
+      }
+    ]
+  },
+  "pytania_do_refleksji": [
+    "Który moment tej historii najbardziej przypomina Twoją codzienność?",
+    "Kiedy ostatnio rozwiązywałeś/-aś problem innego obszaru „po cichu”, samodzielnie – i jaki był tego koszt?",
+    "Z kim w zespole zarządzającym mógłbyś/mogłabyś porozmawiać tak, jak w ostatniej scenie – i co dziś stoi temu na przeszkodzie?",
+    "Jakie jedno pytanie możesz zadać na najbliższym spotkaniu międzyobszarowym, żeby przenieść uwagę ze stanowisk na wspólny cel?"
+  ],
+  "poglebienie": [
+    {
+      "tekst": "Wypalenie → Przyczyny: sześć obszarów niedopasowania (m.in. wspólnota i wartości)",
+      "link": "sekcja.html?s=wypalenie#przyczyny"
+    },
+    {
+      "tekst": "Film: Simon Sinek – dlaczego przy dobrych liderach czujemy się bezpiecznie",
+      "link": "filmy.html#film=lmyZMtPVodo"
+    },
+    {
+      "tekst": "Książka: Pułapka szczęścia – defuzja i działanie zgodne z wartościami",
+      "link": "ksiazki.html#ksiazka=harris-pulapka"
+    },
+    {
+      "tekst": "Książka: Dobre życie – relacje jako źródło odporności",
+      "link": "ksiazki.html#ksiazka=waldinger-dobre-zycie"
+    },
+    {
+      "tekst": "Ćwiczenie: oddech z wydłużonym wydechem – przed trudnym spotkaniem",
+      "link": "oddech.html"
+    }
+  ]
+}

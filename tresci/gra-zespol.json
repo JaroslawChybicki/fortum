@@ -158,5 +158,76 @@
     "W którym momencie tej historii Twoje napięcie byłoby najwyższe – i jak zwykle wtedy reagujesz?",
     "Co w Twoim zespole dzieje się dziś z informacją o błędzie: jak szybko dociera do Ciebie?",
     "Jakie jedno zdanie możesz wprowadzić do swojego repertuaru, gdy ktoś przychodzi z trudną informacją?"
+  ],
+  "mierniki": {
+    "zaufanie": "Zaufanie w zespole",
+    "napiecie": "Twoje napięcie"
+  },
+  "zakonczenia": [
+    {
+      "min_zaufanie": 70,
+      "max_napiecie": 55,
+      "tytul": "Strefa uczenia się",
+      "opis": "Zespół wie, że o błędach można mówić, a Ty zachowałeś równowagę. To połączenie wysokiego bezpieczeństwa psychologicznego z wysokimi standardami – warunek, w którym zespoły uczą się najszybciej."
+    },
+    {
+      "min_zaufanie": 70,
+      "tytul": "Zaufanie zbudowane – kosztem Twojej energii",
+      "opis": "Zespół wyszedł z tej sytuacji z większym zaufaniem, ale Ty zapłaciłeś za to wysokim napięciem. Warto zapytać: co mogę oddać, a gdzie potrzebuję regeneracji, żeby taki styl był możliwy na dłuższą metę?"
+    },
+    {
+      "max_zaufanie": 45,
+      "tytul": "Strefa lęku",
+      "opis": "Wymagania są wysokie, ale bezpieczeństwo psychologiczne spadło. W takiej atmosferze ludzie częściej ukrywają błędy i rzadziej zgłaszają problemy – a to zwiększa ryzyko dla całej organizacji."
+    },
+    {
+      "tytul": "Sytuacja opanowana – potencjał do wykorzystania",
+      "opis": "Problem został rozwiązany, ale zespół nie wzmocnił przekonania, że o błędach można mówić bezpiecznie. Przejrzyj swoje wybory – który jeden krok mógłby to zmienić?"
+    }
+  ],
+  "macierz": {
+    "opis": "Macierz Amy Edmondson: przy wysokich wymaganiach (termin, zarząd) o efekcie decyduje poziom bezpieczeństwa psychologicznego.",
+    "kolumny_tytul": "Bezpieczeństwo psychologiczne",
+    "kolumny": [
+      "niskie",
+      "wysokie"
+    ],
+    "wiersze_tytul": "wymagania",
+    "prog_zaufanie": 60,
+    "wiersz_staly": 0,
+    "wiersze": [
+      {
+        "nazwa": "Wymagania wysokie",
+        "pola": [
+          "Strefa lęku",
+          "Strefa uczenia się"
+        ]
+      },
+      {
+        "nazwa": "Wymagania niskie",
+        "pola": [
+          "Strefa apatii",
+          "Strefa komfortu"
+        ]
+      }
+    ]
+  },
+  "poglebienie": [
+    {
+      "tekst": "Film: Amy Edmondson – bezpieczeństwo psychologiczne",
+      "link": "filmy.html#film=LhoLuui9gX8"
+    },
+    {
+      "tekst": "Książka: Firma bez strachu",
+      "link": "ksiazki.html#ksiazka=edmondson-firma"
+    },
+    {
+      "tekst": "Książka: Odwaga w przywództwie",
+      "link": "ksiazki.html#ksiazka=brown-odwaga"
+    },
+    {
+      "tekst": "Ćwiczenie: oddech z wydłużonym wydechem – na moment przed trudną rozmową",
+      "link": "oddech.html"
+    }
   ]
 }
