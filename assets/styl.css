@@ -89,3 +89,19 @@ a{color:var(--deep)}
 footer{margin-top:auto;border-top:1px solid var(--line);padding:22px 0 calc(22px + env(safe-area-inset-bottom));color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer a{color:var(--muted)}
+
+/* podsekcje jako zakładki */
+.md.intro{margin:20px 0 8px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;padding-bottom:16px;border-bottom:1px solid var(--line);scroll-margin-top:16px}
+.tabs button{font:inherit;font-size:.95rem;font-weight:600;border:1px solid var(--mist-2);background:var(--white);color:var(--deep);
+  padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s}
+.tabs button:hover{background:var(--mist)}
+.tabs button[aria-selected="true"]{background:var(--deep);border-color:var(--deep);color:#fff}
+.panel{margin:26px 0 64px}
+.panel .md{margin:0}
+.panel-h{color:var(--navy);font-size:1.6rem;margin:0 0 .6em}
+.panel .md h2{font-size:1.3rem}
+.muted{color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:18px;border-top:1px solid var(--line);max-width:70ch}
+.pager a{color:var(--teal);font-weight:600;text-decoration:none}
+.pager a:hover{text-decoration:underline}

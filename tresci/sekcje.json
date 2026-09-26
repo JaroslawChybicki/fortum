@@ -9,7 +9,8 @@
       "adres": "badanie/",
       "wyroznij": true,
       "ukryj": false,
-      "tresc": ""
+      "tresc": "",
+      "podsekcje": []
     },
     {
       "id": "wypalenie",
@@ -20,7 +21,25 @@
       "adres": "",
       "wyroznij": false,
       "ukryj": false,
-      "tresc": ""
+      "tresc": "",
+      "podsekcje": [
+        {
+          "tytul": "Badania i dane",
+          "tresc": ""
+        },
+        {
+          "tytul": "Po czym poznać",
+          "tresc": ""
+        },
+        {
+          "tytul": "Przyczyny",
+          "tresc": ""
+        },
+        {
+          "tytul": "Jak przeciwdziałać",
+          "tresc": ""
+        }
+      ]
     },
     {
       "id": "energia",
@@ -31,7 +50,25 @@
       "adres": "",
       "wyroznij": false,
       "ukryj": false,
-      "tresc": ""
+      "tresc": "",
+      "podsekcje": [
+        {
+          "tytul": "Badania i dane",
+          "tresc": ""
+        },
+        {
+          "tytul": "Po czym poznać",
+          "tresc": ""
+        },
+        {
+          "tytul": "Przyczyny",
+          "tresc": ""
+        },
+        {
+          "tytul": "Jak przeciwdziałać",
+          "tresc": ""
+        }
+      ]
     },
     {
       "id": "odpornosc",
@@ -42,7 +79,25 @@
       "adres": "",
       "wyroznij": false,
       "ukryj": false,
-      "tresc": ""
+      "tresc": "",
+      "podsekcje": [
+        {
+          "tytul": "Badania i dane",
+          "tresc": ""
+        },
+        {
+          "tytul": "Po czym poznać",
+          "tresc": ""
+        },
+        {
+          "tytul": "Przyczyny",
+          "tresc": ""
+        },
+        {
+          "tytul": "Jak przeciwdziałać",
+          "tresc": ""
+        }
+      ]
     }
   ]
 }

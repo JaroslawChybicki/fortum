@@ -25,8 +25,11 @@ Przy pierwszym logowaniu Pages CMS poprosi o zainstalowanie aplikacji GitHub –
 W panelu są dwie pozycje:
 - **Sekcje (kafelki i treści)** – lista kafelków. Każdy ma tytuł, opis, ikonę, przełączniki
   „wyróżniony” / „ukryj” oraz edytor treści podstrony (pogrubienia, listy, linki, obrazki).
-  - Nagłówek poziomu 2 (H2) = osobna część strony i przycisk w spisie treści.
-  - Pusta treść = „Materiały do tej sekcji pojawią się wkrótce”.
+  - **Wprowadzenie** – krótki tekst nad zakładkami (opcjonalny).
+  - **Podsekcje (zakładki)** – np. „Badania i dane”, „Po czym poznać”, „Przyczyny”, „Jak przeciwdziałać”;
+    w każdej sekcji mogą być inne. Podsekcja bez treści jest ukryta, więc tytuły można przygotować zawczasu.
+    Link do konkretnej zakładki: `sekcja.html?s=wypalenie#przyczyny`.
+  - Sekcja bez wprowadzenia i bez wypełnionych podsekcji = „Materiały do tej sekcji pojawią się wkrótce”.
   - **Nowa sekcja:** *Add an item* na końcu listy → tytuł, treść, „Adres podstrony” (np. `oddech`) → Save.
   - Kolejność kafelków = kolejność na liście (przeciągnij).
   - „Link zewnętrzny zamiast podstrony” – tak działa kafelek „Badanie” (`badanie/`).

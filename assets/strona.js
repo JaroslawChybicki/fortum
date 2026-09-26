@@ -110,15 +110,30 @@ async function podstrona() {
   }
   document.title = t.tytul + ' | ' + (u.tytul_strony || '');
 
-  // Pages CMS zapisuje Markdown; ewentualny blok frontmatter (---) pomijamy.
-  const md = String(t.tresc || '').replace(/^---\r?\n(?:[\s\S]*?\r?\n)?---\r?\n?/, '').replace(/<!--[\s\S]*?-->/g, '').trim();
+  const podsekcje = (t.podsekcje || [])
+    .filter((p) => p && (p.tytul || '').trim())
+    .map((p) => ({ tytul: p.tytul.trim(), html: renderMd(p.tresc), id: slug(p.tytul) }))
+    .filter((p) => p.html); // podsekcja bez treści nie pojawia się na stronie
+  const wstep = renderMd(t.tresc);
 
   let body;
-  if (!md) {
+  if (!wstep && !podsekcje.length) {
     body = `<div class="soon">${esc(u.komunikat_w_przygotowaniu || 'Treści tej sekcji są w przygotowaniu.')}</div>`;
   } else {
-    const html = DOMPurify.sanitize(marked.parse(md), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'target'] });
-    body = `<nav class="toc" id="toc" aria-label="Spis treści"></nav><article class="md" id="md">${html}</article>`;
+    body = (wstep ? `<article class="md intro" id="md">${wstep}</article>` : '') +
+      (podsekcje.length ? `
+        <div class="tabs" role="tablist" aria-label="Podsekcje">
+          ${podsekcje.map((p) => `<button type="button" role="tab" id="tab-${p.id}" aria-controls="pan-${p.id}" data-id="${p.id}">${esc(p.tytul)}</button>`).join('')}
+        </div>
+        ${podsekcje.map((p, i) => `
+          <section class="panel" role="tabpanel" id="pan-${p.id}" aria-labelledby="tab-${p.id}" hidden>
+            <h2 class="panel-h">${esc(p.tytul)}</h2>
+            <div class="md">${p.html}</div>
+            <div class="pager">
+              ${i > 0 ? `<a href="#${podsekcje[i - 1].id}" class="prev">← ${esc(podsekcje[i - 1].tytul)}</a>` : '<span></span>'}
+              ${i < podsekcje.length - 1 ? `<a href="#${podsekcje[i + 1].id}" class="next">${esc(podsekcje[i + 1].tytul)} →</a>` : ''}
+            </div>
+          </section>`).join('')}` : '');
   }
 
   main.innerHTML = `<div class="wrap">
@@ -127,15 +142,47 @@ async function podstrona() {
     ${body}
   </div>`;
 
-  // Spis treści z nagłówków „## …” (pokazywany, gdy są co najmniej 2 sekcje).
-  const art = document.getElementById('md');
-  if (art) {
-    const h2 = [...art.querySelectorAll('h2')];
+  main.querySelectorAll('.md a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
+
+  if (podsekcje.length) {
+    // Zakładki: aktywna podsekcja w adresie (#przyczyny), więc można wysłać link do konkretnej.
+    const tabs = [...main.querySelectorAll('[role=tab]')];
+    const pokaz = (id, przewin) => {
+      if (!podsekcje.some((p) => p.id === id)) id = podsekcje[0].id;
+      tabs.forEach((b) => {
+        const on = b.dataset.id === id;
+        b.setAttribute('aria-selected', on);
+        b.tabIndex = on ? 0 : -1;
+        document.getElementById('pan-' + b.dataset.id).hidden = !on;
+      });
+      if (przewin) main.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    tabs.forEach((b, i) => {
+      b.addEventListener('click', () => { history.replaceState(null, '', '#' + b.dataset.id); pokaz(b.dataset.id); });
+      b.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        const n = tabs[(i + d + tabs.length) % tabs.length];
+        n.focus(); n.click();
+      });
+    });
+    window.addEventListener('hashchange', () => pokaz(decodeURIComponent(location.hash.slice(1)), true));
+    pokaz(decodeURIComponent(location.hash.slice(1)), false);
+  } else {
+    // Bez podsekcji: spis treści z nagłówków „## …” w treści (gdy są co najmniej 2).
+    const art = document.getElementById('md');
+    const h2 = art ? [...art.querySelectorAll('h2')] : [];
     h2.forEach((h) => { h.id = slug(h.textContent); });
-    const toc = document.getElementById('toc');
-    if (h2.length >= 2) toc.innerHTML = h2.map((h) => `<a href="#${h.id}">${esc(h.textContent)}</a>`).join('');
-    else toc.remove();
-    art.querySelectorAll('a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
+    if (h2.length >= 2) {
+      art.insertAdjacentHTML('beforebegin', `<nav class="toc" aria-label="Spis treści">${h2.map((h) => `<a href="#${h.id}">${esc(h.textContent)}</a>`).join('')}</nav>`);
+    }
     if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
   }
+}
+
+// Markdown z CMS → bezpieczny HTML (pusty tekst → '').
+function renderMd(tekst) {
+  const md = String(tekst || '').replace(/^---\r?\n(?:[\s\S]*?\r?\n)?---\r?\n?/, '').replace(/<!--[\s\S]*?-->/g, '').trim();
+  if (!md) return '';
+  return DOMPurify.sanitize(marked.parse(md), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'target'] });
 }

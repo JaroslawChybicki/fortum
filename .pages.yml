@@ -27,9 +27,25 @@ content:
             type: string
             required: true
           - name: tresc
-            label: Treść podstrony
-            description: "Nagłówki poziomu 2 tworzą części strony i spis treści na górze. Puste = „Materiały pojawią się wkrótce”."
+            label: Wprowadzenie
+            description: Tekst nad zakładkami podsekcji (opcjonalny).
             type: rich-text
+          - name: podsekcje
+            label: Podsekcje (zakładki)
+            description: "Każda podsekcja to osobna zakładka na podstronie, np. „Przyczyny”, „Jak przeciwdziałać”. Podsekcja bez treści jest ukryta. Kolejność = kolejność zakładek."
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{tytul}"
+            fields:
+              - name: tytul
+                label: Tytuł zakładki
+                type: string
+                required: true
+              - name: tresc
+                label: Treść
+                type: rich-text
           - name: opis
             label: Opis na kafelku
             type: text
