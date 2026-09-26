@@ -17,8 +17,40 @@
 </div></header>
 <svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
 <main id="tresc"></main>
+
+<!-- Formularz kontaktowy (Netlify Forms). Musi być w statycznym HTML, żeby Netlify go wykrył przy wdrożeniu. -->
+<section class="wrap" id="napisz" aria-labelledby="napisz-h">
+  <form class="kform" name="kontakt" method="POST" data-netlify="true" netlify-honeypot="adres_www" action="/?wyslano=1#napisz">
+    <input type="hidden" name="form-name" value="kontakt">
+    <h2 id="napisz-h">Napisz wiadomość</h2>
+    <p class="kform-lead">Pytanie o program, sesję coachingową albo materiały? Odpowiem na podany adres e-mail.</p>
+    <p class="hp" aria-hidden="true"><label>Nie wypełniaj tego pola: <input name="adres_www" tabindex="-1" autocomplete="off"></label></p>
+    <div class="kgrid">
+      <label class="kf"><span>Imię</span><input name="imie" autocomplete="given-name" maxlength="80" required></label>
+      <label class="kf"><span>E-mail</span><input type="email" name="email" autocomplete="email" maxlength="120" required></label>
+      <label class="kf full"><span>Temat</span>
+        <select name="temat">
+          <option>Pytanie o program „Odporni i gotowi”</option>
+          <option>Sesja coachingowa – termin lub organizacja</option>
+          <option>Badanie Deep Dive</option>
+          <option>Materiały na stronie</option>
+          <option>Inne</option>
+        </select>
+      </label>
+      <label class="kf full"><span>Wiadomość</span><textarea name="wiadomosc" rows="6" maxlength="4000" required></textarea></label>
+    </div>
+    <p class="knote">Nie opisuj w formularzu szczegółów dotyczących zdrowia – na takie rozmowy jest miejsce na sesji.</p>
+    <label class="kcheck"><input type="checkbox" name="zgoda" value="tak" required>
+      <span>Wyrażam zgodę na przetwarzanie podanych danych (imię, e-mail, treść wiadomości) wyłącznie w celu udzielenia odpowiedzi. Administratorem danych jest prowadzący program. Mogę w każdej chwili poprosić o ich usunięcie.</span></label>
+    <div class="kactions">
+      <button type="submit" class="btn">Wyślij wiadomość</button>
+      <span class="kstatus" role="status" aria-live="polite"></span>
+    </div>
+  </form>
+</section>
 <footer id="stopka"></footer>
 <script src="assets/strona.js"></script>
 <script>stronaGlowna();</script>
+<script src="assets/kontakt.js"></script>
 </body>
 </html>

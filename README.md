@@ -55,6 +55,12 @@ panel pilnuje tego za Ciebie.
 więc przycisk „Kopiuj link” pozwala wysłać gotowe wyliczenie (np. klientowi). Wartości domyślne i ich źródła:
 blok `DOMYSLNE` w `assets/kalkulator.js` oraz opisy pól w `kalkulator.html`.
 
+## Formularz kontaktowy
+Na stronie głównej (sekcja `#napisz`), link „Napisz wiadomość” w stopce każdej podstrony. Obsługa: **Netlify Forms**
+(formularz „kontakt”). Wiadomości: Netlify → projekt `fortum` → *Forms*. Powiadomienia e-mail:
+*Project configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification*.
+Formularz musi pozostać w statycznym HTML `index.html` – inaczej Netlify go nie wykryje.
+
 ## Podgląd lokalny
 Treści są wczytywane z plików, więc samo dwukliknięcie `index.html` nie wystarczy:
 ```

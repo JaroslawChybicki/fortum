@@ -45,8 +45,10 @@ function stopka(u) {
   const f = document.getElementById('stopka');
   if (!f) return;
   const k = u.kontakt || {};
-  f.innerHTML = `<div class="wrap"><span>© ${new Date().getFullYear()} ${esc(k.imie)}</span>` +
-    (k.lyra_url ? `<a href="${esc(k.lyra_url)}" target="_blank" rel="noopener">${esc(k.lyra_nazwa || k.lyra_url)}</a>` : '') + '</div>';
+  const naGlownej = !!document.getElementById('napisz');
+  f.innerHTML = `<div class="wrap"><span>© ${new Date().getFullYear()} ${esc(k.imie)}</span><span class="flinks">` +
+    `<a href="${naGlownej ? '' : './'}#napisz">Napisz wiadomość</a>` +
+    (k.lyra_url ? `<a href="${esc(k.lyra_url)}" target="_blank" rel="noopener">${esc(k.lyra_nazwa || k.lyra_url)}</a>` : '') + '</span></div>';
 }
 
 /* ---------- strona główna ---------- */
@@ -87,7 +89,10 @@ async function stronaGlowna() {
             ${k.strona_www ? `<li>${IKONY.www}<a href="${esc(k.strona_www)}" target="_blank" rel="noopener">${esc(k.strona_www.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</a></li>` : ''}
           </ul>
         </div>
-        ${k.lyra_url ? `<a class="btn" href="${esc(k.lyra_url)}" target="_blank" rel="noopener">${esc(k.lyra_przycisk || 'Lyra Polska')} ↗</a>` : ''}
+        <div class="contact-actions">
+          <a class="btn" href="#napisz">Napisz wiadomość</a>
+          ${k.lyra_url ? `<a class="btn ghost" href="${esc(k.lyra_url)}" target="_blank" rel="noopener">${esc(k.lyra_przycisk || 'Lyra Polska')} ↗</a>` : ''}
+        </div>
       </section>
     </div>`;
   stopka(u);

@@ -167,3 +167,36 @@ footer a{display:inline-block;padding:6px 0}
 .bk-foot .btn.ghost{background:transparent;color:var(--deep) !important;border:1px solid var(--mist-2)}
 .bk-foot .btn[hidden]{display:none}
 @media (max-width:560px){#book-dlg{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border-radius:0}}
+
+/* formularz kontaktowy */
+.contact-actions{display:flex;flex-wrap:wrap;gap:10px}
+.contact-actions .btn.ghost{background:transparent;color:var(--navy) !important;border:1.5px solid var(--navy)}
+.contact-actions .btn.ghost:hover{background:rgba(18,59,82,.06)}
+#napisz{scroll-margin-top:20px;margin-top:-28px;margin-bottom:56px}
+.kform{background:var(--white);border:1px solid var(--line);border-radius:var(--r-l);padding:26px}
+.kform h2{margin:0 0 4px;color:var(--navy);font-size:1.3rem}
+.kform-lead{margin:0 0 18px;color:var(--muted)}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.kf{display:flex;flex-direction:column;gap:6px}
+.kf.full{grid-column:1/-1}
+.kf>span{font-weight:600;font-size:.93rem}
+.kf input,.kf select,.kf textarea{font:inherit;padding:10px 12px;border:1px solid var(--mist-2);border-radius:10px;background:#fff;color:var(--ink);width:100%}
+.kf textarea{resize:vertical;min-height:130px}
+.kf input:focus,.kf select:focus,.kf textarea:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.knote{margin:14px 0 10px;font-size:.88rem;color:var(--muted)}
+.kcheck{display:flex;gap:10px;align-items:flex-start;font-size:.86rem;color:var(--muted);line-height:1.45}
+.kcheck input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--deep)}
+.kactions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:18px}
+.kactions .btn{border:0;cursor:pointer;font:inherit;font-weight:600}
+.kactions .btn:disabled{opacity:.6;cursor:wait}
+.kstatus.ok{color:var(--teal);font-weight:600}
+.kstatus.err{color:var(--red);font-weight:600}
+.kform.sent{border-color:var(--teal);background:var(--mist)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+footer .flinks{display:flex;gap:18px;flex-wrap:wrap}
+@media (max-width:560px){
+  .kform{padding:20px 16px}
+  .kgrid{grid-template-columns:1fr}
+  .kactions .btn,.contact-actions .btn{width:100%;justify-content:center}
+  #napisz{margin-top:-16px;margin-bottom:36px}
+}
