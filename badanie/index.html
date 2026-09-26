@@ -853,7 +853,7 @@ function renderResults(){
       <div class="tiers">
         <div class="tier avoid-break"><h3>Na najbliższy tydzień</h3><ol>${rec.now.map(t=>`<li>${t}</li>`).join('')}</ol></div>
         <div class="tier avoid-break"><h3>Tematy na sesje coachingowe</h3><p class="small muted" style="margin:0">Propozycje do wyboru – ostateczny kierunek ustalicie wspólnie na pierwszej sesji.</p><ul>${rec.topics.map(t=>`<li>${t}</li>`).join('')}</ul></div>
-        ${rec.safety?`<div class="tier warm avoid-break"><h3>Zadbaj o siebie teraz</h3><p>Twoje wyniki wskazują na znaczne i utrzymujące się obciążenie. To nie jest diagnoza, ale warto nie czekać z rozmową do pierwszej sesji. Możesz napisać do prowadzącego (<a href="mailto:${CONFIG.contactEmail}">${CONFIG.contactEmail}</a>) albo skorzystać z konsultacji dostępnych w programie wsparcia Lyra w Twojej organizacji. Jeśli czujesz, że trudno Ci funkcjonować na co dzień, skonsultuj się z lekarzem lub psychoterapeutą.</p></div>`:''}
+        ${rec.safety?`<div class="tier warm avoid-break"><h3>Zadbaj o siebie teraz</h3><p>Twoje wyniki wskazują na znaczne i utrzymujące się obciążenie. To nie jest diagnoza, ale warto nie czekać z rozmową do pierwszej sesji. Możesz napisać do prowadzącego (<a href="mailto:${CONFIG.contactEmail}">${CONFIG.contactEmail}</a>) – pomoże znaleźć odpowiednie wsparcie. Jeśli czujesz, że trudno Ci funkcjonować na co dzień, skonsultuj się z lekarzem (np. lekarzem rodzinnym), psychologiem lub psychoterapeutą.</p><p>W sytuacji zagrożenia dzwoń pod <strong>112</strong>. Całodobowe Centrum Wsparcia dla osób dorosłych w kryzysie psychicznym: <strong>800 70 2222</strong> (bezpłatnie).</p></div>`:''}
         <div class="tier avoid-break"><h3>Pytania do refleksji przed pierwszą sesją</h3><ul>${REFLECTION.map(t=>`<li>${t}</li>`).join('')}</ul></div>
       </div>
     </section>
@@ -926,7 +926,7 @@ function reportMarkdown(R){
   m+=NEEDS.map(n=>`- ${n}: ${h.needs[n]} / 60`).join('\n')+'\n\n';
   m+=`### Wskazówki dla filarów\n\n`+PILLARS.map(p=>`**${p.name}** (${zone(h.pillars[p.id])})\n\n${stripHtml(HANSON_RECS[p.id][level(h.pillars[p.id])]).trim()}\n`).join('\n')+'\n';
   m+=`## Kierunki rozwoju\n\n### Na najbliższy tydzień\n\n${rec.now.map((t,i)=>`${i+1}. ${stripHtml(t)}`).join('\n')}\n\n### Tematy na sesje coachingowe\n\n${rec.topics.map(t=>`- ${t}`).join('\n')}\n\n`;
-  if(rec.safety) m+=`### Zadbaj o siebie teraz\n\nTwoje wyniki wskazują na znaczne i utrzymujące się obciążenie. To nie jest diagnoza, ale warto nie czekać z rozmową do pierwszej sesji: napisz do prowadzącego (${CONFIG.contactEmail}) albo skorzystaj z konsultacji w programie wsparcia Lyra.\n\n`;
+  if(rec.safety) m+=`### Zadbaj o siebie teraz\n\nTwoje wyniki wskazują na znaczne i utrzymujące się obciążenie. To nie jest diagnoza, ale warto nie czekać z rozmową do pierwszej sesji: napisz do prowadzącego (${CONFIG.contactEmail}) – pomoże znaleźć odpowiednie wsparcie. Jeśli trudno Ci funkcjonować na co dzień, skonsultuj się z lekarzem (np. lekarzem rodzinnym), psychologiem lub psychoterapeutą.\n\nW sytuacji zagrożenia dzwoń pod **112**. Całodobowe Centrum Wsparcia dla osób dorosłych w kryzysie psychicznym: **800 70 2222** (bezpłatnie).\n\n`;
   m+=`### Pytania do refleksji przed pierwszą sesją\n\n${REFLECTION.map(t=>`- ${t}`).join('\n')}\n\n---\n\nKod danych: \`${dataCode()}\`\n\nNarzędzie rozwojowe, nie diagnoza kliniczna. Kontakt: ${CONFIG.contactName}, ${CONFIG.contactEmail}, lyrapolska.pl\n`;
   return m;
 }
