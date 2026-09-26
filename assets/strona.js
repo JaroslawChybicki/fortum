@@ -145,6 +145,7 @@ async function podstrona() {
   </div>`;
 
   main.querySelectorAll('.md a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
+  podepnijFilmy(main);
 
   if (podsekcje.length) {
     // Zakładki: aktywna podsekcja w adresie (#przyczyny), więc można wysłać link do konkretnej.
@@ -191,4 +192,38 @@ function renderMd(tekst) {
   const md = String(tekst || '').replace(/^---\r?\n(?:[\s\S]*?\r?\n)?---\r?\n?/, '').replace(/<!--[\s\S]*?-->/g, '').trim();
   if (!md) return '';
   return DOMPurify.sanitize(marked.parse(md), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'target'] });
+}
+
+// Linki „filmy.html#film=ID” w treści otwierają film w oknie na miejscu,
+// bez opuszczania podstrony (bez JS działają jak zwykły link do biblioteki).
+function podepnijFilmy(root) {
+  const linki = [...root.querySelectorAll('a[href*="filmy.html#film="]')];
+  if (!linki.length || !window.HTMLDialogElement) return;
+  let dlg = document.getElementById('player');
+  if (!dlg) {
+    document.body.insertAdjacentHTML('beforeend', `
+      <dialog id="player" aria-label="Odtwarzacz filmu">
+        <div class="pl-head"><div><strong id="pl-title"></strong></div>
+          <button type="button" id="pl-close" aria-label="Zamknij">✕</button></div>
+        <div class="pl-frame" id="pl-frame"></div>
+        <a id="pl-yt" href="filmy.html">Więcej filmów w bibliotece →</a>
+      </dialog>`);
+    dlg = document.getElementById('player');
+    const frame = document.getElementById('pl-frame');
+    document.getElementById('pl-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('close', () => { frame.innerHTML = ''; });
+  }
+  linki.forEach((a) => {
+    a.closest('blockquote')?.classList.add('film');
+    a.addEventListener('click', (e) => {
+      const id = (a.getAttribute('href').match(/#film=([\w-]{11})/) || [])[1];
+      if (!id) return;
+      e.preventDefault();
+      document.getElementById('pl-title').textContent = a.textContent;
+      document.getElementById('pl-frame').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&hl=pl&cc_lang_pref=pl&cc_load_policy=1"
+        title="${esc(a.textContent)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+      dlg.showModal();
+    });
+  });
 }

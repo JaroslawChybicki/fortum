@@ -135,3 +135,9 @@ footer a{display:inline-block;padding:6px 0}
   .md h2{font-size:1.3rem}
   .md th,.md td{padding:7px 8px;font-size:.9rem}
 }
+
+/* odnośnik do filmu w treści */
+.md blockquote.film{background:var(--peach);border-left-color:var(--red);padding-left:56px;position:relative}
+.md blockquote.film::before{content:"";position:absolute;left:16px;top:16px;width:26px;height:26px;border-radius:50%;
+  background:var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6.5v11l9-5.5z' fill='white'/%3E%3C/svg%3E") center/16px no-repeat}
+.md blockquote.film a{font-weight:700}

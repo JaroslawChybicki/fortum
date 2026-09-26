@@ -35,3 +35,4 @@
   .vid-body{padding:14px 16px 18px}
   #player{width:100vw;max-width:100vw;border-radius:0}
 }
+.vid.hl{outline:3px solid var(--teal);outline-offset:2px}

@@ -64,16 +64,26 @@ async function biblioteka() {
   // Odtwarzacz w oknie (youtube-nocookie, polskie napisy gdy dostępne).
   const dlg = document.getElementById('player');
   const frame = document.getElementById('pl-frame');
-  el.querySelectorAll('.thumb').forEach((b) => b.addEventListener('click', () => {
-    const f = filmy[b.dataset.i];
+  const otworz = (f) => {
     const id = ytId(f.youtube);
     document.getElementById('pl-title').textContent = f.tytul;
     document.getElementById('pl-meta').textContent = [f.autor, f.wydarzenie].filter(Boolean).join(' · ');
     document.getElementById('pl-yt').href = 'https://www.youtube.com/watch?v=' + id;
     frame.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&hl=pl&cc_lang_pref=pl&cc_load_policy=1"
       title="${esc(f.tytul)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
-    if (dlg.showModal) dlg.showModal(); else window.open('https://www.youtube.com/watch?v=' + id, '_blank');
-  }));
+    if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else window.open('https://www.youtube.com/watch?v=' + id, '_blank');
+  };
+  el.querySelectorAll('.thumb').forEach((b) => b.addEventListener('click', () => otworz(filmy[b.dataset.i])));
+
+  // Link z treści sekcji: filmy.html#film=ID otwiera od razu dany film.
+  const m = location.hash.match(/^#film=([\w-]{11})/);
+  const zLinku = m && filmy.find((f) => ytId(f.youtube) === m[1]);
+  if (zLinku) {
+    const karta = el.querySelectorAll('.vid')[filmy.indexOf(zLinku)];
+    karta.scrollIntoView({ block: 'center' });
+    karta.classList.add('hl');
+    otworz(zLinku);
+  }
   const zamknij = () => { frame.innerHTML = ''; if (dlg.open) dlg.close(); };
   document.getElementById('pl-close').addEventListener('click', zamknij);
   dlg.addEventListener('click', (e) => { if (e.target === dlg) zamknij(); });
