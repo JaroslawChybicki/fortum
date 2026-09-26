@@ -212,6 +212,13 @@ content:
             collapsed: true
             summary: "{autor} – {tytul}"
         fields:
+          - name: id
+            label: Identyfikator (do linków z treści)
+            description: "Krótka nazwa bez polskich znaków, np. „maslach-prawda”. Link w treści sekcji: ksiazki.html#ksiazka=maslach-prawda. Nie zmieniaj, jeśli jest już użyta w treści."
+            type: string
+            pattern:
+              regex: "^[a-z0-9-]*$"
+              message: Tylko małe litery bez polskich znaków, cyfry i myślniki.
           - name: tytul
             label: Tytuł (polskiego wydania, jeśli istnieje)
             type: string

@@ -35,3 +35,4 @@
   .cover{width:120px}
 }
 @media print{.top,.ridge,.back,.lib-tabs,footer,.btn.shop{display:none !important}.book details{display:block}.book details>*{display:block}}
+.book.hl{outline:3px solid var(--teal);outline-offset:2px}

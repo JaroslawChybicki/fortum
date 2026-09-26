@@ -147,6 +147,7 @@ async function podstrona() {
 
   main.querySelectorAll('.md a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
   podepnijFilmy(main);
+  podepnijKsiazki(main);
 
   if (podsekcje.length) {
     // Zakładki: aktywna podsekcja w adresie (#przyczyny), więc można wysłać link do konkretnej.
@@ -225,6 +226,49 @@ function podepnijFilmy(root) {
       document.getElementById('pl-frame').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&hl=pl&cc_lang_pref=pl&cc_load_policy=1"
         title="${esc(a.textContent)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
       dlg.showModal();
+    });
+  });
+}
+
+// Linki „ksiazki.html#ksiazka=ID” w treści otwierają okno z opisem książki
+// (bez JS działają jak zwykły link do listy polecanych książek).
+let _ksiazki;
+function podepnijKsiazki(root) {
+  const linki = [...root.querySelectorAll('a[href*="ksiazki.html#ksiazka="]')];
+  if (!linki.length || !window.HTMLDialogElement) return;
+  let dlg = document.getElementById('book-dlg');
+  if (!dlg) {
+    document.body.insertAdjacentHTML('beforeend', `
+      <dialog id="book-dlg" aria-labelledby="bk-title">
+        <div class="bk-head"><div><span class="tag">Polecana książka</span><h2 id="bk-title"></h2><p id="bk-meta"></p></div>
+          <button type="button" class="bk-close" aria-label="Zamknij">✕</button></div>
+        <div class="bk-body" id="bk-body"></div>
+        <div class="bk-foot"><a class="btn" id="bk-shop" target="_blank" rel="noopener">Zobacz w księgarni ↗</a>
+          <a class="btn ghost" id="bk-all" href="ksiazki.html">Wszystkie polecane książki</a></div>
+      </dialog>`);
+    dlg = document.getElementById('book-dlg');
+    dlg.querySelector('.bk-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
+  linki.forEach((a) => {
+    a.closest('blockquote')?.classList.add('ksiazka');
+    a.addEventListener('click', async (e) => {
+      const id = (a.getAttribute('href').match(/#ksiazka=([\w-]+)/) || [])[1];
+      if (!id) return;
+      e.preventDefault();
+      try { _ksiazki = _ksiazki || (await wczytajJson('ksiazki.json')).ksiazki || []; }
+      catch (err) { location.href = a.href; return; }
+      const b = _ksiazki.find((x) => x.id === id);
+      if (!b) { location.href = a.href; return; }
+      document.getElementById('bk-title').textContent = b.tytul;
+      document.getElementById('bk-meta').innerHTML = [esc(b.autor), b.tytul_oryginalny ? `oryg. <em>${esc(b.tytul_oryginalny)}</em>` : '', esc(b.wydanie || '')].filter(Boolean).join(' · ');
+      document.getElementById('bk-body').innerHTML = (b.zajawka ? `<p class="lead">${esc(b.zajawka)}</p>` : '') + `<div class="md">${renderMd(b.tresc)}</div>`;
+      document.getElementById('bk-body').querySelectorAll('a[href^="http"]').forEach((x) => { x.target = '_blank'; x.rel = 'noopener'; });
+      const shop = document.getElementById('bk-shop');
+      shop.hidden = !b.link; if (b.link) shop.href = b.link;
+      document.getElementById('bk-all').href = 'ksiazki.html#ksiazka=' + encodeURIComponent(b.id);
+      dlg.showModal();
+      document.getElementById('bk-body').scrollTop = 0;
     });
   });
 }

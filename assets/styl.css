@@ -141,3 +141,29 @@ footer a{display:inline-block;padding:6px 0}
 .md blockquote.film::before{content:"";position:absolute;left:16px;top:16px;width:26px;height:26px;border-radius:50%;
   background:var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6.5v11l9-5.5z' fill='white'/%3E%3C/svg%3E") center/16px no-repeat}
 .md blockquote.film a{font-weight:700}
+
+/* odnośnik do książki w treści */
+.md blockquote.ksiazka{background:var(--mist);border-left-color:var(--deep);padding-left:56px;position:relative}
+.md blockquote.ksiazka::before{content:"";position:absolute;left:16px;top:16px;width:26px;height:26px;border-radius:50%;
+  background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M4 6c2.6-1 5.3-1 8 0v12c-2.7-1-5.4-1-8 0zM20 6c-2.6-1-5.3-1-8 0v12c2.7-1 5.4-1 8 0z'/%3E%3C/svg%3E") center/15px no-repeat}
+.md blockquote.ksiazka a{font-weight:700}
+
+/* okno z opisem książki */
+#book-dlg{border:0;padding:0;border-radius:var(--r-l);width:min(760px,94vw);max-height:88vh;display:none;flex-direction:column;background:var(--paper);color:var(--ink)}
+#book-dlg[open]{display:flex}
+#book-dlg::backdrop{background:rgba(10,25,35,.7)}
+.bk-head{display:flex;justify-content:space-between;gap:14px;padding:20px 22px 14px;background:var(--navy);color:#fff}
+.bk-head .tag{color:var(--teal-2)}
+.bk-head h2{margin:4px 0 6px;font-size:1.25rem;line-height:1.3}
+.bk-head p{margin:0;font-size:.88rem;opacity:.8}
+.bk-close{flex:none;background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer}
+.bk-body{padding:18px 22px;overflow:auto}
+.bk-body .lead{margin:0 0 12px;font-weight:500}
+.bk-body .md{margin:0;max-width:none}
+.bk-body .md h2{font-size:1.05rem;margin:1.2em 0 .4em;padding-top:0;border-top:0}
+.bk-body .md h2:first-child{margin-top:0}
+.bk-foot{display:flex;flex-wrap:wrap;gap:10px;padding:14px 22px 18px;border-top:1px solid var(--line)}
+.bk-foot .btn{font-size:.9rem;padding:10px 16px}
+.bk-foot .btn.ghost{background:transparent;color:var(--deep) !important;border:1px solid var(--mist-2)}
+.bk-foot .btn[hidden]{display:none}
+@media (max-width:560px){#book-dlg{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border-radius:0}}

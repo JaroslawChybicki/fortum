@@ -40,6 +40,10 @@ W panelu są cztery pozycje (dodatkowo **Biblioteka filmów** – link z YouTube
   - „Link zewnętrzny zamiast podstrony” – tak działa kafelek „Badanie” (`badanie/`).
 - **Strona główna i kontakt** – nagłówek, wstęp, telefon, e-mail, link do Lyry. Puste pole się nie wyświetla.
 
+Odnośniki w treści sekcji: film – cytat „**Film:** [tytuł](filmy.html#film=ID_YOUTUBE)”,
+książka – cytat „**Książka:** [tytuł](ksiazki.html#ksiazka=ID_KSIĄŻKI)” (ID z pola „Identyfikator” w „Polecanych książkach”).
+Oba otwierają się w oknie na podstronie, bez opuszczania tekstu.
+
 Każde *Save* to commit w repozytorium; Netlify publikuje zmianę po ok. minucie.
 Obrazki wgrane w edytorze trafiają do katalogu `obrazy/`.
 

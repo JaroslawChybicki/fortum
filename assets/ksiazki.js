@@ -29,7 +29,7 @@ async function ksiazki() {
     </div>
     <div class="books">
       ${lista.map((b) => `
-        <article class="book" data-k="${esc(b.kategoria)}">
+        <article class="book" data-k="${esc(b.kategoria)}"${b.id ? ` id="k-${esc(b.id)}"` : ''}>
           <div class="cover k-${esc(b.kategoria)}" aria-hidden="true">
             <span class="c-title">${esc(krotki(b.tytul))}</span>
             <span class="c-author">${esc(b.autor)}</span>
@@ -60,6 +60,15 @@ async function ksiazki() {
     filtruj(b.dataset.k);
   }));
   filtruj(decodeURIComponent(location.hash.slice(1)));
+
+  // Link z treści sekcji: ksiazki.html#ksiazka=ID rozwija i pokazuje daną książkę.
+  const m = location.hash.match(/^#ksiazka=([\w-]+)/);
+  const karta = m && document.getElementById('k-' + m[1]);
+  if (karta) {
+    karta.querySelector('details')?.setAttribute('open', '');
+    karta.classList.add('hl');
+    karta.scrollIntoView({ block: 'start' });
+  }
 }
 
 ksiazki();
