@@ -6,6 +6,7 @@ Statyczna strona bez backendu, hostowana na Netlify.
 ```
 index.html            strona główna (kafelki + kontakt) — nie trzeba edytować
 sekcja.html           szablon podstrony sekcji — nie trzeba edytować
+kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
 tresci/               ← TREŚCI (edytowane w CMS)
   sekcje.json         kafelki + treść każdej podstrony (Markdown)
@@ -40,6 +41,11 @@ Obrazki wgrane w edytorze trafiają do katalogu `obrazy/`.
 
 Edycja bez CMS też jest możliwa (GitHub → plik w `tresci/` → ołówek), ale w JSON łatwo o błąd składni –
 panel pilnuje tego za Ciebie.
+
+## Kalkulator kosztów
+`kalkulator.html` – absencja, prezenteizm, rotacja i zwrot z inwestycji. Wpisane wartości zapisują się w adresie strony,
+więc przycisk „Kopiuj link” pozwala wysłać gotowe wyliczenie (np. klientowi). Wartości domyślne i ich źródła:
+blok `DOMYSLNE` w `assets/kalkulator.js` oraz opisy pól w `kalkulator.html`.
 
 ## Podgląd lokalny
 Treści są wczytywane z plików, więc samo dwukliknięcie `index.html` nie wystarczy:

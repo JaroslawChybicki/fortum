@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Kalkulator kosztów | Odporni i gotowi</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styl.css">
+<link rel="stylesheet" href="assets/kalkulator.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="logo.png" alt="Lyra Polska"><span>Odporni i gotowi</span></a>
+  <a class="site" href="./">← Strona główna</a>
+</div></header>
+<svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
+
+<main class="wrap calc">
+  <a class="back" href="./">← Strona główna</a>
+  <h1>Kalkulator kosztów</h1>
+  <p class="lead">Szacunek rocznych kosztów, jakie organizacja ponosi z powodu wypalenia, spadku energii i odejść przeciążonych osób. Wartości domyślne pochodzą z badań (źródła przy każdym polu) – zmień je na dane własnego zespołu.</p>
+
+  <form id="calc" autocomplete="off" onsubmit="return false">
+
+    <section class="box">
+      <h2><span class="num">1</span> Zespół</h2>
+      <div class="grid">
+        <label class="f"><span>Liczba osób</span>
+          <input type="number" name="n" min="1" max="100000" step="1" inputmode="numeric">
+        </label>
+        <label class="f"><span>Średnie wynagrodzenie brutto (zł / mies.)</span>
+          <input type="number" name="brutto" min="1000" max="200000" step="100" inputmode="numeric">
+          <small>Domyślnie: przeciętne wynagrodzenie w sektorze przedsiębiorstw, sierpień 2026 – <a href="https://www.money.pl/praca/zarobki-polakow-rozgryzione-gus-podal-dane-o-wynagrodzeniach-7331741070027008a.html" target="_blank" rel="noopener">GUS</a>. Dla kadry kierowniczej wpisz realną kwotę.</small>
+        </label>
+        <label class="f"><span>Narzut pracodawcy (%)</span>
+          <input type="number" name="narzut" min="0" max="60" step="0.1" inputmode="decimal">
+          <small>Składki ZUS po stronie pracodawcy (ok. 20%) i inne koszty stałe.</small>
+        </label>
+      </div>
+      <p class="derived" id="d-team"></p>
+    </section>
+
+    <section class="box">
+      <h2><span class="num">2</span> Absencja <em>zwolnienia z przyczyn psychicznych</em></h2>
+      <div class="grid">
+        <label class="f"><span>Odsetek osób z takim zwolnieniem w roku (%)</span>
+          <input type="range" name="absP" min="0" max="50" step="1"><output data-for="absP"></output>
+          <small>Założenie do dopasowania. Zwolnienia z przyczyn psychicznych to 7,2% wszystkich zwolnień w Polsce – <a href="https://www.zus.pl/documents/10182/39590/Raport_Absencja+chorobowa+w+2024+roku.pdf/a4947e09-3b9c-41c6-1de6-83563006fd49?t=1744352901435" target="_blank" rel="noopener">ZUS 2024</a>.</small>
+        </label>
+        <label class="f"><span>Średnia długość zwolnienia (dni kalendarzowe)</span>
+          <input type="number" name="absD" min="1" max="182" step="1" inputmode="numeric">
+          <small>Średnio ok. 19 dni na zwolnienie z powodu zaburzeń psychicznych (30,3 mln dni / 1,6 mln zwolnień) – <a href="https://www.zus.pl/documents/10182/39590/Raport_Absencja+chorobowa+w+2024+roku.pdf/a4947e09-3b9c-41c6-1de6-83563006fd49?t=1744352901435" target="_blank" rel="noopener">ZUS 2024</a>.</small>
+        </label>
+        <label class="f"><span>Koszt zastępstwa / utraconej pracy (% wartości dnia pracy)</span>
+          <input type="range" name="absZ" min="0" max="150" step="5"><output data-for="absZ"></output>
+          <small>Nadgodziny, zastępstwa, opóźnienia. 100% = wartość dnia pracy nieobecnej osoby.</small>
+        </label>
+      </div>
+      <p class="derived" id="d-abs"></p>
+    </section>
+
+    <section class="box">
+      <h2><span class="num">3</span> Prezenteizm <em>praca mimo wyczerpania</em></h2>
+      <div class="grid">
+        <label class="f"><span>Odsetek osób z objawami wypalenia (%)</span>
+          <input type="range" name="preP" min="0" max="80" step="1"><output data-for="preP"></output>
+          <small>22% pracowników przekracza próg objawów wypalenia – <a href="https://www.mckinsey.com/featured-insights/charts/the-burnout-continues" target="_blank" rel="noopener">McKinsey Health Institute 2023</a>. W Polsce 22% deklaruje obecnie wypalenie – <a href="https://www.prawo.pl/kadry/wypalenie-zawodowe,1552408.html" target="_blank" rel="noopener">D. Maison, UW 2025</a>.</small>
+        </label>
+        <label class="f"><span>Spadek efektywności tych osób (%)</span>
+          <input type="range" name="preL" min="0" max="50" step="1"><output data-for="preL"></output>
+          <small>Założenie ostrożne. Prezenteizm to największa część kosztów złego zdrowia psychicznego – w Wielkiej Brytanii ok. połowa z 51 mld £ rocznie – <a href="https://www.deloitte.com/uk/en/about/press-room/poor-mental-health-costs-uk-employers-51-billion-a-year-for-employees.html" target="_blank" rel="noopener">Deloitte 2024</a>.</small>
+        </label>
+      </div>
+      <p class="derived" id="d-pre"></p>
+    </section>
+
+    <section class="box">
+      <h2><span class="num">4</span> Rotacja <em>odejścia z powodu przeciążenia</em></h2>
+      <div class="grid">
+        <label class="f"><span>Liczba odejść w roku</span>
+          <input type="number" name="rotN" min="0" max="10000" step="1" inputmode="numeric">
+        </label>
+        <label class="f"><span>Koszt zastąpienia jednej osoby</span>
+          <select name="rotK">
+            <option value="40">Pierwsza linia – 40% pensji rocznej</option>
+            <option value="80">Specjalista – 80% pensji rocznej</option>
+            <option value="200">Menedżer / lider – 200% pensji rocznej</option>
+          </select>
+          <small>Rekrutacja, wdrożenie, utracona wiedza i relacje. Szacunki <a href="https://www.gallup.com/workplace/247391/fixable-problem-costs-businesses-trillion.aspx" target="_blank" rel="noopener">Gallup</a>: od połowy do dwukrotności rocznego wynagrodzenia.</small>
+        </label>
+      </div>
+      <p class="derived" id="d-rot"></p>
+    </section>
+
+    <section class="box sum" aria-live="polite">
+      <h2>Szacowany roczny koszt</h2>
+      <div class="bars" id="bars"></div>
+      <div class="total">
+        <div><span>Razem</span><strong id="t-sum"></strong></div>
+        <div><span>Na osobę</span><strong id="t-per"></strong></div>
+        <div><span>Udział w kosztach wynagrodzeń</span><strong id="t-pct"></strong></div>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2><span class="num">5</span> Zwrot z inwestycji w program</h2>
+      <div class="grid">
+        <label class="f"><span>Koszt programu (zł)</span>
+          <input type="number" name="prog" min="0" max="100000000" step="1000" inputmode="numeric">
+        </label>
+        <label class="f"><span>Zakładane obniżenie powyższych kosztów (%)</span>
+          <input type="range" name="red" min="0" max="60" step="1"><output data-for="red"></output>
+          <small>Punkt odniesienia: każdy funt zainwestowany w zdrowie psychiczne pracowników zwraca średnio ok. 4,70 £ – <a href="https://www.deloitte.com/uk/en/services/consulting/analysis/mental-health-and-employers-the-case-for-investment.html" target="_blank" rel="noopener">Deloitte 2024</a>; w leczenie depresji i lęku – 4 $ na każdego 1 $ – <a href="https://www.who.int/news-room/fact-sheets/detail/mental-health-at-work" target="_blank" rel="noopener">WHO</a>.</small>
+        </label>
+      </div>
+      <div class="total roi">
+        <div><span>Roczna oszczędność</span><strong id="r-save"></strong></div>
+        <div><span>Wynik netto</span><strong id="r-net"></strong></div>
+        <div><span>Zwrot na 1 zł</span><strong id="r-roi"></strong></div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="btn" id="share">Kopiuj link do tego wyliczenia</button>
+      <button type="button" class="btn ghost" id="print">Drukuj / PDF</button>
+      <button type="button" class="btn ghost" id="reset">Przywróć wartości domyślne</button>
+      <span class="toast" id="toast" role="status"></span>
+    </div>
+
+    <p class="note">To model poglądowy, nie wycena aktuarialna. Pokazuje rząd wielkości i to, które czynniki najbardziej wpływają na koszty. Wynagrodzenie chorobowe liczone jest jako 80% wynagrodzenia za pierwsze 33 dni niezdolności w roku (art. 92 Kodeksu pracy; dla osób po 50. roku życia – 14 dni), dzień pracy jako 1/250 rocznego kosztu pracodawcy.</p>
+  </form>
+</main>
+<footer id="stopka"><div class="wrap"><span>Odporni i gotowi · Lyra Polska</span><a href="https://lyrapolska.pl" target="_blank" rel="noopener">lyrapolska.pl</a></div></footer>
+<script src="assets/kalkulator.js"></script>
+</body>
+</html>

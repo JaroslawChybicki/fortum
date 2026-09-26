@@ -74,6 +74,8 @@ content:
                   label: Bateria (energia)
                 - value: odpornosc
                   label: Góry (odporność)
+                - value: kalkulator
+                  label: Kalkulator (koszty)
           - name: wyroznij
             label: Wyróżniony kafelek (kolorowy)
             type: boolean
