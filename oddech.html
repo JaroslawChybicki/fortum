@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Oddech i trzyminutowa przestrzeń | Odporni i gotowi</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styl.css">
+<link rel="stylesheet" href="assets/cwiczenia.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="logo.png" alt="Lyra Polska"><span>Odporni i gotowi</span></a>
+  <a class="site" href="cwiczenia.html">← Ćwiczenia i gry</a>
+</div></header>
+<svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
+
+<main class="wrap cw">
+  <a class="back" href="cwiczenia.html">← Ćwiczenia i gry</a>
+  <h1 class="cw-h">Oddech i trzyminutowa przestrzeń</h1>
+  <div class="tabs" role="tablist" aria-label="Rodzaj ćwiczenia">
+    <button type="button" role="tab" id="t-oddech" aria-controls="p-oddech" aria-selected="true">Oddech z wydłużonym wydechem</button>
+    <button type="button" role="tab" id="t-przestrzen" aria-controls="p-przestrzen" aria-selected="false">Trzyminutowa przestrzeń oddechowa</button>
+  </div>
+
+  <section id="p-oddech" role="tabpanel" aria-labelledby="t-oddech" class="panel-cw">
+    <p class="cw-lead">Wydech dłuższy niż wdech aktywuje przywspółczulną część układu nerwowego i obniża pobudzenie. Siedź wygodnie, oddychaj nosem, bez wysiłku. Jeśli rytm jest za długi – wybierz krótszy.</p>
+    <div class="br-opts">
+      <label class="fld"><span>Rytm</span><select id="rytm-od">
+        <option value="4,0,6,0">Wdech 4 · wydech 6</option>
+        <option value="4,0,8,0">Wdech 4 · wydech 8</option>
+        <option value="4,2,6,0">Wdech 4 · pauza 2 · wydech 6</option>
+        <option value="4,0,4,0">Oddech równy 4 · 4</option>
+      </select></label>
+      <label class="fld"><span>Czas</span><select id="czas-od">
+        <option value="60">1 minuta</option><option value="180" selected>3 minuty</option><option value="300">5 minut</option>
+      </select></label>
+      <label class="chk"><input type="checkbox" id="wibracje"> Wibracje przy zmianie fazy (telefon)</label>
+    </div>
+    <div class="br-stage" aria-live="polite">
+      <div class="br-circle" id="kolo"><span id="faza">Gotowy?</span><small id="licz"></small></div>
+    </div>
+    <div class="br-bar"><span id="postep"></span></div>
+    <div class="me-actions center"><button type="button" class="btn" id="start-od">Start</button><button type="button" class="btn ghost" id="stop-od" hidden>Zakończ</button></div>
+  </section>
+
+  <section id="p-przestrzen" role="tabpanel" aria-labelledby="t-przestrzen" class="panel-cw" hidden>
+    <p class="cw-lead">Krótka praktyka z terapii poznawczej opartej na uważności (MBCT). Trzy kroki po około minucie – przypominają kształt klepsydry: szeroka uwaga, wąska uwaga na oddechu, znów szeroka.</p>
+    <div class="sp-steps" id="kroki"></div>
+    <div class="br-bar"><span id="postep-sp"></span></div>
+    <div class="me-actions center"><button type="button" class="btn" id="start-sp">Start</button><button type="button" class="btn ghost" id="dalej-sp" hidden>Następny krok</button><button type="button" class="btn ghost" id="stop-sp" hidden>Zakończ</button></div>
+  </section>
+
+</main>
+<footer id="stopka"></footer>
+<script src="assets/strona.js"></script>
+<script src="assets/oddech.js"></script>
+<script>ustawienia().then(stopka).catch(() => {});</script>
+</body>
+</html>

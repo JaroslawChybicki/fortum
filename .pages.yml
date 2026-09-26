@@ -80,6 +80,8 @@ content:
                   label: Ekran z przyciskiem odtwarzania (filmy)
                 - value: ksiazki
                   label: Otwarta książka (książki)
+                - value: cwiczenia
+                  label: Tarcza (ćwiczenia)
           - name: wyroznij
             label: Wyróżniony kafelek (kolorowy)
             type: boolean
@@ -259,4 +261,43 @@ content:
             type: string
           - name: ukryj
             label: Ukryj na stronie
+            type: boolean
+
+  - name: quiz
+    label: Quiz „Mity o stresie i wypaleniu”
+    description: Stwierdzenia w quizie na stronie quiz.html.
+    type: file
+    path: tresci/quiz.json
+    format: json
+    fields:
+      - name: wstep
+        label: Wstęp
+        type: text
+      - name: pytania
+        label: Stwierdzenia
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{twierdzenie}"
+        fields:
+          - name: twierdzenie
+            label: Stwierdzenie
+            type: text
+            required: true
+          - name: prawda
+            label: To prawda (zaznacz) / mit (odznacz)
+            type: boolean
+          - name: wyjasnienie
+            label: Wyjaśnienie po odpowiedzi
+            type: rich-text
+          - name: link
+            label: Link „Więcej”
+            description: "Np. sekcja.html?s=wypalenie#przyczyny"
+            type: string
+          - name: link_tekst
+            label: Tekst linku
+            type: string
+          - name: ukryj
+            label: Ukryj w quizie
             type: boolean

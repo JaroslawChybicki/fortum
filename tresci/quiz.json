@@ -1,0 +1,89 @@
+{
+  "wstep": "12 stwierdzeń o stresie, energii, wypaleniu i odporności. Prawda czy fałsz? Po każdej odpowiedzi zobaczysz krótkie wyjaśnienie oparte na badaniach.",
+  "pytania": [
+    {
+      "twierdzenie": "Wypalenie zawodowe jest w klasyfikacji WHO (ICD-11) jednostką chorobową.",
+      "prawda": false,
+      "wyjasnienie": "Od 2022 r. wypalenie figuruje w ICD-11 (kod QD85) jako **zjawisko związane z pracą**, a nie choroba. WHO opisuje je trzema wymiarami: wyczerpaniem, dystansem/cynizmem i obniżonym poczuciem skuteczności.",
+      "link": "sekcja.html?s=wypalenie#badania-i-dane",
+      "link_tekst": "Wypalenie → Badania i dane"
+    },
+    {
+      "twierdzenie": "Wypalenie dotyka głównie osoby mało zaangażowane w pracę.",
+      "prawda": false,
+      "wyjasnienie": "Jest odwrotnie: najczęściej dotyka ludzi zaangażowanych i odpowiedzialnych, którzy najdłużej „dopłacają” z własnych rezerw. Profil **przeciążenia** – wyniki są, ale kosztem wyczerpania – to najczęstsza droga do wypalenia.",
+      "link": "sekcja.html?s=wypalenie#badania-i-dane",
+      "link_tekst": "Profile wypalenia"
+    },
+    {
+      "twierdzenie": "Dobry urlop wystarczy, żeby wyjść z wypalenia.",
+      "prawda": false,
+      "wyjasnienie": "Urlop pomaga, ale jego efekt jest krótkotrwały – badania pokazują, że poprawa samopoczucia po urlopie zwykle zanika w ciągu kilku tygodni po powrocie do pracy. Bez zmiany dopasowania między człowiekiem a pracą i bez codziennej regeneracji wyczerpanie wraca.",
+      "link": "sekcja.html?s=wypalenie#jak-przeciwdzialac",
+      "link_tekst": "Jak przeciwdziałać"
+    },
+    {
+      "twierdzenie": "Źródła wypalenia leżą częściej w warunkach pracy niż w cechach osobowości.",
+      "prawda": true,
+      "wyjasnienie": "Badania Maslach i Leitera wskazują sześć obszarów niedopasowania: obciążenie, kontrolę, nagrody, wspólnotę, sprawiedliwość i wartości. Cechy osobiste (np. perfekcjonizm) mogą przyspieszać proces, ale rzadko są jego główną przyczyną.",
+      "link": "sekcja.html?s=wypalenie#przyczyny",
+      "link_tekst": "Wypalenie → Przyczyny"
+    },
+    {
+      "twierdzenie": "Każdy stres szkodzi zdrowiu – im mniej stresu, tym lepiej.",
+      "prawda": false,
+      "wyjasnienie": "Krótkotrwały stres mobilizuje: wyostrza uwagę i dodaje energii. Szkodzi przede wszystkim stres **przewlekły**, bez okresów regeneracji. Znaczenie ma też to, jak interpretujemy pobudzenie – jako zagrożenie czy przygotowanie do działania.",
+      "link": "sekcja.html?s=energia#cztery-stany-energii",
+      "link_tekst": "Cztery stany energii"
+    },
+    {
+      "twierdzenie": "Krótkie przerwy – do 10 minut – realnie zmniejszają zmęczenie.",
+      "prawda": true,
+      "wyjasnienie": "Metaanaliza badań nad mikroprzerwami (Albulescu i in., 2022) pokazała, że krótkie przerwy zwiększają poczucie witalności i zmniejszają zmęczenie. Warunek: przerwa musi być prawdziwa, czyli bez przewijania telefonu.",
+      "link": "sekcja.html?s=energia#regeneracja-w-ciagu-dnia",
+      "link_tekst": "Regeneracja w ciągu dnia"
+    },
+    {
+      "twierdzenie": "Wielozadaniowość pozwala menedżerowi zrobić więcej w krótszym czasie.",
+      "prawda": false,
+      "wyjasnienie": "Przełączanie się między zadaniami ma koszt: po każdej zmianie część uwagi „zostaje” przy poprzednim zadaniu (tzw. resztka uwagi). Częste przerywanie obniża jakość myślenia i zwiększa napięcie.",
+      "link": "sekcja.html?s=energia#rytm-dnia",
+      "link_tekst": "Rytm dnia"
+    },
+    {
+      "twierdzenie": "Po nieprzespanej nocy trudniej nam regulować emocje.",
+      "prawda": true,
+      "wyjasnienie": "Niedobór snu zwiększa reaktywność emocjonalną i osłabia kontrolę ze strony kory przedczołowej. Stąd drażliwość, pochopne decyzje i gorsza ocena ryzyka – ważna informacja przed trudną rozmową.",
+      "link": "sekcja.html?s=energia#regeneracja-w-ciagu-dnia",
+      "link_tekst": "Sen i regeneracja"
+    },
+    {
+      "twierdzenie": "Odporność psychiczna to cecha wrodzona – albo się ją ma, albo nie.",
+      "prawda": false,
+      "wyjasnienie": "Współczesne badania opisują rezyliencję jako **proces i zestaw zasobów**, które można rozwijać: relacje, regulację emocji, poczucie sensu i wpływu. Rick Hanson wyróżnia 12 takich wewnętrznych zasobów.",
+      "link": "sekcja.html?s=odpornosc#czym-jest-rezyliencja",
+      "link_tekst": "Czym jest rezyliencja"
+    },
+    {
+      "twierdzenie": "Życzliwość wobec siebie po porażce obniża motywację do poprawy.",
+      "prawda": false,
+      "wyjasnienie": "Badania nad samowspółczuciem pokazują coś przeciwnego: osoby, które po błędzie traktują się życzliwie, chętniej biorą odpowiedzialność i są bardziej zmotywowane do poprawy niż osoby surowo samokrytyczne.",
+      "link": "sekcja.html?s=odpornosc#praktyki",
+      "link_tekst": "Praktyki samowspółczucia"
+    },
+    {
+      "twierdzenie": "Zaufanie do lidera i zespołu wiąże się z wyższą odpornością pracowników.",
+      "prawda": true,
+      "wyjasnienie": "W globalnym badaniu ADP Research osoby, które w pełni ufały współpracownikom, liderowi zespołu i kierownictwu, były **42 razy** częściej wysoce odporne. Odporność to w dużej mierze zjawisko zespołowe.",
+      "link": "sekcja.html?s=odpornosc#badania-i-dane",
+      "link_tekst": "Odporność → Badania i dane"
+    },
+    {
+      "twierdzenie": "Tłumienie trudnych emocji pomaga szybciej o nich zapomnieć.",
+      "prawda": false,
+      "wyjasnienie": "Tłumienie zwykle zwiększa napięcie fizjologiczne i sprawia, że tłumione myśli wracają częściej. Skuteczniejsze jest nazwanie emocji i zrobienie jej miejsca – to podstawa podejścia ACT i sprawności emocjonalnej.",
+      "link": "sekcja.html?s=odpornosc#czym-jest-rezyliencja",
+      "link_tekst": "Elastyczność psychologiczna"
+    }
+  ]
+}

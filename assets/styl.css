@@ -200,3 +200,9 @@ footer .flinks{display:flex;gap:18px;flex-wrap:wrap}
   .kactions .btn,.contact-actions .btn{width:100%;justify-content:center}
   #napisz{margin-top:-16px;margin-bottom:36px}
 }
+
+/* odnośnik do ćwiczenia w treści */
+.md blockquote.cw-link{background:#f3ece4;border-left-color:#9a6b43;padding-left:56px;position:relative}
+.md blockquote.cw-link::before{content:"";position:absolute;left:16px;top:16px;width:26px;height:26px;border-radius:50%;
+  background:#9a6b43 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2'%3E%3Ccircle cx='12' cy='12' r='7'/%3E%3Ccircle cx='12' cy='12' r='2.5' fill='white'/%3E%3C/svg%3E") center/15px no-repeat}
+.md blockquote.cw-link a{font-weight:700}

@@ -1,0 +1,162 @@
+{
+  "wstep": "Scenariusz decyzyjny dla liderów. Twoje wybory wpływają na dwa wskaźniki: **zaufanie w zespole** i **Twoje napięcie**. Nie ma tu jednej „poprawnej” ścieżki – są konsekwencje. Dobrze sprawdza się jako materiał do rozmowy w grupie.",
+  "start": {
+    "zaufanie": 60,
+    "napiecie": 45
+  },
+  "sceny": {
+    "start": {
+      "krok": "Poniedziałek, 9:10",
+      "tekst": "Marta, doświadczona specjalistka z Twojego zespołu, zatrzymuje Cię na korytarzu. Jest wyraźnie zdenerwowana:\n\n*„W piątkowym raporcie dla zarządu jest błąd w danych. Pomyliłam się przy imporcie – sumy za trzeci kwartał są zawyżone. Raport już poszedł dalej.”*\n\nZarząd ma posiedzenie jutro rano. Czujesz, jak rośnie napięcie. Co mówisz?",
+      "opcje": [
+        {
+          "tekst": "„Jak to się mogło stać? Przecież prosiłem, żeby wszystko było dokładnie sprawdzone!”",
+          "zaufanie": -20,
+          "napiecie": 10,
+          "komentarz": "Reakcja jest zrozumiała – napięcie szuka ujścia. Ale Marta słyszy przede wszystkim ocenę. Badania Amy Edmondson pokazują, że tam, gdzie za zgłoszenie błędu grozi krytyka, ludzie zaczynają błędy ukrywać – a to zwiększa ryzyko, zamiast je zmniejszać.",
+          "dalej": "obrona"
+        },
+        {
+          "tekst": "„Dziękuję, że mówisz od razu. Usiądźmy na 15 minut i zobaczmy, co trzeba zrobić dziś.”",
+          "zaufanie": 15,
+          "napiecie": -5,
+          "komentarz": "Docenienie samego zgłoszenia to najważniejszy sygnał dla całego zespołu: *tu o błędach się mówi*. To nie jest bagatelizowanie problemu – od razu przechodzicie do działania.",
+          "dalej": "zarzad"
+        },
+        {
+          "tekst": "„Dobrze, zostaw to mnie. Sam się tym zajmę.”",
+          "zaufanie": -5,
+          "napiecie": 15,
+          "komentarz": "Wygląda na wsparcie, ale Marta traci możliwość naprawienia własnego błędu, a Ty dokładasz sobie pracy w i tak napiętym dniu. To typowy wzorzec menedżerów w profilu **przeciążenia**.",
+          "dalej": "sam"
+        },
+        {
+          "tekst": "„Daj mi 10 minut, wrócę do ciebie.” – i wychodzisz na chwilę zaczerpnąć powietrza.",
+          "zaufanie": 0,
+          "napiecie": -12,
+          "komentarz": "Krótka pauza pozwala zejść poniżej czerwonej linii napięcia, zanim zareagujesz. Kilka wolnych oddechów z wydłużonym wydechem to nie strata czasu, lecz warunek dobrej decyzji. Ważne, żeby naprawdę wrócić.",
+          "dalej": "powrot"
+        }
+      ]
+    },
+    "obrona": {
+      "krok": "Chwilę później",
+      "tekst": "Marta milknie, a potem zaczyna się tłumaczyć: dane dostała w ostatniej chwili, termin był nieprzesuwalny. Słyszysz, że się broni. W pokoju obok zrobiło się podejrzanie cicho – zespół słyszał rozmowę.",
+      "opcje": [
+        {
+          "tekst": "„Przepraszam, poniosło mnie. Dobrze, że powiedziałaś od razu – zajmijmy się tym razem.”",
+          "zaufanie": 12,
+          "napiecie": -5,
+          "komentarz": "Naprawa relacji po trudnym momencie to jedna z kluczowych kompetencji lidera. Przyznając się do własnej reakcji, modelujesz dokładnie to, czego oczekujesz od zespołu: otwarte mówienie o błędach.",
+          "dalej": "zarzad"
+        },
+        {
+          "tekst": "„Tłumaczenia nic nie zmienią. Masz to poprawić do południa.”",
+          "zaufanie": -10,
+          "napiecie": 5,
+          "komentarz": "Problem zostanie naprawiony, ale lekcja dla zespołu jest jasna: zgłoszenie błędu kosztuje. Następnym razem ktoś może poczekać, „aż samo się wyjaśni”.",
+          "dalej": "zarzad"
+        }
+      ]
+    },
+    "sam": {
+      "krok": "Poniedziałek, 21:30",
+      "tekst": "Siedzisz nad danymi sam – Marta zaproponowała pomoc, ale odmówiłeś. Większość tabel jest poprawiona, ale rano trzeba jeszcze poinformować zarząd. Jesteś zmęczony i spięty.",
+      "opcje": [
+        {
+          "tekst": "Kończysz pracę, zostawiasz resztę na rano i piszesz do Marty: „Jutro o 8:00 dokończmy razem.”",
+          "zaufanie": 8,
+          "napiecie": -8,
+          "komentarz": "Włączenie Marty z powrotem przywraca jej sprawczość, a Tobie część zasobów. Późny wieczór w stanie **napiętego zmęczenia** to zły moment na decyzje – problemy wydają się wtedy większe, niż są.",
+          "dalej": "zarzad"
+        },
+        {
+          "tekst": "Siedzisz do północy, żeby mieć wszystko z głowy.",
+          "zaufanie": -5,
+          "napiecie": 15,
+          "komentarz": "Zadanie będzie skończone, ale kosztem snu i regeneracji. Po krótkiej nocy trudniej będzie Ci spokojnie przeprowadzić rozmowę z przełożonym.",
+          "dalej": "zarzad"
+        }
+      ]
+    },
+    "powrot": {
+      "krok": "10 minut później",
+      "tekst": "Wracasz spokojniejszy. Marta czeka przy biurku – widać, że jest zestresowana.",
+      "opcje": [
+        {
+          "tekst": "„Dziękuję, że powiedziałaś od razu. Zobaczmy, co trzeba zrobić i kto może pomóc.”",
+          "zaufanie": 15,
+          "napiecie": -5,
+          "komentarz": "Pauza dała Ci przestrzeń, by **odpowiedzieć**, a nie **zareagować**. Docenienie zgłoszenia i wspólny plan to najlepszy możliwy początek.",
+          "dalej": "zarzad"
+        },
+        {
+          "tekst": "„OK. Popraw to, proszę, i daj znać, jak skończysz.”",
+          "zaufanie": 3,
+          "napiecie": 0,
+          "komentarz": "Rzeczowo i bez oceniania – to już dużo. Brakuje jednak docenienia samego zgłoszenia i wspólnego planu, co w trudnej sytuacji zostawia Martę samą.",
+          "dalej": "zarzad"
+        }
+      ]
+    },
+    "zarzad": {
+      "krok": "Poniedziałek, 11:00",
+      "tekst": "Poprawione dane są prawie gotowe. Zostaje pytanie, co z zarządem, który dostał błędny raport i jutro rano ma posiedzenie.",
+      "opcje": [
+        {
+          "tekst": "Dzwonisz do przełożonego: „W raporcie naszego zespołu jest błąd w danych za III kwartał. Poprawiona wersja będzie do 15:00. Wyjaśnię, co się stało i co zmieniamy.”",
+          "zaufanie": 12,
+          "napiecie": 5,
+          "komentarz": "Biorąc odpowiedzialność jako lider zespołu, chronisz ludzi i budujesz wiarygodność. Rozmowa jest trudna – napięcie rośnie – ale zespół widzi, że błąd nie oznacza „wystawienia” kogokolwiek.",
+          "dalej": "retro"
+        },
+        {
+          "tekst": "Podmieniasz plik po cichu w folderze zarządu, licząc, że nikt nie zauważy różnicy.",
+          "zaufanie": -12,
+          "napiecie": 10,
+          "komentarz": "Ukrywanie błędów to najprostsza droga do kultury, w której problemy wychodzą na jaw za późno. Zespół wie, co się stało – i wyciąga z tego wniosek na przyszłość.",
+          "dalej": "retro"
+        },
+        {
+          "tekst": "Piszesz do zarządu: „Błąd popełniła specjalistka Marta K., wyciągnęliśmy konsekwencje.”",
+          "zaufanie": -25,
+          "napiecie": 5,
+          "komentarz": "Wskazanie osoby na forum zarządu może chwilowo zdjąć presję z Ciebie, ale niszczy poczucie bezpieczeństwa w zespole. Po takim komunikacie mało kto zgłosi następny błąd sam.",
+          "dalej": "retro"
+        }
+      ]
+    },
+    "retro": {
+      "krok": "Czwartek, spotkanie zespołu",
+      "tekst": "Sytuacja jest opanowana. Na cotygodniowym spotkaniu możesz wrócić do tematu – albo nie.",
+      "opcje": [
+        {
+          "tekst": "Proponujesz krótką rozmowę bez szukania winnych: „Co w naszym procesie sprawiło, że błąd mógł przejść? Co zmieniamy?” Zaczynasz od własnej części – zbyt krótkiego terminu.",
+          "zaufanie": 15,
+          "napiecie": -5,
+          "komentarz": "To klasyczne narzędzie budowania bezpieczeństwa psychologicznego: **uczenie się zamiast szukania winnych**. Zespół ustala np. zasadę „czterech oczu” dla raportów do zarządu i realny bufor czasowy.",
+          "dalej": "koniec"
+        },
+        {
+          "tekst": "Ogłaszasz, że od teraz każdy raport do zarządu sprawdzasz osobiście.",
+          "zaufanie": -5,
+          "napiecie": 15,
+          "komentarz": "Kontrola jest zrozumiała, ale przenosi całą odpowiedzialność na Ciebie: zwiększasz swoje obciążenie i sygnalizujesz brak zaufania. To prosta droga do profilu przeciążenia.",
+          "dalej": "koniec"
+        },
+        {
+          "tekst": "Nie wracasz do tematu – było, minęło.",
+          "zaufanie": -3,
+          "napiecie": 0,
+          "komentarz": "Temat zamknięty, ale lekcja nie została wyciągnięta. Zespół nie wie, co zmienić, a podobny błąd może się powtórzyć.",
+          "dalej": "koniec"
+        }
+      ]
+    }
+  },
+  "pytania_do_refleksji": [
+    "W którym momencie tej historii Twoje napięcie byłoby najwyższe – i jak zwykle wtedy reagujesz?",
+    "Co w Twoim zespole dzieje się dziś z informacją o błędzie: jak szybko dociera do Ciebie?",
+    "Jakie jedno zdanie możesz wprowadzić do swojego repertuaru, gdy ktoś przychodzi z trudną informacją?"
+  ]
+}

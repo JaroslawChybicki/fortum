@@ -8,6 +8,11 @@ index.html            strona główna (kafelki + kontakt) — nie trzeba edytowa
 sekcja.html           szablon podstrony sekcji — nie trzeba edytować
 filmy.html            biblioteka filmów (treść: tresci/filmy.json)
 ksiazki.html          polecane książki (treść: tresci/ksiazki.json)
+cwiczenia.html        ćwiczenia i gry (strona zbiorcza)
+mapa-energii.html     dziennik energii i napięcia (dane tylko w przeglądarce uczestnika)
+oddech.html           oddech z wydłużonym wydechem + trzyminutowa przestrzeń oddechowa
+quiz.html             quiz „Mity o stresie i wypaleniu” (treść: tresci/quiz.json, edycja w CMS)
+gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci/gra-zespol.json)
 kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
 tresci/               ← TREŚCI (edytowane w CMS)
@@ -41,7 +46,8 @@ W panelu są cztery pozycje (dodatkowo **Biblioteka filmów** – link z YouTube
 - **Strona główna i kontakt** – nagłówek, wstęp, telefon, e-mail, link do Lyry. Puste pole się nie wyświetla.
 
 Odnośniki w treści sekcji: film – cytat „**Film:** [tytuł](filmy.html#film=ID_YOUTUBE)”,
-książka – cytat „**Książka:** [tytuł](ksiazki.html#ksiazka=ID_KSIĄŻKI)” (ID z pola „Identyfikator” w „Polecanych książkach”).
+książka – cytat „**Książka:** [tytuł](ksiazki.html#ksiazka=ID_KSIĄŻKI)” (ID z pola „Identyfikator” w „Polecanych książkach”),
+ćwiczenie – cytat „**Ćwiczenie:** [nazwa](mapa-energii.html | oddech.html | oddech.html#przestrzen | quiz.html | gra-zespol.html)”.
 Oba otwierają się w oknie na podstronie, bez opuszczania tekstu.
 
 Każde *Save* to commit w repozytorium; Netlify publikuje zmianę po ok. minucie.
