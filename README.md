@@ -69,10 +69,10 @@ nazwy wskaźników (`mierniki`), `zakonczenia` (warunki progowe, pierwsze pasuj�
 i linki „Pogłębienie”. Nowa gra = nowy plik JSON + kopia `gra-sezon.html` ze zmienionym `data-scenariusz`.
 
 ## Formularz kontaktowy
-Na stronie głównej (sekcja `#napisz`), link „Napisz wiadomość” w stopce każdej podstrony. Obsługa: **Netlify Forms**
-(formularz „kontakt”). Wiadomości: Netlify → projekt `fortum` → *Forms*. Powiadomienia e-mail:
-*Project configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification*.
-Formularz musi pozostać w statycznym HTML `index.html` – inaczej Netlify go nie wykryje.
+Na stronie głównej (sekcja `#napisz`), link „Napisz wiadomość” w stopce każdej podstrony.
+Wysyłka na e-mail przez **Web3Forms** (darmowy plan: 250 wiadomości/mies.). Klucz `access_key` jest w `index.html`
+(publiczny z założenia – pozwala tylko wysyłać wiadomości na przypisany adres). Zmiana adresu odbiorcy:
+nowy klucz na web3forms.com i podmiana wartości `access_key`. Obsługa wysyłki: `assets/kontakt.js`.
 
 ## Podgląd lokalny
 Treści są wczytywane z plików, więc samo dwukliknięcie `index.html` nie wystarczy:

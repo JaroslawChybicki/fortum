@@ -18,13 +18,16 @@
 <svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
 <main id="tresc"></main>
 
-<!-- Formularz kontaktowy (Netlify Forms). Musi być w statycznym HTML, żeby Netlify go wykrył przy wdrożeniu. -->
+<!-- Formularz kontaktowy – wysyłka na e-mail przez Web3Forms (darmowy plan). Klucz access_key jest publiczny z założenia. -->
 <section class="wrap" id="napisz" aria-labelledby="napisz-h">
-  <form class="kform" name="kontakt" method="POST" data-netlify="true" netlify-honeypot="adres_www" action="/?wyslano=1#napisz">
-    <input type="hidden" name="form-name" value="kontakt">
+  <form class="kform" name="kontakt" method="POST" action="https://api.web3forms.com/submit">
+    <input type="hidden" name="access_key" value="98f4f9e2-3e62-4eaa-b547-511a88c32bb8">
+    <input type="hidden" name="subject" value="Nowa wiadomość ze strony „Odporni i gotowi”">
+    <input type="hidden" name="from_name" value="Strona Odporni i gotowi">
+    <input type="hidden" name="redirect" value="https://fortum.netlify.app/?wyslano=1#napisz">
     <h2 id="napisz-h">Napisz wiadomość</h2>
     <p class="kform-lead">Pytanie o program, sesję coachingową albo materiały? Odpowiem na podany adres e-mail.</p>
-    <p class="hp" aria-hidden="true"><label>Nie wypełniaj tego pola: <input name="adres_www" tabindex="-1" autocomplete="off"></label></p>
+    <p class="hp" aria-hidden="true"><label>Nie zaznaczaj tego pola: <input type="checkbox" name="botcheck" tabindex="-1"></label></p>
     <div class="kgrid">
       <label class="kf"><span>Imię</span><input name="imie" autocomplete="given-name" maxlength="80" required></label>
       <label class="kf"><span>E-mail</span><input type="email" name="email" autocomplete="email" maxlength="120" required></label>
@@ -41,7 +44,7 @@
     </div>
     <p class="knote">Nie opisuj w formularzu szczegółów dotyczących zdrowia – na takie rozmowy jest miejsce na sesji.</p>
     <label class="kcheck"><input type="checkbox" name="zgoda" value="tak" required>
-      <span>Wyrażam zgodę na przetwarzanie podanych danych (imię, e-mail, treść wiadomości) wyłącznie w celu udzielenia odpowiedzi. Administratorem danych jest prowadzący program. Mogę w każdej chwili poprosić o ich usunięcie.</span></label>
+      <span>Wyrażam zgodę na przetwarzanie podanych danych (imię, e-mail, treść wiadomości) wyłącznie w celu udzielenia odpowiedzi. Administratorem danych jest prowadzący program; wiadomość jest przekazywana e-mailem za pośrednictwem usługi Web3Forms. Mogę w każdej chwili poprosić o usunięcie danych.</span></label>
     <div class="kactions">
       <button type="submit" class="btn">Wyślij wiadomość</button>
       <span class="kstatus" role="status" aria-live="polite"></span>

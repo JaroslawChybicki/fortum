@@ -1,5 +1,5 @@
-// Formularz kontaktowy – wysyłka przez Netlify Forms bez przeładowania strony.
-// Bez JavaScriptu formularz działa zwykłym POST-em (Netlify obsługuje go tak samo).
+// Formularz kontaktowy – wysyłka na e-mail przez Web3Forms bez przeładowania strony.
+// Bez JavaScriptu formularz działa zwykłym POST-em i wraca na stronę z podziękowaniem (pole redirect).
 (function () {
   const form = document.querySelector('form[name="kontakt"]');
   if (!form) return;
@@ -20,12 +20,13 @@
     if (!form.reportValidity()) return;
     btn.disabled = true; pokaz('Wysyłam…', true);
     try {
-      const r = await fetch('/', {
+      const r = await fetch(form.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(form)).toString(),
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
       });
-      if (!r.ok) throw new Error(r.status);
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.success) throw new Error(j.message || r.status);
       podziekuj();
       form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (err) {
