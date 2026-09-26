@@ -130,6 +130,18 @@
       "ukryj": false,
       "tresc": "",
       "podsekcje": []
+    },
+    {
+      "id": "ksiazki",
+      "tytul": "Polecane książki",
+      "opis": "17 książek o wypaleniu, energii, odporności, uważności i przywództwie – z omówieniem najważniejszych tez.",
+      "przycisk": "Przeglądaj",
+      "ikona": "ksiazki",
+      "adres": "ksiazki.html",
+      "wyroznij": false,
+      "ukryj": false,
+      "tresc": "",
+      "podsekcje": []
     }
   ]
 }

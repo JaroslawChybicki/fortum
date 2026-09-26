@@ -78,6 +78,8 @@ content:
                   label: Kalkulator (koszty)
                 - value: filmy
                   label: Ekran z przyciskiem odtwarzania (filmy)
+                - value: ksiazki
+                  label: Otwarta książka (książki)
           - name: wyroznij
             label: Wyróżniony kafelek (kolorowy)
             type: boolean
@@ -188,6 +190,66 @@ content:
           - name: opis
             label: Krótki opis
             type: text
+          - name: ukryj
+            label: Ukryj na stronie
+            type: boolean
+
+  - name: ksiazki
+    label: Polecane książki
+    description: Książki na stronie ksiazki.html.
+    type: file
+    path: tresci/ksiazki.json
+    format: json
+    fields:
+      - name: wstep
+        label: Wstęp nad listą książek
+        type: text
+      - name: ksiazki
+        label: Książki
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{autor} – {tytul}"
+        fields:
+          - name: tytul
+            label: Tytuł (polskiego wydania, jeśli istnieje)
+            type: string
+            required: true
+          - name: autor
+            label: Autor / autorzy
+            type: string
+            required: true
+          - name: tytul_oryginalny
+            label: Tytuł oryginalny
+            type: string
+          - name: wydanie
+            label: Wydawnictwo i rok
+            type: string
+          - name: kategoria
+            label: Temat
+            type: select
+            options:
+              values:
+                - value: wypalenie
+                  label: Wypalenie
+                - value: energia
+                  label: Energia i stres
+                - value: odpornosc
+                  label: Odporność
+                - value: uwaznosc
+                  label: Uważność i zen
+                - value: przywodztwo
+                  label: Przywództwo i zespół
+          - name: zajawka
+            label: Krótki opis (widoczny od razu)
+            type: text
+          - name: tresc
+            label: Najważniejsze tezy i dlaczego warto (rozwijane)
+            type: rich-text
+          - name: link
+            label: Link do księgarni
+            type: string
           - name: ukryj
             label: Ukryj na stronie
             type: boolean
