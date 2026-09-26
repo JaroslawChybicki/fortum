@@ -14,6 +14,7 @@ oddech.html           oddech z wydłużonym wydechem + trzyminutowa przestrzeń 
 medytacja-gory.html   nagranie „Medytacja góry” (plik: audio/medytacja-gory.mp3)
 body-scan.html        nagranie „Mini body scan” (audio/body-scan.mp3)
 przestrzen-oddechu.html nagranie „Przestrzeń oddechu” (audio/przestrzen-oddechu.mp3)
+relaksacja-jacobsona.html nagranie „Progresywna relaksacja mięśni” (audio/relaksacja-jacobsona.mp3)
 quiz.html             quiz „Mity o stresie i wypaleniu” (treść: tresci/quiz.json, edycja w CMS)
 gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci/gra-zespol.json)
 gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scenariusz: tresci/gra-sezon.json)
