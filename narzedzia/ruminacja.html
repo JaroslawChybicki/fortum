@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Myśleć o problemie czy problemem?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 2: Mechanizmy przeciążenia</nav>
+  <div class="pagehead">
+    <h1>Myśleć o problemie czy problemem?</h1>
+    <p class="lead">Terapia metapoznawcza (MCT, Adrian Wells) pokazuje, że przeciążenie podtrzymuje nie tyle treść myśli, ile <b>sposób</b> myślenia: długie przeżuwanie, zamartwianie się i ciągłe monitorowanie zagrożeń. Nie trzeba zmieniać myśli. Wystarczy zmienić to, ile czasu z nimi spędzasz.</p>
+  </div>
+
+  <section class="card">
+    <h2>Test jednego pytania</h2>
+    <div class="note">Gdy łapiesz się na długim myśleniu o sprawie, zapytaj: <b>„Jaki jest mój następny konkretny krok?”</b><br>Jeśli masz odpowiedź, zapisz ją i wróć do teraz. To było <i>myślenie o problemie</i>.<br>Jeśli odpowiedzi nie ma, a myśli krążą, to <i>myślenie problemem</i>, czyli ruminacja. Odrocz ją.</div>
+  </section>
+
+  <section class="card">
+    <h2>Moje przekonania o myśleniu</h2>
+    <p class="small muted">Na ile się z tym zgadzasz (0–100%)? Wróć do tej części po dwóch tygodniach praktyki i porównaj.</p>
+    <div class="grid g2">
+      <div>
+        <h3>Na starcie</h3>
+        <div class="field"><label>„Przemyślenie wszystkiego dokładnie pomaga mi się przygotować.”</label><div class="range-row"><input type="range" min="0" max="100" step="5" value="50" data-k="pos1"><output>50</output></div></div>
+        <div class="field"><label>„Nie mam kontroli nad tym, jak długo myślę o sprawach z pracy.”</label><div class="range-row"><input type="range" min="0" max="100" step="5" value="50" data-k="neg1"><output>50</output></div></div>
+      </div>
+      <div>
+        <h3>Po dwóch tygodniach</h3>
+        <div class="field"><label>„Przemyślenie wszystkiego dokładnie pomaga mi się przygotować.”</label><div class="range-row"><input type="range" min="0" max="100" step="5" value="50" data-k="pos2"><output>50</output></div></div>
+        <div class="field"><label>„Nie mam kontroli nad tym, jak długo myślę o sprawach z pracy.”</label><div class="range-row"><input type="range" min="0" max="100" step="5" value="50" data-k="neg2"><output>50</output></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Plan odraczania</h2>
+    <div class="grid g3">
+      <div class="field"><label>Moje „okno na myślenie”: godzina</label><input type="time" data-k="winTime"></div>
+      <div class="field"><label>Czas trwania</label><select data-k="winLen"><option>10 min</option><option selected>15 min</option><option>20 min</option></select></div>
+      <div class="field"><label>Miejsce<span class="hint">Nie w łóżku i nie tuż przed snem.</span></label><input type="text" data-k="winPlace"></div>
+    </div>
+    <div class="note small"><b>Jak to działa.</b> Gdy pojawi się myśl-wyzwalacz: (1) zauważ ją, (2) powiedz sobie „zajmę się tym o godz. …”, (3) wróć uwagą do tego, co robisz. W oknie możesz myśleć, ile chcesz, ale nie musisz. Często okazuje się, że sprawa straciła znaczenie.</div>
+  </section>
+
+  <section class="card">
+    <h2>Dziennik odraczania</h2>
+    <div class="grid g4">
+      <div class="field"><label for="wd">Data</label><input type="date" id="wd"></div>
+      <div class="field" style="grid-column:span 2"><label for="wt">Myśl-wyzwalacz</label><input type="text" id="wt" placeholder="np. „a co, jeśli zarząd nie przyjmie planu?”"></div>
+      <div class="field"><label for="wm">Ile minut minęło, zanim zauważyłem(-am)?</label><input type="number" id="wm" min="0" value="5"></div>
+    </div>
+    <div class="grid g3">
+      <label class="check"><input type="checkbox" id="wp"> Udało się odroczyć</label>
+      <label class="check"><input type="checkbox" id="wr"> W oknie wciąż było to ważne</label>
+      <div><button type="button" class="primary" id="wadd">Dodaj wpis</button></div>
+    </div>
+    <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Data</th><th>Wyzwalacz</th><th>Min.</th><th>Odroczone</th><th>Ważne w oknie</th><th></th></tr></thead><tbody id="wrows"></tbody></table></div>
+    <div id="wsum" class="grid g3" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <h2>Uważność zdystansowana: ćwiczenia</h2>
+    <div class="grid g2">
+      <div><h3>Chmury</h3><p class="small">Przez 2 minuty pozwól myślom przepływać jak chmurom po niebie. Nie odpychaj ich i nie podążaj za nimi. Po prostu obserwuj, jak przychodzą i odchodzą same.</p></div>
+      <div><h3>Tygrys</h3><p class="small">Wyobraź sobie tygrysa. Nie próbuj niczego z nim robić. Zauważ, że obraz porusza się, zmienia, może zniknąć sam. Myśli o pracy zachowują się tak samo, jeśli ich nie „karmisz”.</p></div>
+    </div>
+    <div class="field"><label>Co zauważyłem(-am) podczas ćwiczeń?</label><textarea data-k="dm"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+OG.Tool({
+  id:'ruminacja', title:'Myśleć o problemie czy problemem? (MCT)',
+  defaults:function(){ return {log:[]}; },
+  init:function(s, api){
+    document.getElementById('wd').value=OG.isoDate();
+    function draw(){
+      var L=s.log;
+      document.getElementById('wrows').innerHTML=L.length?L.map(function(x,i){return '<tr><td>'+OG.esc(x.d)+'</td><td>'+OG.esc(x.t)+'</td><td>'+x.m+'</td><td>'+(x.p?'✓':'–')+'</td><td>'+(x.r?'✓':'–')+'</td><td><button type="button" class="sm ghost danger no-print" data-del="'+i+'" aria-label="Usuń">✕</button></td></tr>';}).join(''):'<tr><td colspan="6" class="muted">Brak wpisów.</td></tr>';
+      if(!L.length){ document.getElementById('wsum').innerHTML=''; return; }
+      var p=L.filter(function(x){return x.p;}).length, r=L.filter(function(x){return x.r;}).length, mm=L.reduce(function(a,x){return a+(+x.m||0);},0)/L.length;
+      document.getElementById('wsum').innerHTML='<div class="stat"><b>'+Math.round(p/L.length*100)+'%</b><span>udanych odroczeń</span></div><div class="stat"><b>'+Math.round(r/L.length*100)+'%</b><span>spraw ważnych w oknie</span></div><div class="stat"><b>'+mm.toFixed(0)+' min</b><span>średnio do zauważenia</span></div>';
+    }
+    document.getElementById('wadd').onclick=function(){
+      var t=document.getElementById('wt').value.trim(); if(!t) return OG.modal('Brak wyzwalacza','<p>Zapisz choć kilka słów o myśli-wyzwalaczu.</p>');
+      s.log.push({d:document.getElementById('wd').value,t:t,m:+document.getElementById('wm').value||0,p:document.getElementById('wp').checked,r:document.getElementById('wr').checked});
+      document.getElementById('wt').value=''; document.getElementById('wp').checked=false; document.getElementById('wr').checked=false; draw(); api.save();
+    };
+    document.getElementById('wrows').addEventListener('click',function(e){var i=e.target.getAttribute('data-del'); if(i==null) return; s.log.splice(+i,1); draw(); api.save();});
+    draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, f=s.f, v=function(x){return x==null?'50':x;};
+    return m.h('Przekonania metapoznawcze (0–100%)')+m.table(['Przekonanie','Start','Po 2 tygodniach'],[['Przemyślenie wszystkiego pomaga mi się przygotować',v(f.pos1),v(f.pos2)],['Nie mam kontroli nad tym, jak długo myślę',v(f.neg1),v(f.neg2)]])+
+      m.h('Plan odraczania')+m.f('Okno',(f.winTime||'–')+', '+(f.winLen||'15 min')+(f.winPlace?', '+f.winPlace:''))+
+      m.h('Dziennik')+m.table(['Data','Wyzwalacz','Min. do zauważenia','Odroczone','Ważne w oknie'], s.log.map(function(x){return [x.d,x.t,x.m,x.p?'tak':'nie',x.r?'tak':'nie'];}))+
+      m.f('Uważność zdystansowana: obserwacje',f.dm);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Wewnętrzne drivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 2: Mechanizmy przeciążenia</nav>
+  <div class="pagehead">
+    <h1>Wewnętrzne drivery</h1>
+    <p class="lead">Taibi Kahler opisał pięć „driverów”: wewnętrznych nakazów, które kiedyś pomogły nam odnieść sukces, a pod presją zaczynają nas prowadzić zamiast nami służyć. U liderów najczęściej stoją za niedelegowaniem, przeciążeniem i pośpiechem.</p>
+  </div>
+  <div class="note small">To narzędzie do refleksji, a nie test psychometryczny. Wynik jest punktem wyjścia do rozmowy, nie diagnozą. Odpowiadaj tak, jak jest, a nie tak, jak „powinno” być.</div>
+
+  <section class="card">
+    <h2>Na ile te stwierdzenia Cię opisują?</h2>
+    <p class="small muted">1 = zupełnie nie, 2 = raczej nie, 3 = czasem, 4 = często, 5 = niemal zawsze</p>
+    <div id="items"></div>
+    <p class="small muted" id="progress"></p>
+  </section>
+
+  <section class="card">
+    <h2>Twój profil</h2>
+    <div id="profile"><p class="muted">Profil pojawi się po udzieleniu odpowiedzi.</p></div>
+  </section>
+
+  <section class="card">
+    <h2>Moje pozwolenie</h2>
+    <p class="small muted">Pozwolenie (ang. <i>allower</i>) to zdanie, które równoważy driver. Nie zastępuje ambicji. Daje wybór tam, gdzie wcześniej był przymus.</p>
+    <div class="grid g2">
+      <div class="field"><label>Mój dominujący driver brzmi dla mnie jak…<span class="hint">Jego własnymi słowami, np. „Nie odpuszczaj, bo…”</span></label><textarea data-k="voice"></textarea></div>
+      <div class="field"><label>Czemu ten driver dobrze mi służył?<span class="hint">Co dzięki niemu osiągnąłem(-am)?</span></label><textarea data-k="served"></textarea></div>
+      <div class="field"><label>Ile mnie dziś kosztuje?<span class="hint">Energia, delegowanie, relacje, zespół, zdrowie.</span></label><textarea data-k="cost"></textarea></div>
+      <div class="field"><label>Moje osobiste pozwolenie<span class="hint">Sformułuj je tak, żeby było Twoje.</span></label><textarea data-k="allower"></textarea></div>
+    </div>
+    <div class="field"><label>Gdzie i kiedy w tym tygodniu je przećwiczę?</label><textarea data-k="practice"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var D = {
+  P:{n:'Bądź perfekcyjny', a:'Wystarczająco dobre jest wystarczająco dobre.', cost:'Trudność z oddaniem zadań, wydłużanie pracy, krytyczny ton wobec siebie i zespołu.', lead:'Delegowanie z jasnym „kryterium wystarczalności”: co musi być, a co może być inaczej niż zrobił(a)bym to ja.'},
+  S:{n:'Bądź silny', a:'Mogę mieć potrzeby, mówić o nich i prosić o wsparcie.', cost:'Samotność w roli, późne sygnały przeciążenia, zespół nie wie, że potrzebujesz pomocy.', lead:'Mówienie o własnej granicy zespołowi. Buduje bezpieczeństwo psychologiczne, a nie je osłabia.'},
+  Z:{n:'Zadowalaj innych', a:'Mogę dbać o siebie i mówić „nie”, pozostając w relacji.', cost:'Przejmowanie zadań, rozmyte komunikaty, kalendarz ustawiony przez innych.', lead:'Formuła „tak dla… więc nie dla…”, czyli jawne negocjowanie priorytetów.'},
+  T:{n:'Staraj się (bardzo)', a:'Mogę po prostu zrobić i skończyć.', cost:'Wiele rozpoczętych inicjatyw, mało domkniętych; wysiłek bez satysfakcji.', lead:'Definicja „zrobione” przed startem i świadome zamykanie tematów.'},
+  H:{n:'Śpiesz się', a:'Mam czas. Mogę się zatrzymać.', cost:'Spotkania bez przerw, przerywanie innym, decyzje pod presją czasu, brak regeneracji.', lead:'Bufory między spotkaniami i jeden świadomy oddech na progu sali.'}
+};
+var ITEMS = [
+ ['P','Trudno mi oddać pracę, zanim nie jest dopracowana w każdym szczególe.'],
+ ['S','Rzadko mówię innym, że jestem zmęczony(-a) albo czegoś nie wiem.'],
+ ['Z','Trudno mi odmówić, nawet gdy mój kalendarz jest pełny.'],
+ ['T','Zaczynam wiele rzeczy z entuzjazmem, a trudniej mi je domykać.'],
+ ['H','Robię kilka rzeczy naraz, także podczas rozmów i spotkań.'],
+ ['P','Zauważam błędy (swoje i cudze) szybciej niż to, co się udało.'],
+ ['S','Proszenie o pomoc odbieram jako oznakę słabości.'],
+ ['Z','Martwię się, co inni pomyślą o mojej decyzji.'],
+ ['T','Czuję, że wysiłek liczy się bardziej niż efekt.'],
+ ['H','Przerywam innym albo kończę za nich zdania.'],
+ ['P','Wolę zrobić coś sam(a), niż poprawiać po kimś.'],
+ ['S','W kryzysie wyłączam emocje i „robię swoje”.'],
+ ['Z','Łagodzę trudne komunikaty tak, że tracą wyrazistość.'],
+ ['T','Gdy coś idzie łatwo, podejrzewam, że robię za mało.'],
+ ['H','Niecierpliwię się, gdy ktoś działa wolniej niż ja.'],
+ ['P','Poprawiam dokumenty i prezentacje także wtedy, gdy są już wystarczająco dobre.'],
+ ['S','Inni dowiadują się, że było mi ciężko, dopiero po fakcie albo wcale.'],
+ ['Z','Biorę na siebie zadania, żeby nie obciążać zespołu.'],
+ ['T','Dokładam nowe inicjatywy, zanim skończę poprzednie.'],
+ ['H','Umawiam spotkania „na styk”, bez przerw między nimi.'],
+ ['P','Pomyłka kosztuje mnie długie rozpamiętywanie.'],
+ ['S','Czuję się nieswojo, gdy ktoś okazuje mi troskę.'],
+ ['Z','Czyjeś niezadowolenie długo mi towarzyszy.'],
+ ['T','Mówię „spróbuję” zamiast „zrobię” albo „nie zrobię”.'],
+ ['H','Zatrzymanie się bez zadania wywołuje u mnie niepokój.']
+];
+function scores(a){ var r={P:0,S:0,Z:0,T:0,H:0}, c=0; ITEMS.forEach(function(it,i){ if(a[i]){ r[it[0]]+=a[i]; c++; } }); return {r:r, c:c}; }
+function band(v){ return v>=20?'wyraźnie obecny':v>=15?'obecny':'słaby'; }
+OG.Tool({
+  id:'drivery', title:'Wewnętrzne drivery',
+  defaults:function(){ return {a:{}}; },
+  init:function(s, api){
+    document.getElementById('items').innerHTML = ITEMS.map(function(it,i){
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div style="margin-bottom:6px">'+(i+1)+'. '+it[1]+'</div><div class="chips" role="radiogroup" aria-label="Odpowiedź '+(i+1)+'">'+
+        [1,2,3,4,5].map(function(v){ return '<button type="button" class="chip" data-i="'+i+'" data-v="'+v+'" aria-pressed="'+(s.a[i]===v)+'" style="min-width:44px;justify-content:center">'+v+'</button>'; }).join('')+'</div></div>';
+    }).join('');
+    document.getElementById('items').addEventListener('click', function(e){
+      var i=e.target.getAttribute('data-i'); if(i==null) return; var v=+e.target.getAttribute('data-v'); s.a[i]=v;
+      OG.$$('[data-i="'+i+'"]').forEach(function(b){ b.setAttribute('aria-pressed', +b.getAttribute('data-v')===v); });
+      draw(); api.save();
+    });
+    function draw(){
+      var sc=scores(s.a); document.getElementById('progress').textContent='Odpowiedzi: '+sc.c+' / 25';
+      if(sc.c<25){ if(sc.c===0) return; }
+      var order=Object.keys(sc.r).sort(function(a,b){return sc.r[b]-sc.r[a];});
+      var h=sc.c<25?'<p class="note small">Profil wstępny: odpowiedziano na '+sc.c+' z 25 stwierdzeń.</p>':'';
+      h+=order.map(function(k,idx){ var v=sc.r[k], p=Math.round((v-5)/20*100); if(v===0) p=0;
+        return '<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;gap:8px"><b>'+(idx===0?'★ ':'')+D[k].n+'</b><span>'+v+' / 25 · '+band(v)+'</span></div><div class="bar'+(v>=20?' red':'')+'"><i style="width:'+Math.max(p,2)+'%"></i></div>'+
+          (idx<2?'<div class="small" style="margin-top:6px"><b>Koszt:</b> '+D[k].cost+'<br><b>Pozwolenie:</b> <i>„'+D[k].a+'”</i><br><b>W roli lidera:</b> '+D[k].lead+'</div>':'')+'</div>';
+      }).join('');
+      document.getElementById('profile').innerHTML=h;
+    }
+    draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, sc=scores(s.a), order=Object.keys(sc.r).sort(function(a,b){return sc.r[b]-sc.r[a];});
+    return m.f('Odpowiedzi',sc.c+' / 25')+m.h('Profil (5–25 punktów na driver)')+m.table(['Driver','Wynik','Poziom'], order.map(function(k){return [D[k].n, sc.r[k], band(sc.r[k])];}))+
+      m.f('Dominujący driver', D[order[0]].n+' → pozwolenie: „'+D[order[0]].a+'”')+
+      m.h('Moje pozwolenie')+m.f('Głos drivera',s.f.voice)+m.f('Czemu służył',s.f.served)+m.f('Ile kosztuje dziś',s.f.cost)+m.f('Moje pozwolenie',s.f.allower)+m.f('Gdzie przećwiczę',s.f.practice)+
+      m.h('Odpowiedzi szczegółowe')+m.table(['#','Stwierdzenie','Driver','Odp.'], ITEMS.map(function(it,i){return [i+1,it[1],D[it[0]].n,s.a[i]||'–'];}));
+  }
+});
+</script>
+</body>
+</html>

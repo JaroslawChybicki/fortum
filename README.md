@@ -20,6 +20,7 @@ gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci
 gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scenariusz: tresci/gra-sezon.json)
 kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
+narzedzia/            narzędzia coachingowe – karty pracy do sesji 1:1 (osobna mini-aplikacja)
 tresci/               ← TREŚCI (edytowane w CMS)
   sekcje.json         kafelki + treść każdej podstrony (Markdown)
   strona.json         nagłówek, wstęp, dane kontaktowe, link do Lyry
@@ -81,6 +82,16 @@ Na stronie głównej (sekcja `#napisz`), link „Napisz wiadomość” w stopce 
 Wysyłka na e-mail przez **Web3Forms** (darmowy plan: 250 wiadomości/mies.). Klucz `access_key` jest w `index.html`
 (publiczny z założenia – pozwala tylko wysyłać wiadomości na przypisany adres). Zmiana adresu odbiorcy:
 nowy klucz na web3forms.com i podmiana wartości `access_key`. Obsługa wysyłki: `assets/kontakt.js`.
+
+## Narzędzia coachingowe (`narzedzia/`)
+14 kart pracy (koło życia, wartości ACT, Matryca ACT, dziennik energii, drivery, koszt standardów, ruminacja/MCT,
+praktyki, delegowanie, regeneracja, WOOP, sygnały, GAS, informacja zwrotna po sesji) + „Mój proces” (raport zbiorczy).
+Odpowiedzi zapisują się tylko w localStorage uczestnika (klucze `fortum:*`); raport uczestnik pobiera (.md), drukuje
+lub wysyła mailem sam („Wyślij do Jarka” → `mailto:`). Adres e-mail: stała `EMAIL` w `narzedzia/assets/app.js`;
+nowe narzędzie = plik HTML na wzór istniejącego + wpis w tablicy `CATALOG` w tym samym pliku.
+Kafelek na stronie głównej: „Narzędzia coachingowe” w CMS (link `narzedzia/`).
+Przewodnik prowadzącego (`przewodnik-coacha.md`) jest materiałem wewnętrznym i celowo NIE trafia do repozytorium –
+wszystko w repo jest publikowane na stronie.
 
 ## Logo i favicon
 Źródło: logo wygenerowane w Gemini (JPG). Pliki:

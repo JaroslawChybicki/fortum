@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Co jest dla mnie ważne?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 1: Mapa i kierunek</nav>
+  <div class="pagehead">
+    <h1>Co jest dla mnie ważne?</h1>
+    <p class="lead">Wartości w ACT nie są celami do osiągnięcia, tylko kierunkami, w których możesz iść każdego dnia, także pod presją. To kompas, a nie cel podróży.</p>
+  </div>
+
+  <div class="grid g4" id="stats" style="margin-bottom:18px"></div>
+
+  <section class="card">
+    <h2>Krok 1. Zaznacz wartości, które są dla Ciebie ważne</h2>
+    <p class="small muted">Kliknij wartość, żeby ją wybrać. Najedź lub przytrzymaj, żeby zobaczyć opis. Nie ma dobrych ani złych odpowiedzi. Wybierz te, które naprawdę coś w Tobie poruszają (zwykle 8–12).</p>
+    <div class="chips" id="all"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap" class="no-print">
+      <input type="text" id="own" placeholder="Dodaj własną wartość…" style="flex:1;min-width:180px">
+      <button type="button" id="addOwn">Dodaj wartość</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Krok 2. Wybierz Top 3</h2>
+    <p class="small muted">Z wybranych wartości wskaż trzy najważniejsze teraz, w tym etapie życia i pracy.</p>
+    <div class="chips" id="picked"></div>
+  </section>
+
+  <section class="card">
+    <h2>Krok 3. Ważność i spójność</h2>
+    <p class="small muted"><b>Ważność:</b> jak bardzo ta wartość jest dla Ciebie istotna (0–10). <b>Spójność:</b> na ile w ostatnich dwóch tygodniach Twoje działania były z nią zgodne (0–10). Największa różnica to zwykle najciekawsze miejsce do pracy.</p>
+    <div id="rate"></div>
+  </section>
+
+  <section class="card">
+    <h2>Krok 4. Mały krok „ku”</h2>
+    <p class="small muted">Dla każdej wartości z Top 3: jedno konkretne, małe działanie w najbliższym tygodniu. Takie, które zrobisz nawet wtedy, gdy pojawi się zmęczenie albo wątpliwość.</p>
+    <div id="steps"></div>
+    <div class="field"><label>Co może stanąć na drodze (myśli, emocje, okoliczności)? Jak chcesz na to odpowiedzieć?</label><textarea data-k="barriers"></textarea></div>
+    <div class="field"><label>Notatki</label><textarea data-k="notes"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var VALUES = [
+ ['Akceptacja','przyjmować siebie, innych i sytuacje takimi, jakie są'],
+ ['Autentyczność','być sobą, mówić i działać zgodnie z tym, co naprawdę myślę'],
+ ['Bliskość','budować głębokie, ciepłe relacje'],
+ ['Ciekawość','odkrywać, pytać, być otwartym na nowe'],
+ ['Dbałość o siebie','troszczyć się o swoje ciało, energię i granice'],
+ ['Docenianie','zauważać i nazywać to, co wartościowe w ludziach i sytuacjach'],
+ ['Duchowość i sens','łączyć się z czymś większym niż ja'],
+ ['Dyscyplina','konsekwentnie robić to, co uznaję za ważne'],
+ ['Elastyczność','dostosowywać się do zmian bez utraty kierunku'],
+ ['Hojność','dzielić się czasem, wiedzą i zasobami'],
+ ['Humor','wnosić lekkość i widzieć zabawną stronę rzeczy'],
+ ['Integralność','być uczciwym wobec siebie i innych, dotrzymywać słowa'],
+ ['Kompetencja','robić rzeczy dobrze, rozwijać mistrzostwo'],
+ ['Kreatywność','tworzyć, szukać nowych rozwiązań'],
+ ['Lojalność','być wiernym ludziom i zobowiązaniom'],
+ ['Niezależność','decydować o sobie, mieć własne zdanie'],
+ ['Odpowiedzialność','brać na siebie skutki decyzji i działań'],
+ ['Odwaga','działać mimo lęku, mówić trudne rzeczy'],
+ ['Otwartość','słuchać innych perspektyw i zmieniać zdanie'],
+ ['Porządek','tworzyć strukturę i jasność'],
+ ['Przygoda','szukać nowych doświadczeń, podejmować wyzwania'],
+ ['Przyjaźń','być dobrym przyjacielem, pielęgnować przyjaźnie'],
+ ['Przywództwo','nadawać kierunek i wspierać innych w rozwoju'],
+ ['Rodzina','być obecnym i zaangażowanym wobec bliskich'],
+ ['Rozwój','uczyć się i stawać lepszą wersją siebie'],
+ ['Równowaga','dbać o proporcje między pracą, relacjami i odpoczynkiem'],
+ ['Skuteczność','doprowadzać sprawy do końca i osiągać rezultaty'],
+ ['Spokój','wnosić wyciszenie i stabilność'],
+ ['Sprawiedliwość','traktować ludzi fair, stawać w obronie słuszności'],
+ ['Szacunek','traktować siebie i innych z godnością'],
+ ['Troska','opiekować się innymi, być wsparciem'],
+ ['Uważność','być obecnym w tym, co dzieje się teraz'],
+ ['Wdzięczność','doceniać to, co mam'],
+ ['Wkład','mieć pozytywny wpływ, służyć czemuś ważnemu'],
+ ['Współczucie','odpowiadać życzliwością na cierpienie, także własne'],
+ ['Współpraca','działać razem, budować wspólnotę'],
+ ['Wytrwałość','nie poddawać się w obliczu trudności'],
+ ['Zaufanie','być godnym zaufania i ufać innym'],
+ ['Zabawa','cieszyć się, odpoczywać, grać'],
+ ['Zdrowie','dbać o sprawność i dobre samopoczucie']
+];
+OG.Tool({
+  id:'wartosci', title:'Co jest dla mnie ważne? Wartości ACT',
+  defaults:function(){ return {sel:[], top:[], own:[], r:{}, step:{}}; },
+  init:function(s, api){
+    function desc(n){ var v=VALUES.find(function(x){return x[0]===n;}); return v?v[1]:'wartość własna'; }
+    function all(){ return VALUES.map(function(v){return v[0];}).concat(s.own); }
+    function drawAll(){
+      document.getElementById('all').innerHTML = all().map(function(n){
+        return '<button type="button" class="chip" aria-pressed="'+(s.sel.indexOf(n)>-1)+'" title="'+OG.esc(desc(n))+'" data-v="'+OG.esc(n)+'">'+OG.esc(n)+'</button>';
+      }).join('');
+    }
+    function drawPicked(){
+      var h = s.sel.length ? s.sel.map(function(n){
+        var on = s.top.indexOf(n)>-1;
+        return '<button type="button" class="chip'+(on?' top':'')+'" data-t="'+OG.esc(n)+'">'+(on?'★ ':'')+OG.esc(n)+'</button>';
+      }).join('') : '<p class="muted">Najpierw zaznacz wartości w kroku 1.</p>';
+      document.getElementById('picked').innerHTML = h;
+    }
+    function drawRate(){
+      var list = s.top.concat(s.sel.filter(function(n){return s.top.indexOf(n)<0;}));
+      document.getElementById('rate').innerHTML = list.length ? '<div class="tablewrap"><table><thead><tr><th>Wartość</th><th style="min-width:150px">Ważność</th><th style="min-width:150px">Spójność</th><th style="min-width:140px">Luka</th></tr></thead><tbody>'+
+        list.map(function(n){
+          var r=s.r[n]||(s.r[n]={i:8,c:5}), gap=r.i-r.c;
+          return '<tr><td><b>'+(s.top.indexOf(n)>-1?'★ ':'')+OG.esc(n)+'</b><br><span class="small muted">'+OG.esc(desc(n))+'</span></td>'+
+            '<td><div class="range-row"><input type="range" min="0" max="10" value="'+r.i+'" data-ri="'+OG.esc(n)+'" aria-label="Ważność '+OG.esc(n)+'"><output>'+r.i+'</output></div></td>'+
+            '<td><div class="range-row"><input type="range" min="0" max="10" value="'+r.c+'" data-rc="'+OG.esc(n)+'" aria-label="Spójność '+OG.esc(n)+'"><output>'+r.c+'</output></div></td>'+
+            '<td><div class="bar'+(gap>=4?' red':'')+'"><i style="width:'+Math.max(0,gap)*10+'%"></i></div><span class="small muted">'+(gap>0?gap:0)+' pkt</span></td></tr>';
+        }).join('')+'</tbody></table></div>' : '<p class="muted">Wybierz wartości w kroku 1.</p>';
+    }
+    function drawSteps(){
+      document.getElementById('steps').innerHTML = s.top.length ? s.top.map(function(n){
+        return '<div class="field"><label>★ '+OG.esc(n)+'<span class="hint">Mały krok w tym tygodniu, konkretnie: co, kiedy, z kim.</span></label><textarea data-step="'+OG.esc(n)+'">'+OG.esc(s.step[n]||'')+'</textarea></div>';
+      }).join('') : '<p class="muted">Wskaż Top 3 w kroku 2.</p>';
+      OG.$$('#steps textarea').forEach(OG.autoGrow);
+    }
+    function stats(){
+      var vals=s.sel.map(function(n){return s.r[n];}).filter(Boolean);
+      var avg=vals.length?(vals.reduce(function(x,r){return x+r.c;},0)/vals.length).toFixed(1):'–';
+      var big=s.sel.slice().sort(function(a,b){var ra=s.r[a]||{i:0,c:0}, rb=s.r[b]||{i:0,c:0}; return (rb.i-rb.c)-(ra.i-ra.c);})[0];
+      document.getElementById('stats').innerHTML='<div class="stat"><b>'+s.sel.length+'</b><span>wybranych wartości</span></div><div class="stat"><b>'+s.top.length+'/3</b><span>wartości Top 3</span></div>'+
+        '<div class="stat"><b>'+avg+'</b><span>średnia spójność</span></div><div class="stat"><b style="font-size:1.1rem">'+(big&&s.r[big]?OG.esc(big):'–')+'</b><span>największa luka</span></div>';
+    }
+    function all4(){ drawAll(); drawPicked(); drawRate(); drawSteps(); stats(); }
+    document.getElementById('all').addEventListener('click', function(e){
+      var n=e.target.getAttribute('data-v'); if(n==null) return;
+      var i=s.sel.indexOf(n);
+      if(i>-1){ s.sel.splice(i,1); var t=s.top.indexOf(n); if(t>-1) s.top.splice(t,1); } else s.sel.push(n);
+      all4(); api.save();
+    });
+    document.getElementById('picked').addEventListener('click', function(e){
+      var n=e.target.getAttribute('data-t'); if(n==null) return;
+      var i=s.top.indexOf(n);
+      if(i>-1) s.top.splice(i,1);
+      else { if(s.top.length>=3) return OG.modal('Tylko trzy','<p>Top 3 to trzy wartości. Odznacz jedną, żeby wybrać inną.</p>'); s.top.push(n); }
+      all4(); api.save();
+    });
+    document.getElementById('rate').addEventListener('input', function(e){
+      var t=e.target, n;
+      if((n=t.getAttribute('data-ri'))!=null) s.r[n].i=+t.value;
+      if((n=t.getAttribute('data-rc'))!=null) s.r[n].c=+t.value;
+      t.parentNode.querySelector('output').textContent=t.value;
+      var r=s.r[n], row=t.closest('tr'), gap=r.i-r.c, bar=row.querySelector('.bar');
+      bar.className='bar'+(gap>=4?' red':''); bar.firstChild.style.width=Math.max(0,gap)*10+'%'; row.querySelector('td:last-child .small').textContent=(gap>0?gap:0)+' pkt';
+      stats(); api.save();
+    });
+    document.getElementById('steps').addEventListener('input', function(e){ var n=e.target.getAttribute('data-step'); if(n==null) return; s.step[n]=e.target.value; OG.autoGrow(e.target); api.save(); });
+    document.getElementById('addOwn').onclick=function(){
+      var inp=document.getElementById('own'), v=inp.value.trim(); if(!v) return;
+      if(all().indexOf(v)<0) s.own.push(v); if(s.sel.indexOf(v)<0) s.sel.push(v); inp.value=''; all4(); api.save();
+    };
+    document.getElementById('own').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('addOwn').click(); });
+    all4();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md;
+    var rows=s.top.concat(s.sel.filter(function(n){return s.top.indexOf(n)<0;})).map(function(n){ var r=s.r[n]||{i:'',c:''}; return [(s.top.indexOf(n)>-1?'★ ':'')+n, r.i, r.c, r.i!==''?Math.max(0,r.i-r.c):'']; });
+    return m.f('Top 3', s.top.join(', ')||'nie wskazano') + m.f('Wszystkie wybrane', s.sel.join(', ')) +
+      m.h('Ważność i spójność (0–10)') + m.table(['Wartość','Ważność','Spójność','Luka'], rows) +
+      m.h('Małe kroki „ku”') + m.list(s.top.map(function(n){ return '**'+n+':** '+(s.step[n]||'–'); })) +
+      m.f('Przeszkody i odpowiedź', s.f.barriers) + m.f('Notatki', s.f.notes);
+  }
+});
+</script>
+</body>
+</html>

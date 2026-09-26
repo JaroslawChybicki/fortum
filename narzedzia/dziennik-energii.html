@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Dziennik energii</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 1: Zadanie między sesjami</nav>
+  <div class="pagehead">
+    <h1>Dziennik energii</h1>
+    <p class="lead">Według Roberta Thayera nastrój wyznaczają dwa wymiary: <b>energia</b> i <b>napięcie</b>. Przez 5 dni roboczych zapisuj 3–4 razy dziennie, gdzie jesteś. Zajmuje to 30 sekund, a po tygodniu masz własną mapę energii.</p>
+  </div>
+
+  <section class="card">
+    <h2>Nowy wpis</h2>
+    <div class="grid g4">
+      <div class="field"><label for="d">Data</label><input type="date" id="d"></div>
+      <div class="field"><label for="t">Godzina</label><input type="time" id="t"></div>
+      <div class="field"><label>Energia<span class="hint">1 = wyczerpanie, 10 = pełnia sił</span></label><div class="range-row"><input type="range" id="e" min="1" max="10" value="5"><output>5</output></div></div>
+      <div class="field"><label>Napięcie<span class="hint">1 = rozluźnienie, 10 = silne napięcie</span></label><div class="range-row"><input type="range" id="n" min="1" max="10" value="5"><output>5</output></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="field"><label for="sit">Co się właśnie działo?</label><input type="text" id="sit" placeholder="np. po posiedzeniu zarządu, po lunchu, 4. spotkanie z rzędu"></div>
+      <div class="field"><label for="inf">Co podniosło lub obniżyło energię?</label><input type="text" id="inf" placeholder="np. krótki spacer, kawa, trudny mail"></div>
+    </div>
+    <label class="check"><input type="checkbox" id="red"> Przekroczyłem(-am) dziś „czerwoną linię”: napięcie przestało mobilizować i zaczęło rozpraszać</label>
+    <div style="margin-top:12px" class="no-print"><button type="button" class="primary" id="add">Dodaj wpis</button> <span class="small muted" id="q"></span></div>
+  </section>
+
+  <div class="grid g2">
+    <section class="card">
+      <h2>Twoja mapa</h2>
+      <div id="map"></div>
+      <p class="small muted">Kolor punktu oznacza porę dnia: <span style="color:#7fb7be">●</span> rano, <span style="color:#177E89">●</span> południe, <span style="color:#084C61">●</span> popołudnie, <span style="color:#db3a34">●</span> wieczór.</p>
+    </section>
+    <section class="card">
+      <h2>Podsumowanie</h2>
+      <div id="sum"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Wpisy</h2>
+    <div class="tablewrap"><table><thead><tr><th>Data</th><th>Godz.</th><th>E</th><th>N</th><th>Stan</th><th>Sytuacja</th><th>Wpływ</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Refleksja po 5 dniach</h2>
+    <div class="grid g2">
+      <div class="field"><label>Kiedy pojawia się spokojna energia? Co ją poprzedza?</label><textarea data-k="calmEnergy"></textarea></div>
+      <div class="field"><label>Co najczęściej wpycha Cię w napięte zmęczenie?</label><textarea data-k="tenseTired"></textarea></div>
+      <div class="field"><label>Po czym poznajesz, że zbliżasz się do czerwonej linii?</label><textarea data-k="redline"></textarea></div>
+      <div class="field"><label>Jedna zmiana w rytmie dnia, którą chcesz przetestować</label><textarea data-k="change"></textarea></div>
+    </div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var QN = {
+  ce:{n:'Spokojna energia', d:'Stan optymalny: jasność, zaangażowanie bez przymusu.'},
+  te:{n:'Napięta energia', d:'Mobilizacja „na wysokich obrotach”. Skuteczna krótko, kosztowna długo.'},
+  tt:{n:'Napięte zmęczenie', d:'Najtrudniejszy stan: wyczerpanie połączone z niepokojem. Sprzyja czarnowidztwu i drażliwości.'},
+  ct:{n:'Spokojne zmęczenie', d:'Naturalne zmęczenie przed odpoczynkiem. Dobre na regenerację, nie na trudne decyzje.'}
+};
+function quad(e,n){ return e>5.5 ? (n>5.5?'te':'ce') : (n>5.5?'tt':'ct'); }
+function part(t){ var h=parseInt((t||'12').split(':')[0],10); return h<11?0:h<14?1:h<18?2:3; }
+var PARTS=['rano','południe','popołudnie','wieczór'], PC=['#7fb7be','#177E89','#084C61','#db3a34'];
+OG.Tool({
+  id:'dziennik-energii', title:'Dziennik energii (Thayer)',
+  defaults:function(){ return {log:[]}; },
+  init:function(s, api){
+    var now=new Date(); document.getElementById('d').value=OG.isoDate(); document.getElementById('t').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    ['e','n'].forEach(function(id){ var el=document.getElementById(id); el.addEventListener('input', function(){ el.nextElementSibling.textContent=el.value; preview(); }); });
+    function preview(){ var q=quad(+document.getElementById('e').value, +document.getElementById('n').value); document.getElementById('q').textContent='Teraz: '+QN[q].n; }
+    document.getElementById('add').onclick=function(){
+      s.log.push({d:document.getElementById('d').value, t:document.getElementById('t').value, e:+document.getElementById('e').value, n:+document.getElementById('n').value,
+        sit:document.getElementById('sit').value.trim(), inf:document.getElementById('inf').value.trim(), red:document.getElementById('red').checked});
+      s.log.sort(function(a,b){ return (a.d+a.t).localeCompare(b.d+b.t); });
+      document.getElementById('sit').value=''; document.getElementById('inf').value=''; document.getElementById('red').checked=false;
+      draw(); api.save();
+    };
+    document.getElementById('rows').addEventListener('click', function(e){ var i=e.target.getAttribute('data-del'); if(i==null) return; s.log.splice(+i,1); draw(); api.save(); });
+    function draw(){
+      var L=s.log;
+      document.getElementById('rows').innerHTML = L.length ? L.map(function(x,i){
+        return '<tr><td>'+OG.esc(x.d)+'</td><td>'+OG.esc(x.t)+'</td><td>'+x.e+'</td><td>'+x.n+'</td><td>'+QN[quad(x.e,x.n)].n+(x.red?' <span class="tag red">czerwona linia</span>':'')+'</td><td>'+OG.esc(x.sit)+'</td><td>'+OG.esc(x.inf)+'</td><td><button type="button" class="sm ghost danger no-print" data-del="'+i+'" aria-label="Usuń">✕</button></td></tr>';
+      }).join('') : '<tr><td colspan="8" class="muted">Brak wpisów. Dodaj pierwszy powyżej.</td></tr>';
+      // mapa
+      var W=380, pad=36, S=W-2*pad, X=function(v){return pad+(v-1)/9*S;}, Y=function(v){return pad+(10-v)/9*S;}, m=pad+S/2;
+      var cells=[['te',m,pad],['ce',pad,pad],['ct',pad,m],['tt',m,m]];
+      var svg=cells.map(function(c){ return '<rect x="'+c[1]+'" y="'+c[2]+'" width="'+S/2+'" height="'+S/2+'" style="fill:'+(c[0]==='ce'?'var(--brand-soft)':c[0]==='tt'?'var(--accent-soft)':'var(--surface-2)')+'"/>'; }).join('');
+      svg+='<text x="'+(pad+S/4)+'" y="'+(pad+16)+'" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--brand)">Spokojna energia</text>';
+      svg+='<text x="'+(m+S/4)+'" y="'+(pad+16)+'" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">Napięta energia</text>';
+      svg+='<text x="'+(pad+S/4)+'" y="'+(pad+S-8)+'" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">Spokojne zmęczenie</text>';
+      svg+='<text x="'+(m+S/4)+'" y="'+(pad+S-8)+'" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent)">Napięte zmęczenie</text>';
+      svg+='<text x="'+(pad+S/2)+'" y="'+(W-8)+'" text-anchor="middle" font-size="12" style="fill:var(--muted)">napięcie →</text>';
+      svg+='<text x="12" y="'+(pad+S/2)+'" text-anchor="middle" font-size="12" transform="rotate(-90 12 '+(pad+S/2)+')" style="fill:var(--muted)">energia →</text>';
+      if (L.length>1){ svg+='<polyline points="'+L.map(function(x){return X(x.n)+','+Y(x.e);}).join(' ')+'" fill="none" style="stroke:var(--faint)" stroke-width="1" stroke-dasharray="3 3" opacity=".6"/>'; }
+      L.forEach(function(x,i){ var jx=((i*37)%7-3)*1.6, jy=((i*53)%7-3)*1.6;
+        svg+='<circle cx="'+(X(x.n)+jx)+'" cy="'+(Y(x.e)+jy)+'" r="'+(x.red?7:5.5)+'" fill="'+PC[part(x.t)]+'" stroke="#fff" stroke-width="'+(x.red?2.5:1.5)+'"><title>'+OG.esc(x.d+' '+x.t+': '+(x.sit||''))+'</title></circle>'; });
+      document.getElementById('map').innerHTML='<svg viewBox="0 0 '+W+' '+W+'" width="100%" role="img" aria-label="Mapa energii i napięcia">'+svg+'</svg>';
+      // podsumowanie
+      if (!L.length){ document.getElementById('sum').innerHTML='<p class="muted">Podsumowanie pojawi się po pierwszych wpisach. Najwięcej powie po 12–20 wpisach.</p>'; return; }
+      var cnt={ce:0,te:0,tt:0,ct:0}; L.forEach(function(x){cnt[quad(x.e,x.n)]++;});
+      var days={}; L.forEach(function(x){days[x.d]=1;});
+      var byPart=PARTS.map(function(_,p){ var a=L.filter(function(x){return part(x.t)===p;}); return a.length?{e:a.reduce(function(s,x){return s+x.e;},0)/a.length, n:a.reduce(function(s,x){return s+x.n;},0)/a.length, k:a.length}:null; });
+      var reds=L.filter(function(x){return x.red;}).length;
+      var h='<div class="grid g3" style="margin-bottom:14px"><div class="stat"><b>'+L.length+'</b><span>wpisów</span></div><div class="stat"><b>'+Object.keys(days).length+'</b><span>dni</span></div><div class="stat"><b>'+reds+'</b><span>× czerwona linia</span></div></div>';
+      h+=['ce','te','tt','ct'].map(function(k){ var p=Math.round(cnt[k]/L.length*100); return '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between"><b>'+QN[k].n+'</b><span>'+p+'%</span></div><div class="bar'+(k==='tt'?' red':'')+'"><i style="width:'+p+'%"></i></div><span class="small muted">'+QN[k].d+'</span></div>'; }).join('');
+      h+='<h3 style="margin-top:14px">Średnio według pory dnia</h3><table><tr><th>Pora</th><th>Energia</th><th>Napięcie</th><th>Wpisy</th></tr>'+byPart.map(function(b,i){ return '<tr><td>'+PARTS[i]+'</td><td>'+(b?b.e.toFixed(1):'–')+'</td><td>'+(b?b.n.toFixed(1):'–')+'</td><td>'+(b?b.k:0)+'</td></tr>'; }).join('')+'</table>';
+      document.getElementById('sum').innerHTML=h;
+    }
+    preview(); draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, L=s.log, cnt={ce:0,te:0,tt:0,ct:0}; L.forEach(function(x){cnt[quad(x.e,x.n)]++;});
+    var out=m.f('Liczba wpisów',L.length);
+    if(L.length) out+=m.h('Rozkład stanów')+m.list(['ce','te','tt','ct'].map(function(k){return QN[k].n+': '+Math.round(cnt[k]/L.length*100)+'%';}))+m.f('Czerwona linia (liczba wpisów)',L.filter(function(x){return x.red;}).length);
+    out+=m.h('Wpisy')+m.table(['Data','Godz.','Energia','Napięcie','Stan','Sytuacja','Wpływ','Czerwona linia'], L.map(function(x){return [x.d,x.t,x.e,x.n,QN[quad(x.e,x.n)].n,x.sit,x.inf,x.red?'tak':''];}));
+    return out+m.h('Refleksja')+m.f('Spokojna energia: kiedy i co ją poprzedza',s.f.calmEnergy)+m.f('Co wpycha w napięte zmęczenie',s.f.tenseTired)+m.f('Sygnały zbliżania się do czerwonej linii',s.f.redline)+m.f('Zmiana do przetestowania',s.f.change);
+  }
+});
+</script>
+</body>
+</html>

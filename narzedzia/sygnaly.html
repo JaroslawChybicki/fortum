@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Protokół wczesnych sygnałów</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 3: Zmiana i transfer</nav>
+  <div class="pagehead">
+    <h1>Protokół wczesnych sygnałów</h1>
+    <p class="lead">Przeciążenie rzadko pojawia się nagle. Zwykle daje sygnały tygodniami, ale my je racjonalizujemy („to tylko intensywny kwartał”). Ten protokół to Twoja osobista instrukcja: po czym poznać, że zjeżdżasz ze strefy zielonej, i co wtedy zrobić.</p>
+  </div>
+
+  <section class="card">
+    <h2>1. Moje sygnały</h2>
+    <p class="small muted">Zaznacz 3–5 sygnałów, które u Ciebie pojawiają się <b>najwcześniej</b>. Dopisz własne.</p>
+    <div class="grid g4" id="base"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" class="no-print">
+      <input type="text" id="own" placeholder="Mój własny sygnał…" style="flex:1;min-width:200px">
+      <select id="ownCat" style="width:auto"><option>Ciało</option><option>Emocje</option><option>Myśli</option><option>Zachowania</option></select>
+      <button type="button" id="addOwn">Dodaj</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. Trzy strefy</h2>
+    <div class="zone green">
+      <h3>Strefa zielona: jestem w formie</h3>
+      <div class="grid g2">
+        <div class="field"><label>Po czym to poznaję? Jak wtedy wyglądam, działam, rozmawiam?</label><textarea data-k="gSee"></textarea></div>
+        <div class="field"><label>Co mnie w niej utrzymuje? (nawyki, rytuały, ludzie)</label><textarea data-k="gKeep"></textarea></div>
+      </div>
+    </div>
+    <div class="zone yellow">
+      <h3>Strefa żółta: pierwsze sygnały</h3>
+      <p class="small muted" id="ySig"></p>
+      <div class="grid g3">
+        <div class="field"><label>Co robię od razu (w ciągu 48 h)?</label><textarea data-k="yDo"></textarea></div>
+        <div class="field"><label>Z czego rezygnuję lub co przesuwam?</label><textarea data-k="yDrop"></textarea></div>
+        <div class="field"><label>Kto może to zauważyć i mi powiedzieć?</label><textarea data-k="yWho"></textarea></div>
+      </div>
+    </div>
+    <div class="zone red">
+      <h3>Strefa czerwona: poważne przeciążenie</h3>
+      <div class="grid g3">
+        <div class="field"><label>Po czym poznaję, że to już czerwona strefa?<span class="hint">Np. sygnały z żółtej utrzymują się ponad 2 tygodnie, problemy ze snem większość nocy.</span></label><textarea data-k="rSee"></textarea></div>
+        <div class="field"><label>Co robię?</label><textarea data-k="rDo"></textarea></div>
+        <div class="field"><label>Co i komu komunikuję? (zarząd, zespół, bliscy)</label><textarea data-k="rTell"></textarea></div>
+      </div>
+      <div class="note warn small">Jeśli sygnały z czerwonej strefy utrzymują się dłużej niż 2 tygodnie albo pojawiają się myśli o bezsensie, niemożności dalszego funkcjonowania lub zrobieniu sobie krzywdy, skontaktuj się z lekarzem lub psychologiem. Możesz też napisać do Jarka, a on pomoże znaleźć odpowiednie wsparcie. W sytuacji zagrożenia dzwoń pod <b>112</b>. Całodobowe Centrum Wsparcia dla osób dorosłych w kryzysie psychicznym: <b>800 70 2222</b>.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Wkład do Paktu Odporności</h2>
+    <p class="small muted">Na warsztacie 10.12 zespół zarządzający ustali wspólne zasady reagowania na przeciążenie. Co z Twojego protokołu mogłoby stać się zasadą zespołową? Zdecydujesz, czy i czym się podzielisz.</p>
+    <div class="grid g2">
+      <div class="field"><label>Czego potrzebuję od zespołu, gdy jestem w żółtej strefie?</label><textarea data-k="needTeam"></textarea></div>
+      <div class="field"><label>Propozycja zasady dla zespołu</label><textarea data-k="rule"></textarea></div>
+    </div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var BASE={
+ 'Ciało':['Gorszy sen lub budzenie się w nocy','Napięcie karku, barków, szczęki','Bóle głowy','Częstsze infekcje','Więcej kawy, słodyczy lub alkoholu','Zmęczenie mimo odpoczynku'],
+ 'Emocje':['Drażliwość, krótki lont','Cynizm wobec spraw i ludzi','Mniej radości z rzeczy, które lubię','Niepokój w niedzielę wieczorem','Poczucie przytłoczenia','Obojętność'],
+ 'Myśli':['Czarnowidztwo','Trudność z koncentracją','Przeżuwanie spraw wieczorem','„Nie mam wyboru”, „wszystko na mojej głowie”','Zapominanie drobnych rzeczy','Trudność z decyzjami'],
+ 'Zachowania':['Praca wieczorami i w weekendy','Pomijanie przerw i posiłków','Rezygnacja z ruchu','Wycofanie z relacji','Odkładanie trudnych rozmów','Mikrozarządzanie']
+};
+OG.Tool({
+  id:'sygnaly', title:'Protokół wczesnych sygnałów',
+  defaults:function(){ return {sel:[], own:[]}; },
+  init:function(s, api){
+    function draw(){
+      document.getElementById('base').innerHTML=Object.keys(BASE).map(function(c){
+        var list=BASE[c].concat(s.own.filter(function(o){return o.c===c;}).map(function(o){return o.t;}));
+        return '<div><h3>'+c+'</h3>'+list.map(function(t){ var k=c+'|'+t; return '<label class="check"><input type="checkbox" data-sig="'+OG.esc(k)+'"'+(s.sel.indexOf(k)>-1?' checked':'')+'> '+OG.esc(t)+'</label>'; }).join('')+'</div>';
+      }).join('');
+      var y=s.sel.map(function(k){return k.split('|')[1];});
+      document.getElementById('ySig').innerHTML=y.length?'<b>Moje wczesne sygnały:</b> '+y.map(OG.esc).join(' · '):'Zaznacz sygnały w części 1. Pojawią się tutaj.';
+    }
+    document.getElementById('base').addEventListener('change',function(e){ var k=e.target.getAttribute('data-sig'); if(!k) return; var i=s.sel.indexOf(k); if(e.target.checked&&i<0) s.sel.push(k); if(!e.target.checked&&i>-1) s.sel.splice(i,1); draw(); api.save(); });
+    document.getElementById('addOwn').onclick=function(){ var t=document.getElementById('own').value.trim(), c=document.getElementById('ownCat').value; if(!t) return; s.own.push({c:c,t:t}); s.sel.push(c+'|'+t); document.getElementById('own').value=''; draw(); api.save(); };
+    draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, f=s.f;
+    return m.h('Moje wczesne sygnały')+m.list(s.sel.map(function(k){var p=k.split('|'); return p[1]+' ('+p[0].toLowerCase()+')';}))+
+      m.h('Strefa zielona')+m.f('Po czym poznaję',f.gSee)+m.f('Co mnie utrzymuje',f.gKeep)+
+      m.h('Strefa żółta')+m.f('Działania w 48 h',f.yDo)+m.f('Rezygnuję / przesuwam',f.yDrop)+m.f('Kto może zauważyć',f.yWho)+
+      m.h('Strefa czerwona')+m.f('Po czym poznaję',f.rSee)+m.f('Co robię',f.rDo)+m.f('Co i komu komunikuję',f.rTell)+
+      m.h('Wkład do Paktu Odporności')+m.f('Czego potrzebuję od zespołu',f.needTeam)+m.f('Propozycja zasady',f.rule);
+  }
+});
+</script>
+</body>
+</html>

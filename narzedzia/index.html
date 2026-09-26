@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Narzędzia coachingowe | Odporni i gotowi</title>
+<meta name="description" content="Interaktywne materiały do pracy własnej w programie „Odporni i gotowi” dla zespołu zarządzającego Fortum.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<main class="wrap">
+  <section class="hero">
+    <span class="tag">Do pracy między sesjami 1:1</span>
+    <h1 style="margin-top:12px">Narzędzia coachingowe</h1>
+    <p class="lead">Karty pracy, które towarzyszą sesjom coachingowym. Każde narzędzie działa w przeglądarce, zapisuje odpowiedzi na bieżąco i pozwala pobrać, wydrukować albo wysłać raport prowadzącemu.</p>
+  </section>
+
+
+  <h2 style="margin-top:28px">Jak korzystać</h2>
+  <ol class="steps">
+    <li>Otwórz narzędzie wskazane na sesji albo takie, które Cię zaciekawi.</li>
+    <li>Odpowiadaj we własnym tempie. Wszystko zapisuje się automatycznie w tej przeglądarce.</li>
+    <li>Pobierz raport (.md) lub zapisz go jako PDF, żeby mieć własną kopię.</li>
+    <li>Jeśli chcesz, wyślij raport do Jarka przed kolejną sesją. To zawsze Twoja decyzja.</li>
+  </ol>
+  <div class="note"><b>Poufność.</b> Strona nie ma bazy danych ani analityki. Odpowiedzi nie trafiają do nikogo, dopóki sam(a) ich nie wyślesz ze swojej skrzynki. Organizacja nie otrzymuje żadnych indywidualnych informacji z tych materiałów. Na komputerze współdzielonym używaj przycisku „Wyczyść” po zakończeniu pracy.</div>
+
+  <p class="small muted">Nagrania praktyk (medytacja góry, body scan, przestrzeń oddechu, relaksacja) i gry znajdziesz w <a href="../cwiczenia.html">Ćwiczeniach i grach</a>.</p>
+
+  <div id="catalog"></div>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  OG.chrome('index');
+  var host = document.getElementById('catalog'), html = '';
+  [1,2,3,0].forEach(function(s){
+    var st = OG.STAGES[s];
+    html += '<div class="stage"><h2>' + st.name + '</h2><span class="tag' + (s===0?' red':'') + '">' + st.sub + '</span></div><div class="tools">';
+    OG.CATALOG.filter(function(t){return t.stage===s;}).forEach(function(t){
+      var saved = OG.store.get('md:' + t.id, null);
+      html += '<a class="tool" href="' + t.id + '.html">' + (saved ? '<span class="done">✓ w toku</span>' : '') +
+        '<h3>' + OG.esc(t.title) + '</h3><p>' + OG.esc(t.desc) + '</p><span class="meta">⏱ ' + t.time + '</span></a>';
+    });
+    html += '</div>';
+  });
+  html += '<div class="stage"><h2>Twoje podsumowanie</h2></div><div class="tools"><a class="tool" href="moj-proces.html"><h3>Mój proces</h3><p>Wszystkie Twoje karty w jednym raporcie, do pobrania, wydruku lub wysłania.</p><span class="meta">zbiorczo</span></a></div>';
+  host.innerHTML = html;
+})();
+</script>
+</body>
+</html>

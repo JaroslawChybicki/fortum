@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>WOOP: plan jeśli–to</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 3: Zmiana i transfer</nav>
+  <div class="pagehead">
+    <h1>WOOP: plan jeśli–to</h1>
+    <p class="lead">Metoda Gabriele Oettingen łączy wyobrażenie celu z realistycznym spojrzeniem na przeszkodę. Plan „jeśli–to” (Peter Gollwitzer) przenosi decyzję z chwili presji do chwili spokoju. Wybierz jedną, najwyżej dwie zmiany.</p>
+  </div>
+
+  <div id="woops"></div>
+  <p class="no-print"><button type="button" id="add2">+ Dodaj drugi WOOP</button></p>
+
+  <section class="card">
+    <h2>Monitoring: 14 dni</h2>
+    <p class="small muted">Zaznacz dzień, w którym plan zadziałał (sytuacja się pojawiła i zrobiłeś(-aś) to, co zaplanowane). Nie chodzi o serię bez przerwy. Chodzi o to, żeby wrócić po potknięciu.</p>
+    <div id="track"></div>
+    <div class="field" style="margin-top:12px"><label>Co pomagało, a co przeszkadzało?</label><textarea data-k="review"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+function blank(){ return {w:'',o:'',ob:'',ifs:'',then:''}; }
+OG.Tool({
+  id:'woop', title:'WOOP: plan jeśli–to',
+  defaults:function(){ return {w:[blank()], t:{}}; },
+  init:function(s, api){
+    function draw(){
+      document.getElementById('woops').innerHTML=s.w.map(function(x,i){
+        return '<section class="card"><h2>WOOP '+(s.w.length>1?i+1:'')+'</h2><div class="grid g2">'+
+          '<div class="field"><label><span class="tag">W</span> Życzenie<span class="hint">Ważne, wyzwanie, ale realne w 4–6 tygodni. Jedno zdanie.</span></label><textarea data-i="'+i+'" data-f="w">'+OG.esc(x.w)+'</textarea></div>'+
+          '<div class="field"><label><span class="tag">O</span> Najlepszy efekt<span class="hint">Co będzie najlepsze, gdy się uda? Zatrzymaj się chwilę i wyobraź to sobie.</span></label><textarea data-i="'+i+'" data-f="o">'+OG.esc(x.o)+'</textarea></div>'+
+          '<div class="field"><label><span class="tag red">O</span> Przeszkoda wewnętrzna<span class="hint">Co <b>w Tobie</b> najczęściej staje na drodze? Nawyk, emocja, myśl, a nie okoliczności.</span></label><textarea data-i="'+i+'" data-f="ob">'+OG.esc(x.ob)+'</textarea></div>'+
+          '<div class="field"><label><span class="tag">P</span> Plan<span class="hint">Konkretna reakcja na tę przeszkodę.</span></label>'+
+            '<div class="grid g2"><div><span class="small muted">JEŚLI…</span><input type="text" data-i="'+i+'" data-f="ifs" value="'+OG.esc(x.ifs)+'" placeholder="np. zauważę, że chcę wziąć zadanie na siebie"></div>'+
+            '<div><span class="small muted">TO…</span><input type="text" data-i="'+i+'" data-f="then" value="'+OG.esc(x.then)+'" placeholder="np. zapytam: kto w zespole może to zrobić?"></div></div></div>'+
+          '</div><div class="note small" data-check="'+i+'"></div>'+(i>0?'<button type="button" class="sm ghost danger no-print" data-del="'+i+'">Usuń</button>':'')+'</section>';
+      }).join('');
+      OG.$$('#woops textarea').forEach(OG.autoGrow); s.w.forEach(function(_,i){check(i);});
+      document.getElementById('add2').style.display=s.w.length>1?'none':'';
+      track();
+    }
+    function check(i){
+      var x=s.w[i], msgs=[];
+      if(x.ifs && !/\b(gdy|kiedy|jeśli|jeżeli|zauważę|poczuję|pomyślę|o godz|po )/i.test(x.ifs)) msgs.push('„Jeśli” działa najlepiej jako konkretny sygnał: moment, miejsce, myśl lub odczucie.');
+      if(x.ob && /\b(szef|zarząd|klient|oni|firma|brak czasu)\b/i.test(x.ob)) msgs.push('Przeszkoda brzmi jak zewnętrzna. Co <b>w Tobie</b> dzieje się wtedy, gdy ona się pojawia?');
+      if(x.then && x.then.split(' ').length<3) msgs.push('„To” powinno być działaniem, które da się wykonać od razu.');
+      var el=document.querySelector('[data-check="'+i+'"]');
+      el.innerHTML=(x.ifs&&x.then)?('<b>Twój plan:</b> Jeśli '+OG.esc(x.ifs)+', to '+OG.esc(x.then)+'.'+(msgs.length?'<br>'+msgs.join('<br>'):'')):'Uzupełnij „jeśli” i „to”, a pojawi się tu Twój plan.';
+    }
+    function track(){
+      document.getElementById('track').innerHTML=s.w.map(function(x,i){
+        return '<div style="margin-bottom:10px"><b>'+(x.w?OG.esc(x.w.slice(0,60)):'WOOP '+(i+1))+'</b><div class="chips" style="margin-top:6px">'+
+          Array.apply(null,{length:14}).map(function(_,d){ var k=i+'-'+d; return '<button type="button" class="chip" style="min-width:40px;justify-content:center" data-tk="'+k+'" aria-pressed="'+!!s.t[k]+'">'+(d+1)+'</button>'; }).join('')+
+          '</div><span class="small muted">'+Array.apply(null,{length:14}).filter(function(_,d){return s.t[i+'-'+d];}).length+' / 14</span></div>';
+      }).join('');
+    }
+    var box=document.getElementById('woops');
+    box.addEventListener('input',function(e){ var i=e.target.getAttribute('data-i'); if(i==null) return; s.w[i][e.target.getAttribute('data-f')]=e.target.value; if(e.target.tagName==='TEXTAREA') OG.autoGrow(e.target); check(+i); if(e.target.getAttribute('data-f')==='w') track(); api.save(); });
+    box.addEventListener('click',function(e){ var i=e.target.getAttribute('data-del'); if(i==null) return; s.w.splice(+i,1); Object.keys(s.t).forEach(function(k){ if(k.indexOf(i+'-')===0) delete s.t[k]; }); draw(); api.save(); });
+    document.getElementById('add2').onclick=function(){ s.w.push(blank()); draw(); api.save(); };
+    document.getElementById('track').addEventListener('click',function(e){ var k=e.target.getAttribute('data-tk'); if(!k) return; s.t[k]=!s.t[k]; track(); api.save(); });
+    draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md;
+    return s.w.map(function(x,i){ var n=Array.apply(null,{length:14}).filter(function(_,d){return s.t[i+'-'+d];}).length;
+      return m.h('WOOP '+(i+1))+m.f('Życzenie',x.w)+m.f('Najlepszy efekt',x.o)+m.f('Przeszkoda wewnętrzna',x.ob)+m.f('Plan','Jeśli '+(x.ifs||'…')+', to '+(x.then||'…')+'.')+m.f('Monitoring',n+' / 14 dni');
+    }).join('')+m.f('Co pomagało / przeszkadzało',s.f.review);
+  }
+});
+</script>
+</body>
+</html>

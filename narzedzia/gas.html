@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Moje cele procesu (GAS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Przez cały proces</nav>
+  <div class="pagehead">
+    <h1>Moje cele procesu</h1>
+    <p class="lead">Goal Attainment Scaling (Kiresuk i Sherman) to sposób mierzenia postępu w celach, które sam(a) definiujesz. Każdy cel dostaje pięć opisanych poziomów: od „znacznie gorzej, niż oczekuję” do „znacznie lepiej”. Oceniasz go na pierwszej i na ostatniej sesji.</p>
+  </div>
+  <div class="note small"><b>Wskazówka:</b> najpierw opisz poziom <b>0</b>, czyli realistyczny, oczekiwany wynik na koniec procesu (grudzień). Potem +1 i +2 (lepiej) oraz −1 i −2 (gorzej). Zwykle stan wyjściowy to −1 lub −2. Opisy powinny być obserwowalne: coś, co można zobaczyć lub policzyć.</div>
+
+  <div id="goals"></div>
+  <p class="no-print"><button type="button" id="add">+ Dodaj cel</button></p>
+
+  <section class="card">
+    <h2>Wynik</h2>
+    <div id="result"></div>
+    <p class="small muted">Wynik T: 50 = cele osiągnięte na oczekiwanym poziomie; powyżej 50 = lepiej, niż zakładano. Obliczenie według wzoru Kiresuka i Shermana (ρ = 0,3).</p>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var LVL=[['+2','Znacznie lepiej, niż oczekuję'],['+1','Lepiej, niż oczekuję'],['0','Oczekiwany wynik'],['−1','Gorzej, niż oczekuję'],['−2','Znacznie gorzej, niż oczekuję']];
+var VAL={'+2':2,'+1':1,'0':0,'−1':-1,'−2':-2};
+function blank(){ return {name:'', w:2, d:{}, s1:'', s3:''}; }
+function T(goals, k){
+  var g=goals.filter(function(x){return x[k]!=='';}); if(!g.length) return null;
+  var sw=0, sw2=0, swx=0; g.forEach(function(x){ var w=+x.w||1; sw+=w; sw2+=w*w; swx+=w*VAL[x[k]]; });
+  return 50 + 10*swx/Math.sqrt(0.7*sw2 + 0.3*sw*sw);
+}
+OG.Tool({
+  id:'gas', title:'Moje cele procesu (GAS)',
+  defaults:function(){ return {g:[blank()]}; },
+  init:function(s, api){
+    function sel(i,k,v){ return '<select data-i="'+i+'" data-f="'+k+'"><option value="">–</option>'+LVL.map(function(l){return '<option value="'+l[0]+'"'+(v===l[0]?' selected':'')+'>'+l[0]+'</option>';}).join('')+'</select>'; }
+    function draw(){
+      document.getElementById('goals').innerHTML=s.g.map(function(x,i){
+        return '<section class="card"><h2>Cel '+(i+1)+'</h2><div class="grid g2"><div class="field"><label>Nazwa celu</label><input type="text" data-i="'+i+'" data-f="name" value="'+OG.esc(x.name)+'" placeholder="np. Delegowanie decyzji operacyjnych w moim pionie"></div>'+
+          '<div class="field"><label>Waga (znaczenie dla Ciebie)</label><select data-i="'+i+'" data-f="w">'+[1,2,3].map(function(v){return '<option value="'+v+'"'+(+x.w===v?' selected':'')+'>'+v+(v===1?' – mniej ważny':v===3?' – najważniejszy':' – ważny')+'</option>';}).join('')+'</select></div></div>'+
+          '<div class="tablewrap"><table><thead><tr><th style="width:70px">Poziom</th><th>Opis: jak to będzie wyglądać?</th></tr></thead><tbody>'+
+          LVL.map(function(l){ return '<tr'+(l[0]==='0'?' style="background:var(--brand-soft)"':'')+'><td><b>'+l[0]+'</b><br><span class="small muted">'+l[1]+'</span></td><td><textarea style="min-height:52px" data-i="'+i+'" data-lv="'+l[0]+'">'+OG.esc(x.d[l[0]]||'')+'</textarea></td></tr>'; }).join('')+
+          '</tbody></table></div><div class="grid g2" style="margin-top:12px"><div class="field"><label>Ocena na sesji 1 (start)</label>'+sel(i,'s1',x.s1)+'</div><div class="field"><label>Ocena na sesji 3 (koniec)</label>'+sel(i,'s3',x.s3)+'</div></div>'+
+          (s.g.length>1?'<button type="button" class="sm ghost danger no-print" data-del="'+i+'">Usuń cel</button>':'')+'</section>';
+      }).join('');
+      OG.$$('#goals textarea').forEach(OG.autoGrow);
+      document.getElementById('add').style.display=s.g.length>=3?'none':'';
+      res();
+    }
+    function res(){
+      var t1=T(s.g,'s1'), t3=T(s.g,'s3');
+      var rows=s.g.map(function(x,i){ var ch=(x.s1!==''&&x.s3!=='')?VAL[x.s3]-VAL[x.s1]:null; return '<tr><td>'+(x.name?OG.esc(x.name):'Cel '+(i+1))+'</td><td>'+x.w+'</td><td>'+(x.s1||'–')+'</td><td>'+(x.s3||'–')+'</td><td>'+(ch==null?'–':(ch>0?'+':'')+ch)+'</td></tr>'; }).join('');
+      document.getElementById('result').innerHTML='<div class="grid g3" style="margin-bottom:12px"><div class="stat"><b>'+(t1==null?'–':t1.toFixed(0))+'</b><span>wynik T na starcie</span></div><div class="stat"><b>'+(t3==null?'–':t3.toFixed(0))+'</b><span>wynik T na koniec</span></div><div class="stat"><b>'+((t1!=null&&t3!=null)?((t3-t1>0?'+':'')+(t3-t1).toFixed(0)):'–')+'</b><span>zmiana</span></div></div>'+
+        '<div class="tablewrap"><table><tr><th>Cel</th><th>Waga</th><th>Start</th><th>Koniec</th><th>Zmiana</th></tr>'+rows+'</table></div>';
+    }
+    var box=document.getElementById('goals');
+    var h=function(e){ var t=e.target, i=t.getAttribute('data-i'); if(i==null) return; var f=t.getAttribute('data-f'), lv=t.getAttribute('data-lv');
+      if(lv) s.g[i].d[lv]=t.value; else s.g[i][f]=t.value; if(t.tagName==='TEXTAREA') OG.autoGrow(t); res(); api.save(); };
+    box.addEventListener('input',h); box.addEventListener('change',h);
+    box.addEventListener('click',function(e){ var i=e.target.getAttribute('data-del'); if(i==null) return; s.g.splice(+i,1); draw(); api.save(); });
+    document.getElementById('add').onclick=function(){ s.g.push(blank()); draw(); api.save(); };
+    draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, t1=T(s.g,'s1'), t3=T(s.g,'s3');
+    return s.g.map(function(x,i){ return m.h('Cel '+(i+1)+': '+(x.name||''))+m.f('Waga',x.w)+m.table(['Poziom','Opis'],LVL.map(function(l){return [l[0],x.d[l[0]]||''];}))+m.f('Ocena start',x.s1||'–')+m.f('Ocena koniec',x.s3||'–'); }).join('')+
+      m.h('Wynik')+m.f('Wynik T start',t1==null?'–':t1.toFixed(1))+m.f('Wynik T koniec',t3==null?'–':t3.toFixed(1));
+  }
+});
+</script>
+</body>
+</html>

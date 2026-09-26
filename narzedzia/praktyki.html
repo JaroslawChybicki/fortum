@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Praktyki regulacji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 2 i dalej</nav>
+  <div class="pagehead">
+    <h1>Praktyki regulacji</h1>
+    <p class="lead">Krótkie praktyki z prowadzeniem. Nie wymagają zamkniętych oczu ani specjalnego miejsca. Działają przez powtarzanie: 1–3 minuty kilka razy dziennie dają więcej niż godzina raz w tygodniu.</p>
+  </div>
+
+  <section class="card" id="p-breath">
+    <span class="tag">1–5 min</span><h2 style="margin-top:8px">Oddech 4–6</h2>
+    <p>Wdech przez 4 sekundy, wydech przez 6. Wydłużony wydech aktywuje gałąź przywspółczulną i obniża pobudzenie. Dobre przed trudną rozmową albo po niej.</p>
+    <div class="field" style="max-width:220px"><label>Czas</label><select id="breathLen"><option value="60">1 minuta</option><option value="180" selected>3 minuty</option><option value="300">5 minut</option></select></div>
+    <div class="player" data-player="breath"></div>
+  </section>
+
+  <section class="card" id="p-space">
+    <span class="tag">3 min</span><h2 style="margin-top:8px">Przestrzeń trzech kroków</h2>
+    <p>Praktyka z MBCT (Segal, Williams, Teasdale). Kształtem przypomina klepsydrę: szeroka uwaga, wąska uwaga, znów szeroka. Idealna między spotkaniami.</p>
+    <div class="player" data-player="space"></div>
+  </section>
+
+  <section class="card" id="p-threshold">
+    <span class="tag">30 s</span><h2 style="margin-top:8px">Próg sali</h2>
+    <p>Zanim wejdziesz na spotkanie, zatrzymaj się na progu. W tradycji Zen przekroczenie progu jest momentem uważności. W języku Davida Kundtza to „stopping”, czyli świadome zatrzymanie. Jeden oddech, jedna intencja.</p>
+    <div class="player" data-player="threshold"></div>
+  </section>
+
+  <section class="card" id="p-heal">
+    <span class="tag">2 min</span><h2 style="margin-top:8px">HEAL: instalowanie zasobu</h2>
+    <p>Metoda Ricka Hansona, znana z warsztatu otwierającego. Mózg łatwo zapamiętuje to, co trudne, a dobre doświadczenia „przepływają” obok. HEAL to sposób, by zatrzymać je na tyle długo, żeby zostawiły ślad.</p>
+    <div class="field" style="max-width:420px"><label>Filar, który wzmacniasz<span class="hint">Najlepiej ten, który w Deep Dive był w strefie rozwoju.</span></label><select id="pillar"></select></div>
+    <p class="note small" id="pillarHint"></p>
+    <div class="player" data-player="heal"></div>
+  </section>
+
+  <section class="card" id="p-sc">
+    <span class="tag">90 s</span><h2 style="margin-top:8px">Przerwa na samowspółczucie</h2>
+    <p>Ćwiczenie Kristin Neff na chwile, gdy coś poszło źle, a wewnętrzny krytyk przejmuje głos. Samowspółczucie nie obniża standardów. Badania wiążą je z większą wytrwałością i gotowością do uczenia się na błędach.</p>
+    <div class="player" data-player="sc"></div>
+  </section>
+
+  <section class="card">
+    <h2>Dziennik praktyki</h2>
+    <p class="small muted">Każda ukończona praktyka zapisuje się tutaj automatycznie.</p>
+    <div id="log"></div>
+    <div class="field" style="margin-top:12px"><label>Co zauważam po tygodniu praktyki?</label><textarea data-k="reflect"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var PILLARS={
+ 'Współczucie':'Przypomnij sobie chwilę, gdy ktoś okazał Ci życzliwość, albo poczuj ciepło wobec kogoś bliskiego.',
+ 'Wytrwałość':'Przywołaj moment, gdy przetrwałeś(-aś) coś trudnego. Poczuj w ciele „dam radę”.',
+ 'Spokój':'Znajdź w tej chwili coś, co jest w porządku: stopy na podłodze, oddech. Nic nie trzeba robić.',
+ 'Odwaga':'Przypomnij sobie sytuację, w której powiedziałeś(-aś) coś trudnego, i świat się nie zawalił.',
+ 'Uważność':'Po prostu teraz: dźwięki, oddech, ciężar ciała. Zauważ, że możesz być tu i teraz.',
+ 'Wdzięczność':'Coś dobrego z dzisiejszego dnia, nawet drobnego: kawa, rozmowa, światło za oknem.',
+ 'Motywacja':'Moment, gdy praca dawała Ci energię i miała sens. Co wtedy czułeś(-aś)?',
+ 'Aspiracja':'Obraz tego, ku czemu zmierzasz. Poczuj radość z samego kierunku, nie tylko z celu.',
+ 'Uczenie się':'Chwila, gdy coś zrozumiałeś(-aś), olśnienie, nowa umiejętność.',
+ 'Pewność siebie':'Sytuacja, w której byłeś(-aś) kompetentny(-a) i doceniony(-a). Poczuj, że to też Ty.',
+ 'Bliskość':'Ktoś, przy kim możesz być sobą. Poczuj, jak to jest być z nim w kontakcie.',
+ 'Wielkoduszność':'Moment, gdy coś dałeś(-aś) albo odpuściłeś(-aś). Poczucie pełni, a nie braku.'
+};
+var PL = {
+  breath:{name:'Oddech 4–6', steps:function(){ var n=Math.round(+document.getElementById('breathLen').value/10), a=[]; for(var i=0;i<n;i++){ a.push({t:4,p:'Wdech…',b:'in'}); a.push({t:6,p:'Wydech…',b:'out'}); } return a; }},
+  space:{name:'Przestrzeń trzech kroków', steps:function(){ return [
+    {t:60,p:'<b>1. Świadomość.</b> Co jest teraz? Jakie myśli, emocje, doznania w ciele? Nie zmieniaj niczego. Zauważ i nazwij.'},
+    {t:60,p:'<b>2. Skupienie.</b> Zawęź uwagę do oddechu w brzuchu. Wdech… wydech… Gdy uwaga odpłynie, łagodnie wróć.',b:'slow'},
+    {t:60,p:'<b>3. Poszerzenie.</b> Rozszerz uwagę na całe ciało: postawa, twarz, dłonie. Weź tę szerszą przestrzeń do następnej chwili.'}]; }},
+  threshold:{name:'Próg sali', steps:function(){ return [
+    {t:5,p:'Zatrzymaj się. Poczuj stopy na podłodze.'},{t:4,p:'Pełny wdech…',b:'in'},{t:6,p:'Długi wydech…',b:'out'},
+    {t:10,p:'Jaką jedną intencję wnoszę na to spotkanie? (np. <i>słuchać do końca</i>, <i>spokój</i>, <i>jasność</i>)'},{t:5,p:'Wejdź.'}]; }},
+  heal:{name:'HEAL', steps:function(){ return [
+    {t:25,p:'<b>H: Have.</b> Przywołaj doświadczenie: '+PILLARS[document.getElementById('pillar').value]},
+    {t:40,p:'<b>E: Enrich.</b> Pozwól mu trwać. Poczuj je w ciele. Niech będzie intensywniejsze, bardziej osobiste, nowe.',b:'slow'},
+    {t:25,p:'<b>A: Absorb.</b> Wyobraź sobie, że wsiąka w Ciebie jak woda w gąbkę. Staje się częścią Ciebie.'},
+    {t:20,p:'<b>L: Link (opcjonalnie).</b> Jeśli chcesz, połóż je obok czegoś trudnego, tak by to, co dobre, było w centrum, a trudne na obrzeżach.'}]; }},
+  sc:{name:'Przerwa na samowspółczucie', steps:function(){ return [
+    {t:30,p:'Przywołaj sytuację, która teraz Cię uwiera. Powiedz sobie: <b>„To jest trudna chwila.”</b>'},
+    {t:30,p:'<b>„Trudności są częścią życia i przywództwa.</b> Inni w mojej sytuacji czuliby to samo.”'},
+    {t:30,p:'Połóż dłoń na sercu lub w innym miejscu, które daje wsparcie. <b>„Obym był(a) dla siebie życzliwy(-a) teraz, gdy tego potrzebuję.”</b>'}]; }}
+};
+OG.Tool({
+  id:'praktyki', title:'Praktyki regulacji',
+  defaults:function(){ return {log:[]}; },
+  init:function(s, api){
+    var ps=document.getElementById('pillar'); ps.innerHTML=Object.keys(PILLARS).map(function(p){return '<option'+(s.pillar===p?' selected':'')+'>'+p+'</option>';}).join('');
+    var ph=function(){ document.getElementById('pillarHint').textContent=PILLARS[ps.value]; s.pillar=ps.value; api.save(); }; ps.onchange=ph; document.getElementById('pillarHint').textContent=PILLARS[ps.value];
+    var running=null;
+    OG.$$('[data-player]').forEach(function(host){
+      var id=host.getAttribute('data-player');
+      host.innerHTML='<div class="pacer" aria-hidden="true"></div><div class="timer">0:00</div><div class="prompt">Naciśnij „Start”, gdy będziesz gotów(-owa).</div><div><button type="button" class="primary">Start</button></div>';
+      var btn=host.querySelector('button'), pacer=host.querySelector('.pacer'), timer=host.querySelector('.timer'), prompt=host.querySelector('.prompt');
+      var st={on:false,h:null};
+      function stop(done){ st.on=false; clearTimeout(st.h); clearInterval(st.iv); btn.textContent='Start'; pacer.style.transform='scale(.55)'; running=null;
+        if(done){ prompt.innerHTML='Dziękuję. Zauważ, jak czujesz się teraz.'; s.log.push({d:new Date().toISOString(), p:PL[id].name+(id==='heal'?' ('+ps.value+')':'')}); drawLog(); api.save(); } }
+      btn.onclick=function(){
+        if(st.on) return stop(false);
+        if(running) running(false);
+        running=stop; st.on=true; st.run=(st.run||0)+1; var run=st.run; btn.textContent='Stop';
+        var steps=PL[id].steps(), total=steps.reduce(function(a,x){return a+x.t;},0), left=total, k=0;
+        var fmt=function(v){return Math.floor(v/60)+':'+String(v%60).padStart(2,'0');};
+        timer.textContent=fmt(left);
+        st.iv=setInterval(function(){ left--; timer.textContent=fmt(Math.max(left,0)); },1000);
+        (function next(){
+          if(!st.on||st.run!==run) return; if(k>=steps.length) return stop(true);
+          var x=steps[k++]; prompt.innerHTML=x.p;
+          pacer.style.transitionDuration=(x.b==='in'||x.b==='out'?x.t:1)+'s';
+          if(x.b==='in') pacer.style.transform='scale(1)'; else if(x.b==='out') pacer.style.transform='scale(.55)';
+          else if(x.b==='slow'){ var tog=false, myK=k; pacer.style.transitionDuration='5s'; (function sw(){ if(!st.on||k!==myK||st.run!==run) return; tog=!tog; pacer.style.transform=tog?'scale(1)':'scale(.55)'; setTimeout(sw,5000);} )(); }
+          else pacer.style.transform='scale(.75)';
+          st.h=setTimeout(next, x.t*1000);
+        })();
+      };
+    });
+    function drawLog(){
+      var L=s.log.slice().reverse(), week=Date.now()-7*864e5, w=s.log.filter(function(x){return new Date(x.d).getTime()>week;}).length;
+      document.getElementById('log').innerHTML='<div class="grid g3" style="margin-bottom:10px"><div class="stat"><b>'+s.log.length+'</b><span>praktyk łącznie</span></div><div class="stat"><b>'+w+'</b><span>w ostatnich 7 dniach</span></div></div>'+
+        (L.length?'<div class="tablewrap"><table><tr><th>Kiedy</th><th>Praktyka</th></tr>'+L.slice(0,15).map(function(x){return '<tr><td>'+new Date(x.d).toLocaleString('pl-PL',{dateStyle:'short',timeStyle:'short'})+'</td><td>'+OG.esc(x.p)+'</td></tr>';}).join('')+'</table></div>':'<p class="muted">Jeszcze nic. Zacznij od 30 sekund na progu sali.</p>');
+    }
+    drawLog();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, c={}; s.log.forEach(function(x){ c[x.p]=(c[x.p]||0)+1; });
+    return m.f('Łącznie praktyk',s.log.length)+m.h('Według rodzaju')+m.list(Object.keys(c).map(function(k){return k+': '+c[k];}))+m.f('Refleksja',s.f.reflect);
+  }
+});
+</script>
+</body>
+</html>

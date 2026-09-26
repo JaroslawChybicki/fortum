@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Koszt moich standardów</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 2: Mechanizmy przeciążenia</nav>
+  <div class="pagehead">
+    <h1>Koszt moich standardów</h1>
+    <p class="lead">Wysokie standardy to zasób. Problem zaczyna się, gdy reguła staje się sztywna i przestaje reagować na kontekst. Ta karta łączy trzy kroki: bilans reguły (CBT), zdystansowanie się od niej (ACT) i eksperyment, który sprawdza ją w praktyce.</p>
+  </div>
+
+  <section class="card">
+    <h2>A. Reguła</h2>
+    <div class="field"><label>Zapisz regułę dosłownie, tak jak brzmi w Twojej głowie<span class="hint">Często w formie „muszę…”, „powinienem…”, „jeśli nie…, to…”. Np. „Jeśli nie dopilnuję tego osobiście, to się posypie”.</span></label><textarea data-k="rule" id="rule"></textarea></div>
+    <div class="grid g2">
+      <div class="field"><label>Jak mocno w nią wierzysz? (0–100%)</label><div class="range-row"><input type="range" min="0" max="100" step="5" value="70" data-k="beliefA"><output>70</output></div></div>
+      <div class="field"><label>W jakich sytuacjach włącza się najczęściej?</label><textarea data-k="where"></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>B. Bilans</h2>
+    <div class="grid g2">
+      <div class="field"><label>Korzyści krótkoterminowe</label><textarea data-k="bs"></textarea></div>
+      <div class="field"><label>Korzyści długoterminowe</label><textarea data-k="bl"></textarea></div>
+      <div class="field"><label>Koszty krótkoterminowe<span class="hint">Czas, napięcie, sen, nastrój.</span></label><textarea data-k="cs"></textarea></div>
+      <div class="field"><label>Koszty długoterminowe<span class="hint">Dla Ciebie, zespołu, relacji, zdrowia, rozwoju ludzi.</span></label><textarea data-k="cl"></textarea></div>
+    </div>
+    <div class="field"><label>Po zważeniu: na ile ta reguła Ci dziś służy? (0 = wcale, 10 = w pełni)</label><div class="range-row"><input type="range" min="0" max="10" value="5" data-k="serve"><output>5</output></div></div>
+    <div class="field"><label>Bardziej elastyczna wersja reguły<span class="hint">Nie przeciwieństwo, tylko wersja zależna od kontekstu, np. „Przy decyzjach o dużym ryzyku sprawdzam osobiście; przy pozostałych ustalam kryteria i ufam”.</span></label><textarea data-k="flex"></textarea></div>
+  </section>
+
+  <section class="card">
+    <h2>C. Defuzja: zobacz myśl, zamiast patrzeć przez nią</h2>
+    <p class="small muted">Przeczytaj powoli każdą wersję. Zauważ, czy zmienia się odległość między Tobą a myślą.</p>
+    <div id="defuse"></div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="field"><label>Gdyby ta historia miała tytuł, brzmiałby…<span class="hint">Np. „Historia o tym, że wszystko zależy ode mnie”.</span></label><input type="text" data-k="story" id="story"></div>
+      <div class="field"><label>Gdybyś trzymał(a) tę regułę lżej, co zrobił(a)byś jutro inaczej?</label><textarea data-k="lighter"></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>D. Eksperyment behawioralny</h2>
+    <div class="grid g2">
+      <div class="field"><label>Co konkretnie zrobię inaczej? (kiedy, gdzie, z kim)</label><textarea data-k="exp"></textarea></div>
+      <div class="field"><label>Co przewiduje reguła? Co się stanie?</label><textarea data-k="pred"></textarea></div>
+      <div class="field"><label>Co się faktycznie stało? (wypełnij po eksperymencie)</label><textarea data-k="result"></textarea></div>
+      <div class="field"><label>Czego się dowiedziałem(-am)?</label><textarea data-k="learn"></textarea></div>
+    </div>
+    <div class="field"><label>Siła przekonania po eksperymencie (0–100%)</label><div class="range-row"><input type="range" min="0" max="100" step="5" value="70" data-k="beliefB"><output>70</output></div></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+function variants(rule, story){
+  var r=(rule||'').trim().replace(/\s+/g,' ').replace(/[.!]+$/,'');
+  if(!r) return '<p class="muted">Wpisz regułę w części A, a pojawią się tu jej wersje.</p>';
+  var lc=r.charAt(0).toLowerCase()+r.slice(1);
+  var v=[['Reguła',r+'.'],['Mam myśl, że…','Mam myśl, że '+lc+'.'],['Zauważam, że…','Zauważam, że mój umysł mówi mi, że '+lc+'.'],
+    ['Nazwij historię', story?'O, znowu „'+story+'”.':'Nadaj historii tytuł poniżej.'],
+    ['Podziękuj umysłowi','Dzięki, umyśle. Wiem, że próbujesz mnie chronić.']];
+  return v.map(function(x,i){ return '<div style="padding:10px 14px;border-left:4px solid '+(i===0?'var(--accent)':'var(--brand-2)')+';background:var(--surface-2);border-radius:8px;margin:0 0 8px;margin-left:'+(i*14)+'px"><span class="small muted">'+x[0]+'</span><br><span style="font-size:1.05rem">'+OG.esc(x[1])+'</span></div>'; }).join('');
+}
+OG.Tool({
+  id:'koszt-standardow', title:'Koszt moich standardów',
+  onChange:function(s){ document.getElementById('defuse').innerHTML=variants(s.f.rule, s.f.story); },
+  toMarkdown:function(s, api){
+    var m=api.md, f=s.f;
+    return m.h('Reguła')+m.f('Reguła',f.rule)+m.f('Siła przekonania przed',(f.beliefA||70)+'%')+m.f('Kiedy się włącza',f.where)+
+      m.h('Bilans')+m.table(['','Krótkoterminowo','Długoterminowo'],[['Korzyści',f.bs,f.bl],['Koszty',f.cs,f.cl]])+
+      m.f('Na ile służy (0–10)',f.serve)+m.f('Elastyczna wersja',f.flex)+m.h('Defuzja')+m.f('Tytuł historii',f.story)+m.f('Gdybym trzymał(a) ją lżej',f.lighter)+
+      m.h('Eksperyment')+m.f('Działanie',f.exp)+m.f('Przewidywanie reguły',f.pred)+m.f('Wynik',f.result)+m.f('Wnioski',f.learn)+m.f('Siła przekonania po',f.beliefB!=null?f.beliefB+'%':'');
+  }
+});
+</script>
+</body>
+</html>

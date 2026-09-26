@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mapa delegowania</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 3: Zmiana i transfer</nav>
+  <div class="pagehead">
+    <h1>Mapa delegowania</h1>
+    <p class="lead">Delegowanie nie jest zero-jedynkowe. Model siedmiu poziomów (Jurgen Appelo, Management 3.0) pozwala precyzyjnie ustalić, <b>kto decyduje i jak</b>. Dla każdego obszaru zaznacz, gdzie jest dziś, a gdzie powinien być.</p>
+  </div>
+
+  <section class="card">
+    <h2>Siedem poziomów</h2>
+    <div class="tablewrap"><table id="levels"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Moje obszary</h2>
+    <p class="small muted">5–6 kluczowych decyzji lub obszarów odpowiedzialności: takich, które zabierają Ci najwięcej czasu albo które najczęściej „wracają” na Twoje biurko.</p>
+    <div id="rows"></div>
+    <button type="button" id="add" class="no-print">+ Dodaj obszar</button>
+  </section>
+
+  <section class="card">
+    <h2>Mapa</h2>
+    <div id="map"></div>
+    <div class="grid g3" id="stats" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <h2>Refleksja</h2>
+    <div class="grid g2">
+      <div class="field"><label>Co mnie powstrzymuje przed przesunięciem w prawo?<span class="hint">Warto zajrzeć do karty <a href="drivery.html">Drivery</a>.</span></label><textarea data-k="block"></textarea></div>
+      <div class="field"><label>Jaki czas i energię odzyskam, jeśli to się uda?</label><textarea data-k="gain"></textarea></div>
+      <div class="field"><label>Pierwsza rozmowa delegująca: z kim, kiedy, o czym?</label><textarea data-k="first"></textarea></div>
+      <div class="field"><label>Jak będę wiedzieć, że działa? (bez mikrozarządzania)</label><textarea data-k="check"></textarea></div>
+    </div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var LV=[
+ ['Mówię','Decyduję sam(a) i ogłaszam decyzję.'],
+ ['Sprzedaję','Decyduję i przekonuję, dlaczego tak.'],
+ ['Konsultuję','Pytam o zdanie, potem decyduję.'],
+ ['Uzgadniamy','Decydujemy razem, szukamy konsensusu.'],
+ ['Doradzam','Ty decydujesz; ja mówię, co myślę.'],
+ ['Pytam','Ty decydujesz; informujesz mnie po fakcie.'],
+ ['Deleguję','Ty decydujesz; nie muszę wiedzieć.']
+];
+function blank(){ return {a:'',who:'',now:1,tgt:4,cond:'',when:''}; }
+OG.Tool({
+  id:'delegowanie', title:'Mapa delegowania',
+  defaults:function(){ return {rows:[blank(),blank(),blank()]}; },
+  init:function(s, api){
+    document.getElementById('levels').innerHTML='<tr><th>Poziom</th><th>Nazwa</th><th>Co to znaczy</th></tr>'+LV.map(function(l,i){return '<tr><td><b>'+(i+1)+'</b></td><td>'+l[0]+'</td><td>'+l[1]+'</td></tr>';}).join('');
+    var sel=function(name,i,v){ return '<select data-'+name+'="'+i+'">'+LV.map(function(l,k){return '<option value="'+(k+1)+'"'+(v===k+1?' selected':'')+'>'+(k+1)+'. '+l[0]+'</option>';}).join('')+'</select>'; };
+    function rows(){
+      document.getElementById('rows').innerHTML=s.rows.map(function(r,i){
+        return '<div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px"><div class="grid g2">'+
+          '<div class="field"><label>Obszar / decyzja</label><input type="text" data-a="'+i+'" value="'+OG.esc(r.a)+'" placeholder="np. zatwierdzanie budżetów projektowych do 50 tys."></div>'+
+          '<div class="field"><label>Komu (rola / osoba)</label><input type="text" data-who="'+i+'" value="'+OG.esc(r.who)+'"></div>'+
+          '<div class="field"><label>Poziom dziś</label>'+sel('now',i,r.now)+'</div>'+
+          '<div class="field"><label>Poziom docelowy</label>'+sel('tgt',i,r.tgt)+'</div>'+
+          '<div class="field"><label>Co musi się stać? (kompetencje, kryteria, informacja)</label><input type="text" data-cond="'+i+'" value="'+OG.esc(r.cond)+'"></div>'+
+          '<div class="field"><label>Do kiedy</label><input type="text" data-when="'+i+'" value="'+OG.esc(r.when)+'" placeholder="np. do końca listopada"></div>'+
+          '</div><button type="button" class="sm ghost danger no-print" data-del="'+i+'">Usuń obszar</button></div>';
+      }).join('');
+      map();
+    }
+    var box=document.getElementById('rows');
+    function upd(e){ var t=e.target; ['a','who','cond','when','now','tgt'].forEach(function(k){ var i=t.getAttribute('data-'+k); if(i!=null){ s.rows[i][k]=(k==='now'||k==='tgt')?+t.value:t.value; } }); map(); api.save(); }
+    box.addEventListener('input',upd); box.addEventListener('change',upd);
+    box.addEventListener('click',function(e){ var i=e.target.getAttribute('data-del'); if(i==null) return; s.rows.splice(+i,1); rows(); api.save(); });
+    document.getElementById('add').onclick=function(){ if(s.rows.length>=10) return; s.rows.push(blank()); rows(); api.save(); };
+    function map(){
+      var R=s.rows, W=640, left=190, colW=(W-left-10)/7, rh=38, H=40+R.length*rh+10, svg='';
+      LV.forEach(function(l,k){ var x=left+k*colW+colW/2; svg+='<text x="'+x+'" y="18" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--muted)">'+(k+1)+'</text><text x="'+x+'" y="32" text-anchor="middle" font-size="10" style="fill:var(--faint)">'+l[0]+'</text>'; svg+='<line x1="'+x+'" y1="38" x2="'+x+'" y2="'+(H-6)+'" style="stroke:var(--line)"/>'; });
+      R.forEach(function(r,i){
+        var y=40+i*rh+rh/2, xn=left+(r.now-1)*colW+colW/2, xt=left+(r.tgt-1)*colW+colW/2;
+        var lab=r.a||('Obszar '+(i+1)); if(lab.length>26) lab=lab.slice(0,25)+'…';
+        svg+='<text x="'+(left-10)+'" y="'+(y+4)+'" text-anchor="end" font-size="12" style="fill:var(--ink)">'+OG.esc(lab)+'</text>';
+        if(r.tgt!==r.now) svg+='<line x1="'+xn+'" y1="'+y+'" x2="'+(xt+(xt>xn?-9:9))+'" y2="'+y+'" stroke="#db3a34" stroke-width="2.5" marker-end="url(#ar)"/>';
+        svg+='<circle cx="'+xn+'" cy="'+y+'" r="7" fill="#084C61"><title>Dziś: '+r.now+'</title></circle>';
+        svg+='<circle cx="'+xt+'" cy="'+y+'" r="7" fill="none" stroke="#db3a34" stroke-width="2.5"><title>Cel: '+r.tgt+'</title></circle>';
+      });
+      document.getElementById('map').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Mapa delegowania"><defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#db3a34"/></marker></defs>'+svg+'</svg><p class="small muted">● dziś &nbsp; ○ docelowo</p>';
+      var n=R.length||1, avgN=R.reduce(function(a,r){return a+r.now;},0)/n, avgT=R.reduce(function(a,r){return a+r.tgt;},0)/n, mv=R.filter(function(r){return r.tgt>r.now;}).length;
+      document.getElementById('stats').innerHTML='<div class="stat"><b>'+avgN.toFixed(1)+'</b><span>średni poziom dziś</span></div><div class="stat"><b>'+avgT.toFixed(1)+'</b><span>średni poziom docelowy</span></div><div class="stat"><b>'+mv+'</b><span>obszarów do przesunięcia</span></div>';
+    }
+    rows();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, f=s.f, L=function(v){return v+'. '+LV[v-1][0];};
+    return m.h('Obszary')+m.table(['Obszar','Komu','Dziś','Cel','Warunki','Termin'], s.rows.map(function(r){return [r.a,r.who,L(r.now),L(r.tgt),r.cond,r.when];}))+
+      m.h('Refleksja')+m.f('Co mnie powstrzymuje',f.block)+m.f('Co odzyskam',f.gain)+m.f('Pierwsza rozmowa',f.first)+m.f('Jak sprawdzę, że działa',f.check);
+  }
+});
+</script>
+</body>
+</html>

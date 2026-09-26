@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Koło życia lidera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 1: Mapa i kierunek</nav>
+  <div class="pagehead">
+    <h1>Koło życia lidera</h1>
+    <p class="lead">Oceń, jak jest <b>teraz</b> (1–10) i jak <b>chcesz, żeby było</b> za 3 miesiące. Potem wskaż <b>Dźwignię</b>: obszar, którego poprawa najmocniej pociągnie za sobą pozostałe.</p>
+  </div>
+
+  <div class="grid g2">
+    <section class="card">
+      <h2>Obszary i oceny</h2>
+      <p class="small muted">Zmieniaj nazwy obszarów według potrzeb. Kółko po lewej oznacza Dźwignię.</p>
+      <div class="tablewrap"><table id="areas">
+        <thead><tr><th title="Dźwignia">⦿</th><th>Obszar</th><th>Teraz</th><th>Cel</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" class="no-print">
+        <input type="text" id="newArea" placeholder="Nowy obszar…" style="flex:1;min-width:160px">
+        <button type="button" id="add">Dodaj</button>
+        <button type="button" id="defaults" class="ghost">Przywróć domyślne 8</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Wykres</h2>
+      <div id="chart"></div>
+      <div class="small muted" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <span><span style="display:inline-block;width:14px;height:10px;background:#177E89;opacity:.55;border-radius:3px"></span> Teraz</span>
+        <span><span style="display:inline-block;width:14px;height:0;border-top:2px dashed #db3a34;vertical-align:middle"></span> Cel</span>
+        <span>★ Dźwignia</span>
+      </div>
+      <div class="grid g3" style="margin-top:14px" id="stats"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Refleksja</h2>
+    <div class="grid g2">
+      <div class="field"><label>Co zauważasz, patrząc na swoje koło?<span class="hint">Co Cię zaskakuje? Gdzie jest największa różnica między „teraz” a „cel”?</span></label><textarea data-k="notice"></textarea></div>
+      <div class="field"><label>Dlaczego właśnie ta Dźwignia?<span class="hint">Jak jej poprawa wpłynęłaby na inne obszary?</span></label><textarea data-k="why"></textarea></div>
+      <div class="field"><label>Co podniosłoby ocenę Dźwigni o 1 punkt?<span class="hint">Najmniejszy krok, który jest w Twoim zasięgu w ciągu 7 dni.</span></label><textarea data-k="step"></textarea></div>
+      <div class="field"><label>Co może przeszkodzić i co wtedy zrobisz?</label><textarea data-k="obstacle"></textarea></div>
+    </div>
+    <div class="field"><label>Notatki</label><textarea data-k="notes"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var DEF = ['Rola lidera i praca','Zespół i współpraca','Energia i zdrowie','Sen i regeneracja','Rodzina i bliscy','Przyjaźnie i wsparcie','Rozwój i nauka','Czas dla siebie i pasje'];
+function defAreas(){ return DEF.map(function(n){ return {n:n, now:5, goal:7}; }); }
+var T = OG.Tool({
+  id:'kolo-zycia', title:'Koło życia lidera',
+  defaults:function(){ return {areas:defAreas(), lever:null}; },
+  init:function(s, api){
+    var tb = document.querySelector('#areas tbody');
+    function draw(){
+      tb.innerHTML = s.areas.map(function(a,i){
+        return '<tr><td><input type="radio" name="lever" aria-label="Dźwignia" '+(s.lever===i?'checked':'')+' data-i="'+i+'"></td>'+
+          '<td><input type="text" value="'+OG.esc(a.n)+'" data-n="'+i+'"></td>'+
+          '<td><input type="number" min="1" max="10" value="'+a.now+'" data-now="'+i+'" style="width:64px"></td>'+
+          '<td><input type="number" min="1" max="10" value="'+a.goal+'" data-goal="'+i+'" style="width:64px"></td>'+
+          '<td><button type="button" class="sm ghost danger no-print" data-del="'+i+'" aria-label="Usuń">✕</button></td></tr>';
+      }).join('');
+      chart();
+    }
+    function clamp(v){ v = parseInt(v,10); return isNaN(v)?1:Math.max(1,Math.min(10,v)); }
+    tb.addEventListener('input', function(e){
+      var t = e.target, i;
+      if ((i=t.getAttribute('data-n'))!=null) s.areas[i].n = t.value;
+      if ((i=t.getAttribute('data-now'))!=null) s.areas[i].now = clamp(t.value);
+      if ((i=t.getAttribute('data-goal'))!=null) s.areas[i].goal = clamp(t.value);
+      if (t.name==='lever') s.lever = +t.getAttribute('data-i');
+      chart(); api.save();
+    });
+    tb.addEventListener('change', function(e){ if (e.target.type==='number'){ draw(); } });
+    tb.addEventListener('click', function(e){
+      var i = e.target.getAttribute('data-del'); if (i==null) return;
+      if (s.areas.length<=3) return OG.modal('Za mało obszarów','<p>Koło potrzebuje co najmniej 3 obszarów.</p>');
+      s.areas.splice(+i,1); if (s.lever===+i) s.lever=null; else if (s.lever>+i) s.lever--; draw(); api.save();
+    });
+    document.getElementById('add').onclick = function(){
+      var inp = document.getElementById('newArea'), v = inp.value.trim(); if (!v) return;
+      if (s.areas.length>=12) return OG.modal('Limit obszarów','<p>Maksymalnie 12 obszarów. Czytelność ma znaczenie.</p>');
+      s.areas.push({n:v, now:5, goal:7}); inp.value=''; draw(); api.save();
+    };
+    document.getElementById('newArea').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('add').click(); });
+    document.getElementById('defaults').onclick = function(){ s.areas = defAreas(); s.lever=null; draw(); api.save(); };
+
+    function chart(){
+      var W=420, c=W/2, R=150, n=s.areas.length, svg='';
+      var pt=function(i,v){ var a=-Math.PI/2 + i*2*Math.PI/n; return [c+Math.cos(a)*R*v/10, c+Math.sin(a)*R*v/10]; };
+      for (var g=2; g<=10; g+=2){ svg+='<polygon points="'+s.areas.map(function(_,i){return pt(i,g).join(',');}).join(' ')+'" fill="none" style="stroke:var(--line)" stroke-width="1"/>'; }
+      s.areas.forEach(function(a,i){ var p=pt(i,10); svg+='<line x1="'+c+'" y1="'+c+'" x2="'+p[0]+'" y2="'+p[1]+'" style="stroke:var(--line)"/>'; });
+      svg+='<polygon points="'+s.areas.map(function(a,i){return pt(i,a.now).join(',');}).join(' ')+'" fill="#177E89" fill-opacity=".45" stroke="#177E89" stroke-width="2"/>';
+      svg+='<polygon points="'+s.areas.map(function(a,i){return pt(i,a.goal).join(',');}).join(' ')+'" fill="none" stroke="#db3a34" stroke-width="2" stroke-dasharray="6 4"/>';
+      s.areas.forEach(function(a,i){
+        var p=pt(i,a.now); svg+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#084C61"/>';
+        var l=pt(i,11.9), anchor = Math.abs(l[0]-c)<8?'middle':(l[0]>c?'start':'end');
+        var lab=(s.lever===i?'★ ':'')+a.n+' ('+a.now+')';
+        svg+='<text x="'+l[0]+'" y="'+(l[1]+4)+'" text-anchor="'+anchor+'" font-size="15" font-weight="'+(s.lever===i?800:600)+'" style="fill:'+(s.lever===i?'#db3a34':'var(--ink)')+'">'+OG.esc(lab.length>30?lab.slice(0,29)+'…':lab)+'</text>';
+      });
+      document.getElementById('chart').innerHTML='<svg viewBox="-160 -10 '+(W+320)+' '+(W+20)+'" width="100%" role="img" aria-label="Wykres koła życia">'+svg+'</svg>';
+      var avg=s.areas.reduce(function(x,a){return x+a.now;},0)/n;
+      var gap=s.areas.slice().sort(function(a,b){return (b.goal-b.now)-(a.goal-a.now);})[0];
+      var low=s.areas.slice().sort(function(a,b){return a.now-b.now;})[0];
+      document.getElementById('stats').innerHTML='<div class="stat"><b>'+avg.toFixed(1)+'</b><span>średnia „teraz”</span></div>'+
+        '<div class="stat"><b style="font-size:1.05rem">'+OG.esc(low.n)+'</b><span>najniższa ocena ('+low.now+')</span></div>'+
+        '<div class="stat"><b style="font-size:1.05rem">'+OG.esc(gap.n)+'</b><span>największa luka (+'+(gap.goal-gap.now)+')</span></div>';
+    }
+    draw();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, lv=s.lever!=null&&s.areas[s.lever]?s.areas[s.lever].n:'nie wskazano';
+    var avg=(s.areas.reduce(function(x,a){return x+a.now;},0)/s.areas.length).toFixed(1);
+    return m.h('Oceny')+m.table(['Obszar','Teraz','Cel','Luka'], s.areas.map(function(a,i){return [(s.lever===i?'★ ':'')+a.n,a.now,a.goal,(a.goal-a.now>0?'+':'')+(a.goal-a.now)];}))+
+      m.f('Średnia „teraz”',avg)+m.f('Dźwignia',lv)+m.h('Refleksja')+
+      m.f('Co zauważam',s.f.notice)+m.f('Dlaczego ta Dźwignia',s.f.why)+m.f('Krok o 1 punkt w 7 dni',s.f.step)+m.f('Przeszkoda i plan',s.f.obstacle)+m.f('Notatki',s.f.notes);
+  }
+});
+</script>
+</body>
+</html>

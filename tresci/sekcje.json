@@ -154,6 +154,18 @@
       "ukryj": false,
       "tresc": "",
       "podsekcje": []
+    },
+    {
+      "id": "narzedzia",
+      "tytul": "Narzędzia coachingowe",
+      "opis": "Karty pracy do sesji 1:1: koło życia, wartości i Matryca ACT, dziennik energii, delegowanie, WOOP, cele GAS. Odpowiedzi zostają w Twojej przeglądarce.",
+      "przycisk": "Otwórz narzędzia",
+      "ikona": "narzedzia",
+      "adres": "narzedzia/",
+      "wyroznij": false,
+      "ukryj": false,
+      "tresc": "",
+      "podsekcje": []
     }
   ]
 }

@@ -82,6 +82,8 @@ content:
                   label: Otwarta książka (książki)
                 - value: cwiczenia
                   label: Tarcza (ćwiczenia)
+                - value: narzedzia
+                  label: Kompas (narzędzia coachingowe)
           - name: wyroznij
             label: Wyróżniony kafelek (kolorowy)
             type: boolean

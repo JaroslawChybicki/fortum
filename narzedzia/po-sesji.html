@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Informacja zwrotna po sesji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Przez cały proces</nav>
+  <div class="pagehead">
+    <h1>Informacja zwrotna po sesji</h1>
+    <p class="lead">Minuta szczerości pomaga dopasować kolejną sesję do tego, czego naprawdę potrzebujesz. Krytyczne uwagi są szczególnie cenne.</p>
+  </div>
+  <section class="card">
+    <div class="field" style="max-width:260px"><label>Sesja</label><select data-k="session"><option value="">wybierz…</option><option>Sesja 1</option><option>Sesja 2</option><option>Sesja 3</option></select></div>
+    <div id="sliders"></div>
+    <div class="grid g2">
+      <div class="field"><label>Co zabieram z tej sesji?</label><textarea data-k="take"></textarea></div>
+      <div class="field"><label>Czego było za mało, za dużo albo co zrobić inaczej?</label><textarea data-k="change"></textarea></div>
+    </div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var SL=[['rel','Relacja','Nie czułem(-am) się wysłuchany(-a)','Czułem(-am) się wysłuchany(-a) i zrozumiany(-a)'],
+ ['goal','Tematy i cele','Nie rozmawialiśmy o tym, o czym chciałem(-am)','Rozmawialiśmy o tym, co dla mnie ważne'],
+ ['meth','Sposób pracy','Sposób pracy mi nie odpowiadał','Sposób pracy dobrze do mnie pasował'],
+ ['all','Całość','Czegoś w tej sesji zabrakło','Sesja była dla mnie wartościowa']];
+OG.Tool({
+  id:'po-sesji', title:'Informacja zwrotna po sesji',
+  init:function(s){
+    document.getElementById('sliders').innerHTML=SL.map(function(x){
+      return '<div class="field"><label>'+x[1]+'</label><div class="small muted" style="display:flex;justify-content:space-between;gap:12px"><span>'+x[2]+'</span><span style="text-align:right">'+x[3]+'</span></div><div class="range-row"><input type="range" min="0" max="10" step="1" value="'+(s.f[x[0]]!=null?s.f[x[0]]:5)+'" data-k="'+x[0]+'" aria-label="'+x[1]+'"><output></output></div></div>';
+    }).join('');
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, f=s.f;
+    return m.f('Sesja',f.session)+m.table(['Obszar','Ocena (0–10)'],SL.map(function(x){return [x[1], f[x[0]]!=null?f[x[0]]:'–'];}))+m.f('Co zabieram',f.take)+m.f('Co zmienić',f.change);
+  }
+});
+</script>
+</body>
+</html>

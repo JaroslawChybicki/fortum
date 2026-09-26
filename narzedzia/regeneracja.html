@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Regeneracja i strategiczne wyspy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 3: Zmiana i transfer</nav>
+  <div class="pagehead">
+    <h1>Regeneracja i strategiczne wyspy</h1>
+    <p class="lead">Badania Sabine Sonnentag i Charlotte Fritz pokazują, że regeneracja to nie tylko ilość wolnego czasu. Liczy się to, co dzieje się w tym czasie. Wyróżniają cztery doświadczenia, które odbudowują zasoby.</p>
+  </div>
+  <div class="note small">Stwierdzenia poniżej to autorska adaptacja do refleksji inspirowana modelem Sonnentag i Fritz, a nie oryginalny kwestionariusz REQ. Odpowiadaj, myśląc o ostatnich 4 tygodniach.</div>
+
+  <section class="card">
+    <h2>Jak wyglądała Twoja regeneracja?</h2>
+    <p class="small muted">1 = zupełnie się nie zgadzam … 5 = całkowicie się zgadzam</p>
+    <div id="items"></div>
+  </section>
+
+  <section class="card">
+    <h2>Profil regeneracji</h2>
+    <div id="profile"></div>
+  </section>
+
+  <section class="card">
+    <h2>Strategiczne wyspy</h2>
+    <p class="small muted">Wyspa to zaplanowany, chroniony moment odbudowy zasobów, wpisany w kalendarz jak spotkanie. Zaplanuj po jednej wyspie w każdej skali czasu i przypisz jej wymiar, który ma wzmacniać (najlepiej ten najsłabszy).</p>
+    <div id="islands"></div>
+    <div class="field"><label>Kto lub co może pomóc chronić te wyspy? (asystentka, kalendarz, ustalenie z zespołem, bliscy)</label><textarea data-k="protect"></textarea></div>
+    <div class="field"><label>Połączenie z <a href="dziennik-energii.html">Dziennikiem energii</a>: o jakiej porze dnia wyspa da najwięcej?</label><textarea data-k="energy"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+var DIM={
+  D:{n:'Odcięcie psychiczne',d:'Zdolność, by po pracy przestać o niej myśleć.',tip:'Rytuał zamknięcia dnia (lista na jutro + „zamykam”), telefon służbowy poza zasięgiem, fizyczna zmiana otoczenia.'},
+  R:{n:'Relaks',d:'Obniżenie pobudzenia ciała i umysłu.',tip:'Oddech z wydłużonym wydechem, spacer bez celu, muzyka, sauna, rozciąganie.'},
+  M:{n:'Mistrzostwo',d:'Nowe wyzwania i nauka poza pracą.',tip:'Nauka czegoś zupełnie spoza roli: instrument, język, sport techniczny, fotografia.'},
+  C:{n:'Kontrola',d:'Poczucie, że to Ty decydujesz o swoim czasie wolnym.',tip:'Jeden blok w tygodniu, o którym decydujesz tylko Ty. Nieprzesuwalny.'}
+};
+var IT=[
+ ['D','Po pracy potrafię przestać myśleć o sprawach zawodowych.'],['D','W czasie wolnym nie sprawdzam poczty służbowej ani komunikatorów.'],['D','Wieczorem mam poczucie dystansu do tego, co wydarzyło się w pracy.'],
+ ['R','W czasie wolnym robię rzeczy, przy których naprawdę się odprężam.'],['R','Znajduję czas, by zwolnić tempo i niczego nie musieć.'],['R','Mam sposoby, by rozluźnić ciało po intensywnym dniu.'],
+ ['M','Po pracy robię coś, co jest dla mnie nowym wyzwaniem.'],['M','Uczę się rzeczy niezwiązanych z moją rolą zawodową.'],['M','W czasie wolnym mam aktywności, w których czuję postęp.'],
+ ['C','Sam(a) decyduję, jak spędzam czas wolny.'],['C','Mój czas wolny rzadko jest „przejmowany” przez pilne sprawy.'],['C','Mam wpływ na to, kiedy i jak odpoczywam.']
+];
+var ISL=[['micro','W ciągu dnia pracy','2–10 min, np. między spotkaniami'],['evening','Wieczór','30–90 min po pracy'],['weekend','Weekend','pół dnia lub dłużej'],['quarter','W kwartale','dzień, wyjazd, dłuższa przerwa']];
+function sc(a){ var r={D:0,R:0,M:0,C:0},c={D:0,R:0,M:0,C:0}; IT.forEach(function(it,i){ if(a[i]){ r[it[0]]+=a[i]; c[it[0]]++; } }); return {r:r,c:c}; }
+function zone(v){ return v<=7?'do wzmocnienia':v<=11?'umiarkowanie':'zasób'; }
+OG.Tool({
+  id:'regeneracja', title:'Regeneracja i strategiczne wyspy',
+  defaults:function(){ return {a:{}, isl:{}}; },
+  init:function(s, api){
+    document.getElementById('items').innerHTML=IT.map(function(it,i){
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div style="margin-bottom:6px">'+(i+1)+'. '+it[1]+'</div><div class="chips">'+[1,2,3,4,5].map(function(v){return '<button type="button" class="chip" style="min-width:44px;justify-content:center" data-i="'+i+'" data-v="'+v+'" aria-pressed="'+(s.a[i]===v)+'">'+v+'</button>';}).join('')+'</div></div>';
+    }).join('');
+    document.getElementById('items').addEventListener('click',function(e){ var i=e.target.getAttribute('data-i'); if(i==null) return; var v=+e.target.getAttribute('data-v'); s.a[i]=v; OG.$$('[data-i="'+i+'"]').forEach(function(b){b.setAttribute('aria-pressed',+b.getAttribute('data-v')===v);}); prof(); api.save(); });
+    var dimOpts=function(v){ return '<option value="">wymiar…</option>'+Object.keys(DIM).map(function(k){return '<option value="'+k+'"'+(v===k?' selected':'')+'>'+DIM[k].n+'</option>';}).join(''); };
+    document.getElementById('islands').innerHTML='<div class="grid g2">'+ISL.map(function(x){ var d=s.isl[x[0]]||{};
+      return '<div style="border:1px solid var(--line);border-radius:12px;padding:14px"><h3>'+x[1]+'</h3><p class="small muted">'+x[2]+'</p>'+
+        '<div class="field"><label>Co robię</label><input type="text" data-is="'+x[0]+'" data-f="what" value="'+OG.esc(d.what||'')+'"></div>'+
+        '<div class="grid g2"><div class="field"><label>Kiedy</label><input type="text" data-is="'+x[0]+'" data-f="when" value="'+OG.esc(d.when||'')+'"></div>'+
+        '<div class="field"><label>Wzmacnia</label><select data-is="'+x[0]+'" data-f="dim">'+dimOpts(d.dim)+'</select></div></div></div>'; }).join('')+'</div>';
+    var ib=document.getElementById('islands'); var h=function(e){ var k=e.target.getAttribute('data-is'); if(!k) return; (s.isl[k]=s.isl[k]||{})[e.target.getAttribute('data-f')]=e.target.value; api.save(); };
+    ib.addEventListener('input',h); ib.addEventListener('change',h);
+    function prof(){
+      var r=sc(s.a), done=Object.keys(s.a).length;
+      if(!done){ document.getElementById('profile').innerHTML='<p class="muted">Profil pojawi się po udzieleniu odpowiedzi.</p>'; return; }
+      var order=Object.keys(DIM).sort(function(a,b){return r.r[a]-r.r[b];});
+      var W=420,H=200,bw=70,gap=(W-4*bw)/5, svg='';
+      Object.keys(DIM).forEach(function(k,i){ var v=r.r[k], full=r.c[k]===3, x=gap+i*(bw+gap), bh=v/15*(H-50), y=H-30-bh;
+        svg+='<rect x="'+x+'" y="'+(H-30-(H-50))+'" width="'+bw+'" height="'+(H-50)+'" rx="6" style="fill:var(--surface-2)"/>';
+        svg+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="6" fill="'+(v<=7&&full?'#db3a34':'#177E89')+'"/>';
+        svg+='<text x="'+(x+bw/2)+'" y="'+(y-6)+'" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--ink)">'+v+(full?'':'*')+'</text>';
+        svg+='<text x="'+(x+bw/2)+'" y="'+(H-12)+'" text-anchor="middle" font-size="11" style="fill:var(--muted)">'+DIM[k].n.split(' ')[0]+'</text>'; });
+      document.getElementById('profile').innerHTML='<div class="grid g2"><div><svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Profil regeneracji">'+svg+'</svg><p class="small muted">Skala 3–15 na wymiar. ≤7: do wzmocnienia · 8–11: umiarkowanie · ≥12: zasób.'+(done<12?' * wymiar niepełny':'')+'</p></div><div>'+
+        order.map(function(k,i){ return '<div style="margin-bottom:10px"><b>'+(i===0?'↑ ':'')+DIM[k].n+'</b> · '+r.r[k]+' ('+zone(r.r[k])+')<br><span class="small muted">'+DIM[k].d+'</span>'+(i===0?'<br><span class="small"><b>Pomysły:</b> '+DIM[k].tip+'</span>':'')+'</div>'; }).join('')+'</div></div>';
+    }
+    prof();
+  },
+  toMarkdown:function(s, api){
+    var m=api.md, r=sc(s.a);
+    return m.h('Profil regeneracji (3–15)')+m.table(['Wymiar','Wynik','Strefa'],Object.keys(DIM).map(function(k){return [DIM[k].n,r.r[k],zone(r.r[k])];}))+
+      m.h('Strategiczne wyspy')+m.table(['Skala','Co','Kiedy','Wzmacnia'],ISL.map(function(x){var d=s.isl[x[0]]||{}; return [x[1],d.what||'',d.when||'',d.dim?DIM[d.dim].n:''];}))+
+      m.f('Kto/co chroni wyspy',s.f.protect)+m.f('Połączenie z energią',s.f.energy)+
+      m.h('Odpowiedzi')+m.table(['#','Stwierdzenie','Odp.'],IT.map(function(it,i){return [i+1,it[1],s.a[i]||'–'];}));
+  }
+});
+</script>
+</body>
+</html>

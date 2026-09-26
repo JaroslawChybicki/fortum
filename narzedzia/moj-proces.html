@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mój proces</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Podsumowanie</nav>
+  <div class="pagehead">
+    <h1>Mój proces</h1>
+    <p class="lead">Wszystkie karty, nad którymi pracujesz w tej przeglądarce, zebrane w jednym raporcie. Zaznacz, co chcesz uwzględnić.</p>
+  </div>
+  <div class="card no-print">
+    <div class="grid g2">
+      <div class="field"><label for="name">Imię lub inicjały</label><input type="text" id="name" autocomplete="off"></div>
+      <div class="field"><label>Działania</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" id="dl">Pobierz .md</button>
+          <button type="button" onclick="window.print()">Drukuj / PDF</button>
+          <button type="button" class="primary" id="send">Wyślij do Jarka</button>
+        </div>
+      </div>
+    </div>
+    <div id="list"></div>
+  </div>
+  <div class="card"><div id="preview"></div></div>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  OG.chrome('moj-proces');
+  var name = document.getElementById('name'); name.value = OG.nameOf();
+  name.addEventListener('input', function(){ OG.store.set('name', name.value.trim()); render(); });
+  var items = OG.CATALOG.map(function(t){ var s = OG.store.get('md:' + t.id, null); return s ? {id:t.id, title:t.title, s:s} : null; }).filter(Boolean);
+  var sel = {}; items.forEach(function(i){ sel[i.id] = true; });
+  var list = document.getElementById('list');
+  if (!items.length) list.innerHTML = '<p class="muted">Nie ma jeszcze zapisanych kart w tej przeglądarce. Zacznij od <a href="index.html">listy narzędzi</a>.</p>';
+  else list.innerHTML = '<p class="small muted" style="margin-top:6px">Uwzględnij w raporcie:</p>' + items.map(function(i){
+    return '<label class="check"><input type="checkbox" data-id="' + i.id + '" checked> ' + OG.esc(i.title) + ' <span class="muted small">(ostatnia zmiana: ' + new Date(i.s.updated).toLocaleString('pl-PL') + ')</span></label>';
+  }).join('');
+  OG.$$('input[data-id]').forEach(function(c){ c.addEventListener('change', function(){ sel[c.getAttribute('data-id')] = c.checked; render(); }); });
+  function build(){
+    var parts = items.filter(function(i){return sel[i.id];}).map(function(i){ return i.s.md.replace(/\n\*Odporni i gotowi · Lyra Polska × Fortum\*  \n(\*\*Uczestnik:\*\*[^\n]*\n)?\*\*Data:\*\*[^\n]*\n/, '\n').replace(/^# /, '## ').replace(/\n## /g, '\n### ').replace(/\n---\n\*Materiał poufny[^\n]*\n?$/, ''); });
+    return '# Mój proces — Odporni i gotowi\n\n' + (OG.nameOf() ? '**Uczestnik:** ' + OG.nameOf() + '  \n' : '') + '**Data:** ' + OG.today() + '\n\n' + parts.join('\n\n') + '\n\n---\n*Materiał poufny, przeznaczony do pracy coachingowej.*\n';
+  }
+  function mdToHtml(m){
+    var h = OG.esc(m);
+    h = h.replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^## (.*)$/gm,'<h2>$1</h2>').replace(/^# (.*)$/gm,'<h1>$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>')
+      .replace(/^- (.*)$/gm,'<li>$1</li>').replace(/^---$/gm,'<hr>');
+    h = h.replace(/((?:^\|.*\|\n?)+)/gm, function(t){
+      var rows = t.trim().split('\n').filter(function(r){return !/^\|(\s*-+\s*\|)+$/.test(r);});
+      return '<div class="tablewrap"><table>' + rows.map(function(r,i){ var c = r.replace(/^\||\|$/g,'').split('|'); return '<tr>' + c.map(function(x){return (i?'<td>':'<th>') + x.trim() + (i?'</td>':'</th>');}).join('') + '</tr>'; }).join('') + '</table></div>';
+    });
+    return h.replace(/\n{2,}/g,'<br><br>').replace(/  \n/g,'<br>');
+  }
+  function render(){ document.getElementById('preview').innerHTML = items.length ? mdToHtml(build()) : '<p class="muted">Podgląd pojawi się tutaj.</p>'; }
+  var fn = function(){ return 'moj-proces' + (OG.nameOf() ? '-' + OG.slug(OG.nameOf()) : '') + '-' + OG.isoDate() + '.md'; };
+  document.getElementById('dl').onclick = function(){ OG.download(fn(), build()); };
+  document.getElementById('send').onclick = function(){ OG.sendReport('Mój proces', build(), fn()); };
+  render();
+})();
+</script>
+</body>
+</html>

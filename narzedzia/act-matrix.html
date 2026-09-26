@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Matryca ACT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+</head>
+<body>
+<header class="site"></header>
+<div data-toolbar></div>
+<main class="wrap">
+  <nav class="crumbs"><a href="index.html">Narzędzia</a> · Sesja 1: Mapa i kierunek</nav>
+  <div class="pagehead">
+    <h1>Matryca ACT</h1>
+    <p class="lead">Narzędzie Kevina Polka i współpracowników (ACT Matrix) pomaga zobaczyć, które zachowania przybliżają Cię do tego, co ważne, a które służą głównie temu, by pozbyć się dyskomfortu.</p>
+  </div>
+
+  <section class="card">
+    <div class="field"><label>Sytuacja lub obszar, który bierzesz pod lupę<span class="hint">Np. „posiedzenia zarządu po restrukturyzacji”, „delegowanie w moim pionie”, „wieczory po pracy”.</span></label><input type="text" data-k="context"></div>
+    <div class="note small">Wypełniaj w kolejności: <b>1</b> (prawy dół) → <b>2</b> (lewy dół) → <b>3</b> (lewa góra) → <b>4</b> (prawa góra). Zapisuj krótko, po jednej rzeczy w wierszu.</div>
+    <div class="axis"><span>Doświadczenie zewnętrzne: co robię (widać to z boku)</span></div>
+    <div class="matrix">
+      <div class="q"><span class="tag">3</span><h3>Zachowania „od”</h3><p class="small muted">Co robisz, żeby pozbyć się, uniknąć albo przyciszyć to, co w polu 2? (np. biorę zadanie na siebie, sprawdzam maile o 23:00, odkładam rozmowę)</p><textarea data-k="away"></textarea></div>
+      <div class="q"><span class="tag">4</span><h3>Zachowania „ku”</h3><p class="small muted">Co robisz albo mógł(a)byś zrobić, żeby zbliżyć się do tego, co w polu 1? Obserwowalne działania.</p><textarea data-k="toward"></textarea></div>
+      <div class="q"><span class="tag red">2</span><h3>Przeszkody wewnętrzne</h3><p class="small muted">Jakie myśli, emocje, wspomnienia, doznania z ciała pojawiają się i stają na drodze? (np. „jeśli nie dopilnuję, posypie się”, napięcie, wina)</p><textarea data-k="inner"></textarea></div>
+      <div class="q"><span class="tag">1</span><h3>Kto i co jest ważne?</h3><p class="small muted">Jakim liderem, partnerem, człowiekiem chcesz być? Kto i co ma dla Ciebie znaczenie? (warto skorzystać z karty <a href="wartosci.html">Wartości</a>)</p><textarea data-k="values"></textarea></div>
+      <span class="me">Ja, który(-a) zauważa</span>
+    </div>
+    <div class="axis"><span>Doświadczenie wewnętrzne: co myślę i czuję (tylko ja to widzę)</span></div>
+    <div class="axis"><span>← Oddalanie się od tego, co niechciane</span><span>Zbliżanie się do tego, co ważne →</span></div>
+  </section>
+
+  <section class="card">
+    <h2>Sprawdzanie skuteczności</h2>
+    <div class="grid g2">
+      <div class="field"><label>Czy zachowania „od” działają na krótką metę?</label><textarea data-k="shortTerm"></textarea></div>
+      <div class="field"><label>A na dłuższą? Co Cię kosztują (energię, relacje, zdrowie, wpływ)?</label><textarea data-k="longTerm"></textarea></div>
+    </div>
+    <div class="field"><label>Na ile to, co robisz obecnie, służy temu, co ważne? (0 = wcale, 10 = w pełni)</label><div class="range-row"><input type="range" min="0" max="10" value="5" data-k="work"><output>5</output></div></div>
+    <div class="field"><label>Jeden ruch „ku” w tym tygodniu, nawet jeśli pojawi się to, co w polu 2</label><textarea data-k="move"></textarea></div>
+    <div class="field"><label>Co zauważasz, patrząc na całą matrycę z miejsca obserwatora?</label><textarea data-k="observer"></textarea></div>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="assets/app.js"></script>
+<script>
+OG.Tool({
+  id:'act-matrix', title:'Matryca ACT',
+  toMarkdown:function(s, api){
+    var m=api.md, f=s.f;
+    return m.f('Sytuacja',f.context)+m.h('Matryca')+m.f('1. Kto i co jest ważne',f.values)+m.f('2. Przeszkody wewnętrzne',f.inner)+
+      m.f('3. Zachowania „od”',f.away)+m.f('4. Zachowania „ku”',f.toward)+m.h('Skuteczność')+m.f('Krótka meta',f.shortTerm)+m.f('Długa meta / koszty',f.longTerm)+
+      m.f('Służenie temu, co ważne (0–10)',f.work)+m.f('Ruch „ku” w tym tygodniu',f.move)+m.f('Perspektywa obserwatora',f.observer);
+  }
+});
+</script>
+</body>
+</html>
