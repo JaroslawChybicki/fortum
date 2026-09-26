@@ -66,6 +66,14 @@
       "opis": "Psycholożka zdrowia o tym, jak sposób myślenia o stresie zmienia jego wpływ na organizm – i jaką rolę odgrywa sięganie po wsparcie."
     },
     {
+      "tytul": "Jak uspokoić lęk – wskazówki neurobiolożki",
+      "autor": "Wendy Suzuki",
+      "wydarzenie": "TED – The Way We Work",
+      "youtube": "https://www.youtube.com/watch?v=FpiWSFcL3-c",
+      "kategoria": "energia",
+      "opis": "Krótki odcinek serii TED o pracy: jak przekształcić lęk w informację i energię do działania w ciągu dnia pracy – z praktykami opartymi na badaniach."
+    },
+    {
       "tytul": "Trzy sekrety odpornych ludzi",
       "autor": "Lucy Hone",
       "wydarzenie": "TEDxChristchurch",
@@ -114,6 +122,14 @@
       "opis": "Wnioski z trwającego ponad 75 lat harwardzkiego badania: najsilniejszym czynnikiem zdrowia i szczęścia są dobre relacje."
     },
     {
+      "tytul": "Jak zachować spokój, gdy wiesz, że będzie stresująco",
+      "autor": "Daniel Levitin",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=8jPQjjsBbIc",
+      "kategoria": "odpornosc",
+      "opis": "Neurobiolog o tym, dlaczego pod wpływem stresu myślimy gorzej – i jak przygotować się zawczasu, zanim trudna sytuacja nastąpi."
+    },
+    {
       "tytul": "Jak budować miejsce pracy bezpieczne psychologicznie",
       "autor": "Amy Edmondson",
       "wydarzenie": "TEDxHGSE",
@@ -128,6 +144,22 @@
       "youtube": "https://www.youtube.com/watch?v=lmyZMtPVodo",
       "kategoria": "przywodztwo",
       "opis": "O „kręgu bezpieczeństwa”: gdy lider chroni ludzi, zespół odpowiada zaufaniem i współpracą zamiast rywalizacji."
+    },
+    {
+      "tytul": "Siła wrażliwości",
+      "autor": "Brené Brown",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=iCvmsMzlF7o",
+      "kategoria": "przywodztwo",
+      "opis": "Jedno z najczęściej oglądanych wystąpień TED: o odwadze pokazania się takim, jakim się jest, jako źródle więzi, zaufania i autentycznego przywództwa."
+    },
+    {
+      "tytul": "Jak wielcy liderzy inspirują do działania",
+      "autor": "Simon Sinek",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=qp0HIF3SfI4",
+      "kategoria": "przywodztwo",
+      "opis": "Model „złotego kręgu”: ludzie idą za liderem nie z powodu tego, co robi, ale dlaczego to robi. O sensie jako źródle motywacji zespołu."
     }
   ]
 }
