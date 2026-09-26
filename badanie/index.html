@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Odporni i gotowi – diagnoza Deep Dive | Lyra Polska</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23123B52%22/%3E%3Cpath%20d%3D%22M6%2050%20L24%2022%20L33%2035%20L42%2018%20L58%2050%20Z%22%20fill%3D%22%23177E89%22/%3E%3Cpath%20d%3D%22M42%2018%20L48.5%2031%20L44%2028%20L40%2031%20L37.5%2027.5%20Z%22%20fill%3D%22%23fff%22/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -29,12 +31,14 @@ button{font-family:inherit}
 /* header */
 .top{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;position:sticky;top:0;z-index:20}
 .top-in{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff}
-.brand img{height:30px;width:auto;display:block}
-.brand span{font-weight:600;font-size:15px;opacity:.85;border-left:1px solid rgba(255,255,255,.3);padding-left:14px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.brand img{width:auto;display:block}
+.brand .znak{height:36px}
+.brand span{font-weight:700;font-size:16px;letter-spacing:-.005em}
+.brand .lyra{height:26px;border-left:1px solid rgba(255,255,255,.3);padding-left:14px;margin-left:6px;box-sizing:content-box}
 .top a.site{color:#cfe6e8;font-size:14px;text-decoration:none}
 .top a.site:hover{color:#fff;text-decoration:underline}
-@media (max-width:480px){.brand span{display:none}.top a.site{padding:8px 0}}
+@media (max-width:480px){.brand .lyra,.brand span{display:none}.top a.site{padding:8px 0}}
 
 /* ridge progress */
 .ridge-wrap{background:var(--navy);padding:0 20px 10px}
@@ -203,8 +207,9 @@ footer b{color:var(--navy)}
 <header class="top">
   <div class="top-in">
     <a class="brand" href="../" title="Strona główna">
-      <img src="data:image/png;base64,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" alt="Lyra Polska">
+      <img class="znak" src="../assets/znak-jasny.png" alt="">
       <span>Odporni i gotowi</span>
+      <img class="lyra" src="data:image/png;base64,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" alt="Lyra Polska">
     </a>
     <a class="site" href="../">← Strona główna</a>
   </div>

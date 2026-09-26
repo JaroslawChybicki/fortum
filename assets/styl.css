@@ -16,12 +16,14 @@ a{color:var(--deep)}
 /* nagłówek */
 .top{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 0 14px}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff}
-.brand img{height:30px;width:auto;display:block}
-.brand span{font-weight:600;font-size:15px;opacity:.85;border-left:1px solid rgba(255,255,255,.3);padding-left:14px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.brand img{width:auto;display:block}
+.brand .znak{height:36px}
+.brand span{font-weight:700;font-size:16px;letter-spacing:-.005em}
+.brand .lyra{height:26px;border-left:1px solid rgba(255,255,255,.3);padding-left:14px;margin-left:6px;box-sizing:content-box}
 .top a.site{color:#cfe6e8;font-size:14px;text-decoration:none}
 .top a.site:hover{color:#fff;text-decoration:underline}
-@media (max-width:480px){.brand span{font-size:14px}}
+@media (max-width:480px){.brand span{font-size:15px}.brand .lyra{display:none}}
 
 /* hero */
 .hero{position:relative;padding:56px 0 40px;overflow:hidden}
