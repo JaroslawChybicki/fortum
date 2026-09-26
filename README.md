@@ -11,6 +11,7 @@ ksiazki.html          polecane książki (treść: tresci/ksiazki.json)
 cwiczenia.html        ćwiczenia i gry (strona zbiorcza)
 mapa-energii.html     dziennik energii i napięcia (dane tylko w przeglądarce uczestnika)
 oddech.html           oddech z wydłużonym wydechem + trzyminutowa przestrzeń oddechowa
+medytacja-gory.html   nagranie „Medytacja góry” (plik: audio/medytacja-gory.mp3)
 quiz.html             quiz „Mity o stresie i wypaleniu” (treść: tresci/quiz.json, edycja w CMS)
 gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci/gra-zespol.json)
 gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scenariusz: tresci/gra-sezon.json)

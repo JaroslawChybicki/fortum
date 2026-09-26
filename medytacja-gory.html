@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Medytacja góry | Odporni i gotowi</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styl.css">
+<link rel="stylesheet" href="assets/cwiczenia.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="logo.png" alt="Lyra Polska"><span>Odporni i gotowi</span></a>
+  <a class="site" href="cwiczenia.html">← Ćwiczenia i gry</a>
+</div></header>
+<svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
+
+<main class="wrap cw">
+  <a class="back" href="cwiczenia.html">← Ćwiczenia i gry</a>
+  <h1 class="cw-h">Medytacja góry</h1>
+  <p class="cw-lead">Prowadzona praktyka uważności, w której przyjmujemy stabilność i spokój góry. Pogoda wokół niej zmienia się bez przerwy – słońce, burza, śnieg – a góra pozostaje. Tak samo nasze myśli, emocje i wydarzenia dnia mogą się zmieniać, podczas gdy my zachowujemy wewnętrzne oparcie.</p>
+
+  <section class="box med" aria-label="Odtwarzacz nagrania">
+    <div class="med-art" aria-hidden="true">
+      <svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice">
+        <defs><linearGradient id="niebo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE2E4"/><stop offset="1" stop-color="#F7E2D7"/></linearGradient></defs>
+        <rect width="400" height="170" fill="url(#niebo)"/>
+        <circle cx="318" cy="46" r="18" fill="#fff" opacity=".75"/>
+        <path d="M0 170 L70 118 L110 136 L170 70 L200 92 L230 58 L300 130 L340 112 L400 150 L400 170 Z" fill="#5FA8AF" opacity=".55"/>
+        <path d="M40 170 L150 88 L200 40 L250 88 L360 170 Z" fill="#123B52"/>
+        <path d="M200 40 L222 62 L212 60 L204 70 L196 60 L186 64 Z" fill="#fff" opacity=".9"/>
+      </svg>
+    </div>
+    <div class="med-info">
+      <span class="cw-meta">Nagranie · ok. 9 minut</span>
+      <h2>Medytacja góry</h2>
+      <p class="muted">prowadzi Jarosław Chybicki</p>
+    </div>
+    <audio id="audio" preload="metadata" src="audio/medytacja-gory.mp3"></audio>
+    <div class="pl">
+      <button type="button" class="pl-btn small" id="wstecz" aria-label="Cofnij o 15 sekund">↺ 15</button>
+      <button type="button" class="pl-btn" id="graj" aria-label="Odtwórz"><svg viewBox="0 0 24 24" id="ikona"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></button>
+      <button type="button" class="pl-btn small" id="naprzod" aria-label="Przewiń o 15 sekund">15 ↻</button>
+    </div>
+    <input type="range" id="pasek" min="0" max="529" step="1" value="0" aria-label="Pozycja w nagraniu">
+    <div class="pl-czas"><span id="teraz">0:00</span><span id="calosc">8:49</span></div>
+    <p class="note" id="wznow" hidden></p>
+    <p class="note">Nagranie gra też przy wygaszonym ekranie. Możesz je <a href="audio/medytacja-gory.mp3" download>pobrać na telefon</a> i słuchać bez internetu.</p>
+  </section>
+
+  <section class="box">
+    <h2>Zanim zaczniesz</h2>
+    <ul>
+      <li><strong>Postawa:</strong> usiądź stabilnie na krześle lub poduszce, z wyprostowanym, ale nie sztywnym kręgosłupem. Dłonie mogą spoczywać na udach. Możesz zamknąć oczy albo opuścić wzrok.</li>
+      <li><strong>Miejsce:</strong> wystarczy spokojny kąt w biurze lub w domu. Słuchawki pomagają, ale nie są konieczne.</li>
+      <li><strong>Nastawienie:</strong> nie ma tu nic do osiągnięcia. Jeśli uwaga odpłynie – a odpłynie – zauważ to i łagodnie wróć do obrazu góry i oddechu.</li>
+    </ul>
+  </section>
+
+  <section class="box">
+    <h2>Po praktyce – kilka pytań</h2>
+    <ul>
+      <li>Co zauważasz teraz w ciele – w porównaniu z momentem sprzed praktyki?</li>
+      <li>Jaka „pogoda” przechodziła przez Twój umysł w czasie medytacji?</li>
+      <li>W jakiej sytuacji w pracy przydałaby Ci się stabilność góry – i co mogłoby Ci o niej przypomnieć?</li>
+    </ul>
+    <p class="muted">Medytacja góry pochodzi z programu redukcji stresu opartego na uważności (MBSR) Jona Kabata-Zinna, a obraz siedzenia „jak góra” jest obecny w praktyce zazen w tradycji zen. W języku terapii akceptacji i zaangażowania (ACT) to doświadczenie „ja obserwującego”: myśli i emocje są jak pogoda, a my jesteśmy przestrzenią, w której się pojawiają.</p>
+    <p><a href="ksiazki.html#ksiazka=kabat-zinn-zycie">Książka: Życie, piękna katastrofa – Jon Kabat-Zinn</a> · <a href="ksiazki.html#ksiazka=suzuki-umysl-zen">Umysł zen, umysł początkującego – Shunryu Suzuki</a></p>
+  </section>
+</main>
+<footer id="stopka"></footer>
+<script src="assets/strona.js"></script>
+<script src="assets/medytacja.js"></script>
+<script>ustawienia().then(stopka).catch(() => {});</script>
+</body>
+</html>

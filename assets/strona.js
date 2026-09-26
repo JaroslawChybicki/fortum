@@ -154,7 +154,7 @@ async function podstrona() {
   main.querySelectorAll('.md a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
   podepnijFilmy(main);
   podepnijKsiazki(main);
-  main.querySelectorAll('.md a[href^="mapa-energii.html"], .md a[href^="oddech.html"], .md a[href^="quiz.html"], .md a[href^="gra-zespol.html"], .md a[href^="cwiczenia.html"]')
+  main.querySelectorAll('.md a[href^="mapa-energii.html"], .md a[href^="oddech.html"], .md a[href^="quiz.html"], .md a[href^="gra-zespol.html"], .md a[href^="gra-sezon.html"], .md a[href^="medytacja-gory.html"], .md a[href^="cwiczenia.html"]')
     .forEach((a) => a.closest('blockquote')?.classList.add('cw-link'));
 
   if (podsekcje.length) {
