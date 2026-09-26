@@ -1,0 +1,48 @@
+{
+  "sekcje": [
+    {
+      "id": "badanie",
+      "tytul": "Badanie",
+      "opis": "Diagnoza Deep Dive: energia, barometr wypalenia i 12 filarów rezyliencji. Ok. 15 minut.",
+      "przycisk": "Rozpocznij badanie",
+      "ikona": "badanie",
+      "adres": "badanie/",
+      "wyroznij": true,
+      "ukryj": false,
+      "tresc": ""
+    },
+    {
+      "id": "wypalenie",
+      "tytul": "Wypalenie zawodowe",
+      "opis": "Czym jest wypalenie, jak je rozpoznać i co realnie chroni.",
+      "przycisk": "",
+      "ikona": "wypalenie",
+      "adres": "",
+      "wyroznij": false,
+      "ukryj": false,
+      "tresc": ""
+    },
+    {
+      "id": "energia",
+      "tytul": "Energia w pracy",
+      "opis": "Jak zarządzać energią i napięciem w ciągu dnia.",
+      "przycisk": "",
+      "ikona": "energia",
+      "adres": "",
+      "wyroznij": false,
+      "ukryj": false,
+      "tresc": ""
+    },
+    {
+      "id": "odpornosc",
+      "tytul": "Odporność",
+      "opis": "Wewnętrzne zasoby, które budują rezyliencję.",
+      "przycisk": "",
+      "ikona": "odpornosc",
+      "adres": "",
+      "wyroznij": false,
+      "ukryj": false,
+      "tresc": ""
+    }
+  ]
+}

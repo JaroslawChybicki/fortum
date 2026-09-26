@@ -1,5 +1,5 @@
 // Wspólny kod strony głównej i podstron sekcji.
-// Treści NIE są tutaj — edytuj pliki w katalogu /tresci (patrz README).
+// Treści NIE są tutaj — edytuj je w Pages CMS albo w plikach /tresci (patrz README).
 
 const IKONY = {
   badanie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 11l1.8 1.8L14 9"/><path d="M8.5 16.5h7"/></svg>',
@@ -14,10 +14,16 @@ const ikona = (n) => IKONY[n] || IKONY.odpornosc;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-async function ustawienia() {
-  const r = await fetch('tresci/ustawienia.json', { cache: 'no-cache' });
-  if (!r.ok) throw new Error('Nie udało się wczytać tresci/ustawienia.json (' + r.status + ')');
+async function wczytajJson(plik) {
+  const r = await fetch('tresci/' + plik, { cache: 'no-cache' });
+  if (!r.ok) throw new Error('Nie udało się wczytać tresci/' + plik + ' (' + r.status + ')');
   return r.json();
+}
+
+// strona.json: nagłówek, wstęp, kontakt; sekcje.json: kafelki razem z treścią podstron.
+async function ustawienia() {
+  const [strona, sekcje] = await Promise.all([wczytajJson('strona.json'), wczytajJson('sekcje.json')]);
+  return { ...strona, kafelki: sekcje.sekcje || [] };
 }
 
 function adresKafelka(k) {
@@ -97,19 +103,15 @@ async function podstrona() {
   try { u = await ustawienia(); } catch (e) { bladWczytania(main, e); return; }
   stopka(u);
 
-  const t = (u.kafelki || []).find((x) => x.id === id && !x.adres);
+  const t = (u.kafelki || []).find((x) => x.id === id && !x.adres && !x.ukryj);
   if (!t) {
     main.innerHTML = `<div class="wrap"><a class="back" href="./">← Strona główna</a><div class="err">Nie ma takiej sekcji.</div></div>`;
     return;
   }
   document.title = t.tytul + ' | ' + (u.tytul_strony || '');
 
-  let md = '';
-  try {
-    const r = await fetch('tresci/' + encodeURIComponent(t.plik || t.id + '.md'), { cache: 'no-cache' });
-    if (r.ok) md = await r.text();
-  } catch (e) { /* brak pliku = sekcja w przygotowaniu */ }
-  md = md.replace(/<!--[\s\S]*?-->/g, '').trim();
+  // Pages CMS zapisuje Markdown; ewentualny blok frontmatter (---) pomijamy.
+  const md = String(t.tresc || '').replace(/^---\r?\n(?:[\s\S]*?\r?\n)?---\r?\n?/, '').replace(/<!--[\s\S]*?-->/g, '').trim();
 
   let body;
   if (!md) {

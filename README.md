@@ -4,42 +4,39 @@ Statyczna strona bez backendu, hostowana na Netlify.
 
 ## Struktura
 ```
-index.html            strona główna (4 kafelki + kontakt) — nie trzeba edytować
+index.html            strona główna (kafelki + kontakt) — nie trzeba edytować
 sekcja.html           szablon podstrony sekcji — nie trzeba edytować
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
-tresci/               ← TU EDYTUJESZ TREŚCI
-  ustawienia.json     kafelki, nagłówek strony, dane kontaktowe, link do Lyry
-  wypalenie.md        treść sekcji „Wypalenie zawodowe”
-  energia.md          treść sekcji „Energia w pracy”
-  odpornosc.md        treść sekcji „Odporność”
-obrazy/               obrazki używane w treściach
+tresci/               ← TREŚCI (edytowane w CMS)
+  sekcje.json         kafelki + treść każdej podstrony (Markdown)
+  strona.json         nagłówek, wstęp, dane kontaktowe, link do Lyry
+obrazy/               obrazki wgrywane przez CMS
+.pages.yml            konfiguracja panelu Pages CMS
 assets/               wygląd i kod (styl.css, strona.js, biblioteki w vendor/)
 archiwum/             starszy kwestionariusz (nie jest podlinkowany)
 ```
 
-## Jak zmieniać treści (bez ruszania kodu)
+## Edycja treści – Pages CMS
+Panel: **https://app.pagescms.org** → *Sign in with GitHub* → repozytorium `JaroslawChybicki/fortum`
+→ wybierz gałąź, z której Netlify publikuje stronę (obecnie `claude/inspiring-mendel-sm1dch`).
 
-### Treść sekcji
-Otwórz na GitHubie np. `tresci/wypalenie.md` → ikona ołówka → pisz w Markdown → *Commit changes*.
-Netlify opublikuje zmianę w ok. minutę.
+Przy pierwszym logowaniu Pages CMS poprosi o zainstalowanie aplikacji GitHub – zezwól tylko na repozytorium `fortum`.
 
-- `## Tytuł` – nowa sekcja; przy 2+ sekcjach na górze strony pojawia się spis treści z przyciskami.
-- `### Podtytuł`, `**pogrubienie**`, `*kursywa*`, `- lista`, `[link](https://…)`
-- `> tekst` – wyróżniona ramka (ćwiczenie, cytat).
-- `![opis](obrazy/plik.jpg)` – obrazek (plik wrzuć wcześniej do `obrazy/`).
-- Film z YouTube: wklej kod `<iframe …>` z opcji „Umieść”.
-- Pusty plik (albo tylko komentarz `<!-- -->`) = na stronie widać „Materiały pojawią się wkrótce”.
+W panelu są dwie pozycje:
+- **Sekcje (kafelki i treści)** – lista kafelków. Każdy ma tytuł, opis, ikonę, przełączniki
+  „wyróżniony” / „ukryj” oraz edytor treści podstrony (pogrubienia, listy, linki, obrazki).
+  - Nagłówek poziomu 2 (H2) = osobna część strony i przycisk w spisie treści.
+  - Pusta treść = „Materiały do tej sekcji pojawią się wkrótce”.
+  - **Nowa sekcja:** *Add an item* na końcu listy → tytuł, treść, „Adres podstrony” (np. `oddech`) → Save.
+  - Kolejność kafelków = kolejność na liście (przeciągnij).
+  - „Link zewnętrzny zamiast podstrony” – tak działa kafelek „Badanie” (`badanie/`).
+- **Strona główna i kontakt** – nagłówek, wstęp, telefon, e-mail, link do Lyry. Puste pole się nie wyświetla.
 
-### Kafelki i kontakt – `tresci/ustawienia.json`
-- `tytul`, `opis`, `przycisk` – teksty na kafelku.
-- `ukryj: true` – chowa kafelek bez usuwania.
-- `wyroznij: true` – kafelek w kolorze (obecnie „Badanie”).
-- `adres` – kafelek prowadzi pod wskazany adres zamiast do sekcji Markdown (tak działa „Badanie”).
-- **Nowa sekcja:** dopisz kafelek `{ "id": "nazwa", "tytul": "…", "opis": "…", "plik": "nazwa.md" }` i utwórz `tresci/nazwa.md`. Ikony dostępne: `badanie`, `wypalenie`, `energia`, `odpornosc` (pole `ikona`).
-- `kontakt` – imię, rola, e-mail, telefon, strona www, link do Lyry. Puste pole = nie wyświetla się.
+Każde *Save* to commit w repozytorium; Netlify publikuje zmianę po ok. minucie.
+Obrazki wgrane w edytorze trafiają do katalogu `obrazy/`.
 
-Uwaga na składnię JSON: teksty w cudzysłowach, przecinki między elementami, bez przecinka po ostatnim.
-Gdy strona główna pokazuje błąd wczytywania, najczęściej to brakujący lub nadmiarowy przecinek.
+Edycja bez CMS też jest możliwa (GitHub → plik w `tresci/` → ołówek), ale w JSON łatwo o błąd składni –
+panel pilnuje tego za Ciebie.
 
 ## Podgląd lokalny
 Treści są wczytywane z plików, więc samo dwukliknięcie `index.html` nie wystarczy:

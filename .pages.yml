@@ -1,0 +1,119 @@
+# Konfiguracja Pages CMS (https://app.pagescms.org).
+# Określa, co można edytować w panelu i jakimi polami.
+
+media:
+  input: obrazy
+  output: /obrazy
+  categories: [image, document]
+
+content:
+  - name: sekcje
+    label: Sekcje (kafelki i treści)
+    description: Kafelki na stronie głównej. Każdy kafelek bez „adresu” ma własną podstronę z treścią.
+    type: file
+    path: tresci/sekcje.json
+    format: json
+    fields:
+      - name: sekcje
+        label: Sekcje
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{tytul}"
+        fields:
+          - name: tytul
+            label: Tytuł
+            type: string
+            required: true
+          - name: tresc
+            label: Treść podstrony
+            description: "Nagłówki poziomu 2 tworzą części strony i spis treści na górze. Puste = „Materiały pojawią się wkrótce”."
+            type: rich-text
+          - name: opis
+            label: Opis na kafelku
+            type: text
+          - name: przycisk
+            label: Tekst przycisku na kafelku
+            description: Puste = „Przejdź”.
+            type: string
+          - name: id
+            label: Adres podstrony
+            description: "Krótka nazwa w adresie strony, np. „oddech” → sekcja.html?s=oddech. Małe litery, bez polskich znaków i spacji. Nie zmieniaj, jeśli link był już komuś wysłany."
+            type: string
+            required: true
+            pattern:
+              regex: "^[a-z0-9-]+$"
+              message: Tylko małe litery bez polskich znaków, cyfry i myślniki.
+          - name: ikona
+            label: Ikona
+            type: select
+            options:
+              values:
+                - value: badanie
+                  label: Kartka z listą (badanie)
+                - value: wypalenie
+                  label: Płomień (wypalenie)
+                - value: energia
+                  label: Bateria (energia)
+                - value: odpornosc
+                  label: Góry (odporność)
+          - name: wyroznij
+            label: Wyróżniony kafelek (kolorowy)
+            type: boolean
+          - name: ukryj
+            label: Ukryj na stronie
+            type: boolean
+          - name: adres
+            label: Link zewnętrzny zamiast podstrony
+            description: "Wypełnij tylko, jeśli kafelek ma prowadzić gdzie indziej (np. „badanie/”). Wtedy treść podstrony jest ignorowana."
+            type: string
+
+  - name: strona
+    label: Strona główna i kontakt
+    type: file
+    path: tresci/strona.json
+    format: json
+    fields:
+      - name: naglowek
+        label: Nagłówek strony głównej
+        type: string
+      - name: wstep
+        label: Wstęp pod nagłówkiem
+        type: text
+      - name: tytul_strony
+        label: Tytuł w karcie przeglądarki
+        type: string
+      - name: komunikat_w_przygotowaniu
+        label: Komunikat dla pustych sekcji
+        type: string
+      - name: kontakt
+        label: Kontakt
+        type: object
+        fields:
+          - name: imie
+            label: Imię i nazwisko
+            type: string
+          - name: rola
+            label: Rola / podpis
+            type: string
+          - name: email
+            label: E-mail
+            type: string
+          - name: telefon
+            label: Telefon
+            description: Puste = nie wyświetla się.
+            type: string
+          - name: strona_www
+            label: Strona www
+            description: Pełny adres z https://. Puste = nie wyświetla się.
+            type: string
+          - name: lyra_url
+            label: Link do Lyra Polska
+            type: string
+          - name: lyra_nazwa
+            label: Tekst linku do Lyry w stopce
+            type: string
+          - name: lyra_przycisk
+            label: Tekst przycisku Lyra
+            type: string
