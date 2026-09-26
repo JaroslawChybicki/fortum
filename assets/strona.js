@@ -155,7 +155,11 @@ async function podstrona() {
         b.tabIndex = on ? 0 : -1;
         document.getElementById('pan-' + b.dataset.id).hidden = !on;
       });
-      if (przewin) main.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Na telefonie pasek zakładek przewija się poziomo – pokaż aktywną.
+      const akt = tabs.find((b) => b.dataset.id === id);
+      const pasek = akt.parentElement;
+      pasek.scrollTo({ left: akt.offsetLeft - pasek.offsetLeft - 20, behavior: przewin ? 'smooth' : 'auto' });
+      if (przewin) pasek.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
     tabs.forEach((b, i) => {
       b.addEventListener('click', () => { history.replaceState(null, '', '#' + b.dataset.id); pokaz(b.dataset.id); });

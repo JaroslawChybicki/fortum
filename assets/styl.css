@@ -105,3 +105,33 @@ footer a{color:var(--muted)}
 .pager{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:18px;border-top:1px solid var(--line);max-width:70ch}
 .pager a{color:var(--teal);font-weight:600;text-decoration:none}
 .pager a:hover{text-decoration:underline}
+
+/* telefony */
+.back{padding:6px 0}
+.pager a{padding:8px 0;display:inline-block}
+footer a{display:inline-block;padding:6px 0}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .top a.site{display:none}              /* link „Strona główna” jest pod nagłówkiem */
+  .ridge{height:28px}
+  .hero{padding:28px 0 24px}
+  .back{margin-top:12px}
+  .page-head{gap:14px;margin-top:10px}
+  .page-head .ic{width:48px;height:48px;border-radius:14px}
+  .page-head .ic svg{width:26px;height:26px}
+  .tiles{gap:12px;margin-bottom:36px}
+  .tile{padding:20px 18px;gap:14px;min-height:0}
+  .tile .ic{width:44px;height:44px;border-radius:12px}
+  .tile .ic svg{width:24px;height:24px}
+  .contact{padding:22px 20px;margin-bottom:36px}
+  /* zakładki: jeden przewijany poziomo pasek zamiast kilku wierszy */
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    margin:22px -20px 0;padding:0 20px 14px;scroll-padding:0 20px;
+    -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:none;white-space:nowrap;padding:9px 15px}
+  .panel{margin-top:20px}
+  .panel-h{font-size:1.4rem}
+  .md h2{font-size:1.3rem}
+  .md th,.md td{padding:7px 8px;font-size:.9rem}
+}
