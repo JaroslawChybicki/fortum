@@ -1,7 +1,8 @@
-// Odtwarzacz nagrania medytacji – z zapamiętaniem miejsca, w którym przerwano słuchanie.
+// Odtwarzacz nagrań praktyk – z zapamiętaniem miejsca, w którym przerwano słuchanie.
+// Ustawienia w atrybutach elementu <audio>: data-klucz (zapis pozycji), data-tytul.
 const $ = (id) => document.getElementById(id);
 const a = $('audio');
-const KLUCZ = 'fortum_medytacja_gory_pozycja';
+const KLUCZ = 'fortum_nagranie_' + (a.dataset.klucz || 'medytacja_gory') + '_pozycja';
 const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const IKONY_PL = {
   graj: '<path d="M8 5.5v13l11-6.5z" fill="currentColor"/>',
@@ -40,7 +41,7 @@ $('pasek').addEventListener('input', () => { a.currentTime = +$('pasek').value; 
 
 // Tytuł i sterowanie na ekranie blokady telefonu.
 if ('mediaSession' in navigator) {
-  navigator.mediaSession.metadata = new MediaMetadata({ title: 'Medytacja góry', artist: 'Jarosław Chybicki', album: 'Odporni i gotowi' });
+  navigator.mediaSession.metadata = new MediaMetadata({ title: a.dataset.tytul || document.title, artist: 'Jarosław Chybicki', album: 'Odporni i gotowi' });
   navigator.mediaSession.setActionHandler('seekbackward', () => { a.currentTime = Math.max(0, a.currentTime - 15); });
   navigator.mediaSession.setActionHandler('seekforward', () => { a.currentTime = Math.min(a.duration, a.currentTime + 15); });
 }

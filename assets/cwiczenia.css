@@ -169,3 +169,5 @@
 .med .note:last-child{margin-bottom:20px}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--deep);font-weight:700;text-decoration:underline;cursor:pointer}
 .k-gora{background:#123B52}
+.cw-grupa{font-size:1.3rem;color:var(--navy);margin:34px 0 2px}
+.cw-grupa-op{color:var(--muted);margin:0 0 14px;font-size:.95rem}

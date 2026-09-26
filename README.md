@@ -12,6 +12,8 @@ cwiczenia.html        ćwiczenia i gry (strona zbiorcza)
 mapa-energii.html     dziennik energii i napięcia (dane tylko w przeglądarce uczestnika)
 oddech.html           oddech z wydłużonym wydechem + trzyminutowa przestrzeń oddechowa
 medytacja-gory.html   nagranie „Medytacja góry” (plik: audio/medytacja-gory.mp3)
+body-scan.html        nagranie „Mini body scan” (audio/body-scan.mp3)
+przestrzen-oddechu.html nagranie „Przestrzeń oddechu” (audio/przestrzen-oddechu.mp3)
 quiz.html             quiz „Mity o stresie i wypaleniu” (treść: tresci/quiz.json, edycja w CMS)
 gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci/gra-zespol.json)
 gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scenariusz: tresci/gra-sezon.json)
@@ -62,6 +64,10 @@ panel pilnuje tego za Ciebie.
 `kalkulator.html` – absencja, prezenteizm, rotacja i zwrot z inwestycji. Wpisane wartości zapisują się w adresie strony,
 więc przycisk „Kopiuj link” pozwala wysłać gotowe wyliczenie (np. klientowi). Wartości domyślne i ich źródła:
 blok `DOMYSLNE` w `assets/kalkulator.js` oraz opisy pól w `kalkulator.html`.
+
+## Nagrania praktyk
+Pliki MP3 w `audio/`, odtwarzacz `assets/medytacja.js` (wspólny). Nowe nagranie = plik w `audio/` + kopia np. `body-scan.html`
+ze zmienionym `src`, `data-klucz`, `data-tytul`, czasem i opisem + karta w `cwiczenia.html`.
 
 ## Gry decyzyjne
 Silnik: `assets/gra.js`. Scenariusz to plik JSON wskazany w `data-scenariusz` elementu `#gra`: sceny z opcjami

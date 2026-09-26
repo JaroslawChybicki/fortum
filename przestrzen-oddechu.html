@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Przestrzeń oddechu | Odporni i gotowi</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styl.css">
+<link rel="stylesheet" href="assets/cwiczenia.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="logo.png" alt="Lyra Polska"><span>Odporni i gotowi</span></a>
+  <a class="site" href="cwiczenia.html">← Ćwiczenia i gry</a>
+</div></header>
+<svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
+
+<main class="wrap cw">
+  <a class="back" href="cwiczenia.html">← Ćwiczenia i gry</a>
+  <h1 class="cw-h">Przestrzeń oddechu</h1>
+  <p class="cw-lead">Trzyminutowa przestrzeń oddechowa – praktyka z terapii poznawczej opartej na uważności (MBCT). Ma kształt klepsydry: najpierw szeroka uwaga na to, co jest, potem wąska – na oddechu, na końcu znów szeroka – na całym ciele. Dobra na moment między spotkaniami.</p>
+
+  <section class="box med" aria-label="Odtwarzacz nagrania">
+    <div class="med-art" aria-hidden="true"><svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice">
+        <defs><linearGradient id="tlo-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE2E4"/><stop offset="1" stop-color="#E6F0F1"/></linearGradient></defs>
+        <rect width="400" height="170" fill="url(#tlo-p)"/>
+        <path d="M150 22h100L208 85l42 63H150l42-63z" fill="none" stroke="#123B52" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M168 34h64l-32 44z" fill="#5FA8AF" opacity=".75"/>
+        <path d="M200 96l32 44h-64z" fill="#177E89" opacity=".85"/>
+        <circle cx="200" cy="86" r="3.5" fill="#db3a34"/>
+        <text x="96" y="52" font-size="12" fill="#5B6B74" font-weight="700" text-anchor="middle">1 · Zauważ</text>
+        <text x="300" y="90" font-size="12" fill="#5B6B74" font-weight="700" text-anchor="middle">2 · Zbierz</text>
+        <text x="96" y="132" font-size="12" fill="#5B6B74" font-weight="700" text-anchor="middle">3 · Rozszerz</text>
+      </svg></div>
+    <div class="med-info">
+      <span class="cw-meta">Nagranie · ok. 3 minuty</span>
+      <h2>Przestrzeń oddechu</h2>
+      <p class="muted">prowadzi Jarosław Chybicki</p>
+    </div>
+    <audio id="audio" preload="metadata" src="audio/przestrzen-oddechu.mp3" data-klucz="przestrzen_oddechu" data-tytul="Przestrzeń oddechu"></audio>
+    <div class="pl">
+      <button type="button" class="pl-btn small" id="wstecz" aria-label="Cofnij o 15 sekund">↺ 15</button>
+      <button type="button" class="pl-btn" id="graj" aria-label="Odtwórz"><svg viewBox="0 0 24 24" id="ikona"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></button>
+      <button type="button" class="pl-btn small" id="naprzod" aria-label="Przewiń o 15 sekund">15 ↻</button>
+    </div>
+    <input type="range" id="pasek" min="0" max="186" step="1" value="0" aria-label="Pozycja w nagraniu">
+    <div class="pl-czas"><span id="teraz">0:00</span><span id="calosc">3:06</span></div>
+    <p class="note" id="wznow" hidden></p>
+    <p class="note">Nagranie gra też przy wygaszonym ekranie. Możesz je <a href="audio/przestrzen-oddechu.mp3" download>pobrać na telefon</a> i słuchać bez internetu.</p>
+  </section>
+
+  <section class="box">
+    <h2>Trzy kroki</h2>
+    <ol>
+      <li><strong>Zauważ</strong> – co teraz jest: myśli, emocje, doznania w ciele. Bez oceniania i poprawiania.</li>
+      <li><strong>Zbierz</strong> – uwaga na oddechu, najlepiej w brzuchu. Gdy odpłynie, łagodnie wróć.</li>
+      <li><strong>Rozszerz</strong> – poczuj całe ciało, postawę, przestrzeń wokół – i zabierz tę uważność do kolejnego zadania.</li>
+    </ol>
+    <p class="muted">Wolisz ćwiczyć bez nagrania? <a href="oddech.html#przestrzen">Wersja z minutnikiem i tekstem</a> prowadzi przez te same trzy kroki.</p>
+  </section>
+
+  <section class="box">
+    <h2>Kiedy sięgać po tę praktykę</h2>
+    <ul>
+      <li>Między spotkaniami – zamiast od razu otwierać pocztę.</li>
+      <li>Gdy zauważasz, że przekraczasz czerwoną linię napięcia.</li>
+      <li>Przed decyzją lub rozmową, która wymaga jasnej głowy.</li>
+    </ul>
+    <p><a href="oddech.html">Ćwiczenie: oddech z wydłużonym wydechem</a> · <a href="medytacja-gory.html">Medytacja góry</a></p>
+  </section>
+</main>
+<footer id="stopka"></footer>
+<script src="assets/strona.js"></script>
+<script src="assets/medytacja.js"></script>
+<script>ustawienia().then(stopka).catch(() => {});</script>
+</body>
+</html>
