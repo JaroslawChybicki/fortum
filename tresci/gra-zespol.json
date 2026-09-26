@@ -10,7 +10,7 @@
       "tekst": "Marta, doświadczona specjalistka z Twojego zespołu, zatrzymuje Cię na korytarzu. Jest wyraźnie zdenerwowana:\n\n*„W piątkowym raporcie dla zarządu jest błąd w danych. Pomyliłam się przy imporcie – sumy za trzeci kwartał są zawyżone. Raport już poszedł dalej.”*\n\nZarząd ma posiedzenie jutro rano. Czujesz, jak rośnie napięcie. Co mówisz?",
       "opcje": [
         {
-          "tekst": "„Jak to się mogło stać? Przecież prosiłem, żeby wszystko było dokładnie sprawdzone!”",
+          "tekst": "„Jak to się mogło stać? Przecież było jasne, że wszystko ma być dokładnie sprawdzone!”",
           "zaufanie": -20,
           "napiecie": 10,
           "komentarz": "Reakcja jest zrozumiała – napięcie szuka ujścia. Ale Marta słyszy przede wszystkim ocenę. Badania Amy Edmondson pokazują, że tam, gdzie za zgłoszenie błędu grozi krytyka, ludzie zaczynają błędy ukrywać – a to zwiększa ryzyko, zamiast je zmniejszać.",
@@ -24,7 +24,7 @@
           "dalej": "zarzad"
         },
         {
-          "tekst": "„Dobrze, zostaw to mnie. Sam się tym zajmę.”",
+          "tekst": "„Dobrze, zostaw to mnie. Zajmę się tym.”",
           "zaufanie": -5,
           "napiecie": 15,
           "komentarz": "Wygląda na wsparcie, ale Marta traci możliwość naprawienia własnego błędu, a Ty dokładasz sobie pracy w i tak napiętym dniu. To typowy wzorzec menedżerów w profilu **przeciążenia**.",
@@ -61,7 +61,7 @@
     },
     "sam": {
       "krok": "Poniedziałek, 21:30",
-      "tekst": "Siedzisz nad danymi sam – Marta zaproponowała pomoc, ale odmówiłeś. Większość tabel jest poprawiona, ale rano trzeba jeszcze poinformować zarząd. Jesteś zmęczony i spięty.",
+      "tekst": "Siedzisz nad danymi w pojedynkę – Marta zaproponowała pomoc, ale jej nie przyjmujesz. Większość tabel jest poprawiona, ale rano trzeba jeszcze poinformować zarząd. Czujesz zmęczenie i napięcie.",
       "opcje": [
         {
           "tekst": "Kończysz pracę, zostawiasz resztę na rano i piszesz do Marty: „Jutro o 8:00 dokończmy razem.”",
@@ -81,7 +81,7 @@
     },
     "powrot": {
       "krok": "10 minut później",
-      "tekst": "Wracasz spokojniejszy. Marta czeka przy biurku – widać, że jest zestresowana.",
+      "tekst": "Wracasz po krótkiej przerwie – napięcie wyraźnie opadło. Marta czeka przy biurku – widać, że jest zestresowana.",
       "opcje": [
         {
           "tekst": "„Dziękuję, że powiedziałaś od razu. Zobaczmy, co trzeba zrobić i kto może pomóc.”",
@@ -168,12 +168,12 @@
       "min_zaufanie": 70,
       "max_napiecie": 55,
       "tytul": "Strefa uczenia się",
-      "opis": "Zespół wie, że o błędach można mówić, a Ty zachowałeś równowagę. To połączenie wysokiego bezpieczeństwa psychologicznego z wysokimi standardami – warunek, w którym zespoły uczą się najszybciej."
+      "opis": "Zespół wie, że o błędach można mówić, a Tobie udało się zachować równowagę. To połączenie wysokiego bezpieczeństwa psychologicznego z wysokimi standardami – warunek, w którym zespoły uczą się najszybciej."
     },
     {
       "min_zaufanie": 70,
       "tytul": "Zaufanie zbudowane – kosztem Twojej energii",
-      "opis": "Zespół wyszedł z tej sytuacji z większym zaufaniem, ale Ty zapłaciłeś za to wysokim napięciem. Warto zapytać: co mogę oddać, a gdzie potrzebuję regeneracji, żeby taki styl był możliwy na dłuższą metę?"
+      "opis": "Zespół wyszedł z tej sytuacji z większym zaufaniem, ale kosztem Twojego wysokiego napięcia. Warto zapytać: co mogę oddać, a gdzie potrzebuję regeneracji, żeby taki styl był możliwy na dłuższą metę?"
     },
     {
       "max_zaufanie": 45,
