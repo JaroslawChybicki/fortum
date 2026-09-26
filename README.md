@@ -6,11 +6,13 @@ Statyczna strona bez backendu, hostowana na Netlify.
 ```
 index.html            strona główna (kafelki + kontakt) — nie trzeba edytować
 sekcja.html           szablon podstrony sekcji — nie trzeba edytować
+filmy.html            biblioteka filmów (treść: tresci/filmy.json)
 kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
 tresci/               ← TREŚCI (edytowane w CMS)
   sekcje.json         kafelki + treść każdej podstrony (Markdown)
   strona.json         nagłówek, wstęp, dane kontaktowe, link do Lyry
+  filmy.json          biblioteka filmów
 obrazy/               obrazki wgrywane przez CMS
 .pages.yml            konfiguracja panelu Pages CMS
 assets/               wygląd i kod (styl.css, strona.js, biblioteki w vendor/)
@@ -23,7 +25,7 @@ Panel: **https://app.pagescms.org** → *Sign in with GitHub* → repozytorium `
 
 Przy pierwszym logowaniu Pages CMS poprosi o zainstalowanie aplikacji GitHub – zezwól tylko na repozytorium `fortum`.
 
-W panelu są dwie pozycje:
+W panelu są trzy pozycje (trzecia to **Biblioteka filmów** – wklejasz link z YouTube, tytuł, autora, temat i opis):
 - **Sekcje (kafelki i treści)** – lista kafelków. Każdy ma tytuł, opis, ikonę, przełączniki
   „wyróżniony” / „ukryj” oraz edytor treści podstrony (pogrubienia, listy, linki, obrazki).
   - **Wprowadzenie** – krótki tekst nad zakładkami (opcjonalny).

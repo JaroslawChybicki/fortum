@@ -1,0 +1,133 @@
+{
+  "wstep": "Wybrane wystąpienia TED, TEDx i materiały ekspertów – krótkie, oparte na badaniach i dobre na start rozmowy w zespole. Większość ma polskie napisy: włącz je ikoną CC w odtwarzaczu.",
+  "filmy": [
+    {
+      "tytul": "Lekarstwo na wypalenie (podpowiedź: to nie samopielęgnacja)",
+      "autor": "Emily i Amelia Nagoski",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=PrJAX-iQ-O4",
+      "kategoria": "wypalenie",
+      "opis": "Dlaczego stres trzeba „domknąć” w ciele, a nie tylko usunąć jego przyczynę – i dlaczego wypalenie nie jest problemem jednostki, lecz systemu."
+    },
+    {
+      "tytul": "Jak wyleczyć się z wypalenia",
+      "autor": "Sophie Scott",
+      "wydarzenie": "TEDxKatoomba",
+      "youtube": "https://www.youtube.com/watch?v=UcKXkukBJ_k",
+      "kategoria": "wypalenie",
+      "opis": "Osobista historia dziennikarki, która osiągała sukcesy aż do wyczerpania – o sygnałach ostrzegawczych i drodze powrotu."
+    },
+    {
+      "tytul": "Jak pokonać społeczeństwo wypalenia",
+      "autor": "Ernst-Jan Pfauth",
+      "wydarzenie": "TEDxMaastricht",
+      "youtube": "https://www.youtube.com/watch?v=T9vLHFza8Uc",
+      "kategoria": "wypalenie",
+      "opis": "Praktyczne, obrazowe wystąpienie o tym, jak pozostać zdrowym w kulturze nieustannej presji na osiągnięcia."
+    },
+    {
+      "tytul": "Jak udzielać sobie emocjonalnej pierwszej pomocy",
+      "autor": "Guy Winch",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=F2hc2FLOdhI",
+      "kategoria": "wypalenie",
+      "opis": "Dbamy o higienę ciała, ale rzadko o higienę psychiczną. Psycholog pokazuje, jak reagować na porażkę, odrzucenie i ruminacje."
+    },
+    {
+      "tytul": "Sen to Twoja supermoc",
+      "autor": "Matt Walker",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=5MuIMqhT8DM",
+      "kategoria": "energia",
+      "opis": "Neurobiolog snu o tym, co dzieje się z pamięcią, odpornością i zdrowiem, gdy śpimy za krótko – i jak spać lepiej."
+    },
+    {
+      "tytul": "Sposób, w jaki pracujemy, nie działa",
+      "autor": "Tony Schwartz",
+      "wydarzenie": "TEDxMidwest",
+      "youtube": "https://www.youtube.com/watch?v=smrMWv5rcCo",
+      "kategoria": "energia",
+      "opis": "Nie jesteśmy komputerami, które mogą pracować na wysokich obrotach bez przerwy. O zarządzaniu energią, a nie tylko czasem."
+    },
+    {
+      "tytul": "Wystarczy 10 minut uważności",
+      "autor": "Andy Puddicombe",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=qzR62JJCMBQ",
+      "kategoria": "energia",
+      "opis": "Były mnich buddyjski o tym, jak 10 minut dziennie bez robienia czegokolwiek zmienia relację z myślami i napięciem."
+    },
+    {
+      "tytul": "Jak zaprzyjaźnić się ze stresem",
+      "autor": "Kelly McGonigal",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=RcGyVTAoXEU",
+      "kategoria": "energia",
+      "opis": "Psycholożka zdrowia o tym, jak sposób myślenia o stresie zmienia jego wpływ na organizm – i jaką rolę odgrywa sięganie po wsparcie."
+    },
+    {
+      "tytul": "Trzy sekrety odpornych ludzi",
+      "autor": "Lucy Hone",
+      "wydarzenie": "TEDxChristchurch",
+      "youtube": "https://www.youtube.com/watch?v=NWH8N-BvhAw",
+      "kategoria": "odpornosc",
+      "opis": "Badaczka rezyliencji, która sama przeżyła ogromną stratę, o trzech strategiach pomagających przejść przez trudne doświadczenia."
+    },
+    {
+      "tytul": "Dar i siła odwagi emocjonalnej",
+      "autor": "Susan David",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=NDQ1Mi5I4rg",
+      "kategoria": "odpornosc",
+      "opis": "Dlaczego wymuszona pozytywność szkodzi, a zdolność do bycia z trudnymi emocjami buduje odporność i skuteczność."
+    },
+    {
+      "tytul": "Jak utrwalać szczęście w mózgu",
+      "autor": "Rick Hanson",
+      "wydarzenie": "TEDxMarin",
+      "youtube": "https://www.youtube.com/watch?v=jpuDyGgIeh0",
+      "kategoria": "odpornosc",
+      "opis": "Autor modelu 12 filarów rezyliencji o negatywnym nastawieniu mózgu i o tym, jak zamieniać dobre chwile w trwałe zasoby."
+    },
+    {
+      "tytul": "Między samooceną a samowspółczuciem",
+      "autor": "Kristin Neff",
+      "wydarzenie": "TEDxCentennialParkWomen",
+      "youtube": "https://www.youtube.com/watch?v=IvtZBUSplr4",
+      "kategoria": "odpornosc",
+      "opis": "Pionierka badań nad samowspółczuciem o tym, dlaczego życzliwość wobec siebie działa lepiej niż pogoń za wysoką samooceną."
+    },
+    {
+      "tytul": "Przełącznik walki (The Struggle Switch)",
+      "autor": "Russ Harris",
+      "wydarzenie": "Terapia akceptacji i zaangażowania (ACT)",
+      "youtube": "https://www.youtube.com/watch?v=_1YEtxs6TdI",
+      "kategoria": "odpornosc",
+      "opis": "Krótka animacja jednego z twórców popularyzacji ACT: co się dzieje, gdy walczymy z trudnymi emocjami – i co zamiast tego."
+    },
+    {
+      "tytul": "Co sprawia, że życie jest dobre?",
+      "autor": "Robert Waldinger",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=8KkKuTCFvzI",
+      "kategoria": "odpornosc",
+      "opis": "Wnioski z trwającego ponad 75 lat harwardzkiego badania: najsilniejszym czynnikiem zdrowia i szczęścia są dobre relacje."
+    },
+    {
+      "tytul": "Jak budować miejsce pracy bezpieczne psychologicznie",
+      "autor": "Amy Edmondson",
+      "wydarzenie": "TEDxHGSE",
+      "youtube": "https://www.youtube.com/watch?v=LhoLuui9gX8",
+      "kategoria": "przywodztwo",
+      "opis": "Profesorka Harvard Business School o tym, czym jest bezpieczeństwo psychologiczne i trzy proste kroki, by je tworzyć w zespole."
+    },
+    {
+      "tytul": "Dlaczego przy dobrych liderach czujemy się bezpiecznie",
+      "autor": "Simon Sinek",
+      "wydarzenie": "TED",
+      "youtube": "https://www.youtube.com/watch?v=lmyZMtPVodo",
+      "kategoria": "przywodztwo",
+      "opis": "O „kręgu bezpieczeństwa”: gdy lider chroni ludzi, zespół odpowiada zaufaniem i współpracą zamiast rywalizacji."
+    }
+  ]
+}

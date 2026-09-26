@@ -21,7 +21,7 @@
       "adres": "",
       "wyroznij": false,
       "ukryj": false,
-      "tresc": "Wypalenie nie jest słabością ani brakiem odporności. To przewidywalna reakcja na **przewlekłe obciążenie, któremu nie towarzyszy wystarczająca regeneracja i wpływ**. Najczęściej dotyka ludzi zaangażowanych i odpowiedzialnych, bo to oni najdłużej „dopłacają” z własnych rezerw.\n\nSwój wynik znajdziesz w części 2 [badania Deep Dive](badanie/) – Barometr wypalenia opisuje te same trzy wymiary, o których mowa poniżej.",
+      "tresc": "Wypalenie nie jest słabością ani brakiem odporności. To przewidywalna reakcja na **przewlekłe obciążenie, któremu nie towarzyszy wystarczająca regeneracja i wpływ**. Najczęściej dotyka ludzi zaangażowanych i odpowiedzialnych, bo to oni najdłużej „dopłacają” z własnych rezerw.\n\nSwój wynik znajdziesz w części 2 [badania Deep Dive](badanie/) – Barometr wypalenia opisuje te same trzy wymiary, o których mowa poniżej.\n\nPolecane: [filmy o wypaleniu](filmy.html#wypalenie) w bibliotece.",
       "podsekcje": [
         {
           "tytul": "Badania i dane",
@@ -50,7 +50,7 @@
       "adres": "",
       "wyroznij": false,
       "ukryj": false,
-      "tresc": "Energia w pracy to nie tylko „ile mam siły”. Według modelu Roberta Thayera nastrój i wydolność wyznaczają **dwa niezależne wymiary: energia i napięcie**. Ta sama ilość energii może dawać skupienie albo nerwowy pośpiech – zależnie od poziomu napięcia.\n\nSwoją mapę dnia znajdziesz w części 1 [badania Deep Dive](badanie/).",
+      "tresc": "Energia w pracy to nie tylko „ile mam siły”. Według modelu Roberta Thayera nastrój i wydolność wyznaczają **dwa niezależne wymiary: energia i napięcie**. Ta sama ilość energii może dawać skupienie albo nerwowy pośpiech – zależnie od poziomu napięcia.\n\nSwoją mapę dnia znajdziesz w części 1 [badania Deep Dive](badanie/).\n\nPolecane: [filmy o energii i stresie](filmy.html#energia) w bibliotece.",
       "podsekcje": [
         {
           "tytul": "Badania i dane",
@@ -83,7 +83,7 @@
       "adres": "",
       "wyroznij": false,
       "ukryj": false,
-      "tresc": "Rezyliencja to zdolność do **radzenia sobie z wyzwaniami, wracania do równowagi i rozwoju pomimo trudności**. Nie jest cechą, którą się ma albo nie – to zestaw zasobów wewnętrznych, które można świadomie rozwijać, podobnie jak kondycję fizyczną.\n\nTwój profil zasobów znajdziesz w części 3 [badania Deep Dive](badanie/) – 12 filarów rezyliencji.",
+      "tresc": "Rezyliencja to zdolność do **radzenia sobie z wyzwaniami, wracania do równowagi i rozwoju pomimo trudności**. Nie jest cechą, którą się ma albo nie – to zestaw zasobów wewnętrznych, które można świadomie rozwijać, podobnie jak kondycję fizyczną.\n\nTwój profil zasobów znajdziesz w części 3 [badania Deep Dive](badanie/) – 12 filarów rezyliencji.\n\nPolecane: [filmy o odporności](filmy.html#odpornosc) w bibliotece.",
       "podsekcje": [
         {
           "tytul": "Badania i dane",
@@ -114,6 +114,18 @@
       "przycisk": "Policz",
       "ikona": "kalkulator",
       "adres": "kalkulator.html",
+      "wyroznij": false,
+      "ukryj": false,
+      "tresc": "",
+      "podsekcje": []
+    },
+    {
+      "id": "filmy",
+      "tytul": "Biblioteka filmów",
+      "opis": "Wybrane wystąpienia TED i TEDx o wypaleniu, energii, odporności i przywództwie – większość z polskimi napisami.",
+      "przycisk": "Oglądaj",
+      "ikona": "filmy",
+      "adres": "filmy.html",
       "wyroznij": false,
       "ukryj": false,
       "tresc": "",

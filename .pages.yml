@@ -76,6 +76,8 @@ content:
                   label: Góry (odporność)
                 - value: kalkulator
                   label: Kalkulator (koszty)
+                - value: filmy
+                  label: Ekran z przyciskiem odtwarzania (filmy)
           - name: wyroznij
             label: Wyróżniony kafelek (kolorowy)
             type: boolean
@@ -135,3 +137,57 @@ content:
           - name: lyra_przycisk
             label: Tekst przycisku Lyra
             type: string
+
+  - name: filmy
+    label: Biblioteka filmów
+    description: Filmy na stronie filmy.html. Wystarczy wkleić link z YouTube.
+    type: file
+    path: tresci/filmy.json
+    format: json
+    fields:
+      - name: wstep
+        label: Wstęp nad listą filmów
+        type: text
+      - name: filmy
+        label: Filmy
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{autor} – {tytul}"
+        fields:
+          - name: tytul
+            label: Tytuł (po polsku)
+            type: string
+            required: true
+          - name: youtube
+            label: Link do YouTube
+            description: "Np. https://www.youtube.com/watch?v=… lub https://youtu.be/…"
+            type: string
+            required: true
+          - name: autor
+            label: Autor / prelegent
+            type: string
+          - name: wydarzenie
+            label: Wydarzenie lub kanał
+            description: Np. TED, TEDxWarsaw.
+            type: string
+          - name: kategoria
+            label: Temat
+            type: select
+            options:
+              values:
+                - value: wypalenie
+                  label: Wypalenie
+                - value: energia
+                  label: Energia
+                - value: odpornosc
+                  label: Odporność
+                - value: przywodztwo
+                  label: Przywództwo i zespół
+          - name: opis
+            label: Krótki opis
+            type: text
+          - name: ukryj
+            label: Ukryj na stronie
+            type: boolean
