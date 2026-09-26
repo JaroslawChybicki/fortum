@@ -16,12 +16,19 @@
 <body>
 <header class="site"></header>
 <main class="wrap">
+  <nav class="crumbs" aria-label="Jesteś tutaj"><ol><li><a href="../">Strona główna</a></li><li aria-current="page">Narzędzia coachingowe</li></ol></nav>
   <section class="hero">
     <span class="tag">Do pracy między sesjami 1:1</span>
     <h1 style="margin-top:12px">Narzędzia coachingowe</h1>
     <p class="lead">Karty pracy, które towarzyszą sesjom coachingowym. Każde narzędzie działa w przeglądarce, zapisuje odpowiedzi na bieżąco i pozwala pobrać, wydrukować albo wysłać raport prowadzącemu.</p>
   </section>
 
+  <div class="timeline" aria-label="Etapy programu">
+    <div><b>20.10.2026</b>Warsztat otwierający (4 h)</div>
+    <div><b>Po warsztacie</b>Diagnoza „Deep Dive”</div>
+    <div><b>Październik–grudzień</b>3 sesje coachingowe 1:1 (ok. 60 min)</div>
+    <div><b>10.12.2026</b>Warsztat zamykający i Pakt Odporności (8 h)</div>
+  </div>
 
   <h2 style="margin-top:28px">Jak korzystać</h2>
   <ol class="steps">
@@ -44,7 +51,7 @@
   var host = document.getElementById('catalog'), html = '';
   [1,2,3,0].forEach(function(s){
     var st = OG.STAGES[s];
-    html += '<div class="stage"><h2>' + st.name + '</h2><span class="tag' + (s===0?' red':'') + '">' + st.sub + '</span></div><div class="tools">';
+    html += '<div class="stage" id="etap-' + s + '"><h2>' + st.name + '</h2><span class="tag' + (s===0?' red':'') + '">' + st.sub + '</span></div><div class="tools">';
     OG.CATALOG.filter(function(t){return t.stage===s;}).forEach(function(t){
       var saved = OG.store.get('md:' + t.id, null);
       html += '<a class="tool" href="' + t.id + '.html">' + (saved ? '<span class="done">✓ w toku</span>' : '') +
@@ -54,6 +61,7 @@
   });
   html += '<div class="stage"><h2>Twoje podsumowanie</h2></div><div class="tools"><a class="tool" href="moj-proces.html"><h3>Mój proces</h3><p>Wszystkie Twoje karty w jednym raporcie, do pobrania, wydruku lub wysłania.</p><span class="meta">zbiorczo</span></a></div>';
   host.innerHTML = html;
+  if (location.hash) { var cel = document.getElementById(location.hash.slice(1)); if (cel) cel.scrollIntoView(); }
 })();
 </script>
 </body>

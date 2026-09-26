@@ -98,6 +98,9 @@ wszystko w repo jest publikowane na stronie.
 - `assets/znak-jasny.png` – znak w nagłówku (wersja na ciemne tło),
 - `assets/logo-odporni-i-gotowi.png` – pełne logo z napisami na jasne tło (do materiałów, prezentacji),
 - `favicon-32.png`, `favicon-192.png` (karta przeglądarki, Android), `apple-touch-icon.png` (skrót na ekranie iPhone'a).
+Nawigacja: każda podstrona ma ścieżkę („okruszki”, `<nav class="okruszki">`) pod nagłówkiem; w sekcjach tematycznych
+uzupełnia ją `okruszki()` w `assets/strona.js` (z nazwą aktywnej zakładki).
+
 Zmiana logo = podmiana tych plików pod tymi samymi nazwami (najlepiej PNG z przezroczystym tłem lub SVG od grafika).
 
 ## Podgląd lokalny

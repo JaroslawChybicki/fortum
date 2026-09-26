@@ -115,7 +115,7 @@ async function podstrona() {
 
   const t = (u.kafelki || []).find((x) => x.id === id && !x.adres && !x.ukryj);
   if (!t) {
-    main.innerHTML = `<div class="wrap"><a class="back" href="./">← Strona główna</a><div class="err">Nie ma takiej sekcji.</div></div>`;
+    main.innerHTML = `<div class="wrap">${okruszki([['Strona główna', './'], ['Nie znaleziono']])}<div class="err">Nie ma takiej sekcji.</div></div>`;
     return;
   }
   document.title = t.tytul + ' | ' + (u.tytul_strony || '');
@@ -147,7 +147,7 @@ async function podstrona() {
   }
 
   main.innerHTML = `<div class="wrap">
-    <a class="back" href="./">← Strona główna</a>
+    ${okruszki([['Strona główna', './'], [t.tytul]])}
     <div class="page-head"><span class="ic" aria-hidden="true">${ikona(t.ikona || t.id)}</span><h1>${esc(t.tytul)}</h1></div>
     ${body}
   </div>`;
@@ -169,6 +169,9 @@ async function podstrona() {
         b.tabIndex = on ? 0 : -1;
         document.getElementById('pan-' + b.dataset.id).hidden = !on;
       });
+      // Ścieżka: Strona główna › Sekcja › aktywna zakładka.
+      const ok = main.querySelector('.okruszki');
+      if (ok) ok.outerHTML = okruszki([['Strona główna', './'], [t.tytul, '?s=' + encodeURIComponent(t.id)], [podsekcje.find((p) => p.id === id).tytul]]);
       // Na telefonie pasek zakładek przewija się poziomo – pokaż aktywną.
       const akt = tabs.find((b) => b.dataset.id === id);
       const pasek = akt.parentElement;
@@ -196,6 +199,12 @@ async function podstrona() {
     }
     if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
   }
+}
+
+// Ścieżka nawigacji: [[etykieta, adres], …, [bieżąca strona]].
+function okruszki(el) {
+  return `<nav class="okruszki" aria-label="Jesteś tutaj"><ol>${el.map(([l, h], i) =>
+    i === el.length - 1 || !h ? `<li aria-current="page">${esc(l)}</li>` : `<li><a href="${esc(h)}">${esc(l)}</a></li>`).join('')}</ol></nav>`;
 }
 
 // Markdown z CMS → bezpieczny HTML (pusty tekst → '').

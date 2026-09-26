@@ -108,6 +108,15 @@ footer a{color:var(--muted)}
 .pager a{color:var(--teal);font-weight:600;text-decoration:none}
 .pager a:hover{text-decoration:underline}
 
+/* okruszki (ścieżka nawigacji) */
+.okruszki{margin:26px 0 0;font-size:.9rem;color:var(--muted)}
+.okruszki ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:2px 0}
+.okruszki li{display:inline-flex;align-items:center}
+.okruszki li+li::before{content:"›";margin:0 8px;color:var(--teal-2)}
+.okruszki a{color:var(--teal);text-decoration:none;font-weight:600;padding:4px 0}
+.okruszki a:hover{text-decoration:underline}
+.okruszki [aria-current]{color:var(--muted)}
+
 /* telefony */
 .back{padding:6px 0}
 .pager a{padding:8px 0;display:inline-block}
@@ -118,6 +127,8 @@ footer a{display:inline-block;padding:6px 0}
   .ridge{height:28px}
   .hero{padding:28px 0 24px}
   .back{margin-top:12px}
+  .okruszki{margin-top:14px;font-size:.84rem}
+  .okruszki li+li::before{margin:0 6px}
   .page-head{gap:14px;margin-top:10px}
   .page-head .ic{width:48px;height:48px;border-radius:14px}
   .page-head .ic svg{width:26px;height:26px}
