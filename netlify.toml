@@ -7,3 +7,9 @@
     X-Robots-Tag = "noindex, nofollow"
     Referrer-Policy = "no-referrer"
     X-Content-Type-Options = "nosniff"
+
+# Treści mają być widoczne od razu po zmianie, bez czekania na cache.
+[[headers]]
+  for = "/tresci/*"
+  [headers.values]
+    Cache-Control = "no-cache"

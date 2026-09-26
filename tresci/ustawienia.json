@@ -1,0 +1,46 @@
+{
+  "tytul_strony": "Odporni i gotowi | Lyra Polska",
+  "naglowek": "Odporni i gotowi",
+  "wstep": "Program rozwojowy dla kadry menedżerskiej. Zacznij od badania, a potem sięgaj po materiały do trzech obszarów, nad którymi pracujemy.",
+  "komunikat_w_przygotowaniu": "Materiały do tej sekcji pojawią się wkrótce.",
+
+  "kafelki": [
+    {
+      "id": "badanie",
+      "tytul": "Badanie",
+      "opis": "Diagnoza Deep Dive: energia, barometr wypalenia i 12 filarów rezyliencji. Ok. 15 minut.",
+      "przycisk": "Rozpocznij badanie",
+      "adres": "badanie/",
+      "wyroznij": true
+    },
+    {
+      "id": "wypalenie",
+      "tytul": "Wypalenie zawodowe",
+      "opis": "Czym jest wypalenie, jak je rozpoznać i co realnie chroni.",
+      "plik": "wypalenie.md"
+    },
+    {
+      "id": "energia",
+      "tytul": "Energia w pracy",
+      "opis": "Jak zarządzać energią i napięciem w ciągu dnia.",
+      "plik": "energia.md"
+    },
+    {
+      "id": "odpornosc",
+      "tytul": "Odporność",
+      "opis": "Wewnętrzne zasoby, które budują rezyliencję.",
+      "plik": "odpornosc.md"
+    }
+  ],
+
+  "kontakt": {
+    "imie": "Jarosław Chybicki",
+    "rola": "Psycholog, trener, prowadzący program",
+    "email": "jaroslaw.chybicki@lyrapolska.pl",
+    "telefon": "",
+    "strona_www": "",
+    "lyra_url": "https://lyrapolska.pl",
+    "lyra_nazwa": "lyrapolska.pl",
+    "lyra_przycisk": "Lyra Polska"
+  }
+}
