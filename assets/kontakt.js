@@ -13,6 +13,10 @@
     form.classList.add('sent');
   };
 
+  // Powrót po wysyłce bez JavaScriptu – na ten sam adres, pod którym działa strona (Netlify, Cloudflare…).
+  const powrot = form.querySelector('input[name="redirect"]');
+  if (powrot && /^https?:$/.test(location.protocol)) powrot.value = location.origin + location.pathname + '?wyslano=1#napisz';
+
   if (new URLSearchParams(location.search).get('wyslano')) podziekuj();
 
   form.addEventListener('submit', async (e) => {

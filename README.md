@@ -111,6 +111,10 @@ python3 -m http.server
 i wejdź na http://localhost:8000.
 
 ## Wdrożenie
+Nagłówki HTTP (noindex, brak cache dla `tresci/`) są w pliku `_headers` – ten sam format czyta Netlify i Cloudflare Pages.
+Strona działa zarówno w katalogu głównym domeny, jak i w podkatalogu (np. `lyraedu.pl/fortum/`) – wszystkie ścieżki są względne.
+Przy publikacji w podkatalogu `_headers` trzeba umieścić w katalogu głównym domeny z regułami poprzedzonymi `/fortum/`.
+
 Netlify → Add new site → Import an existing project → GitHub → `fortum`, publish directory `.`.
 Każdy commit automatycznie aktualizuje stronę. Strona nie jest indeksowana w wyszukiwarkach.
 

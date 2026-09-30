@@ -1,0 +1,9 @@
+# Nagłówki HTTP – czytane zarówno przez Cloudflare Pages, jak i Netlify.
+/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+
+# Treści mają być widoczne od razu po zmianie, bez czekania na cache.
+/tresci/*
+  Cache-Control: no-cache

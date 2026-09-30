@@ -1,15 +1,4 @@
 [build]
   publish = "."
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-    Referrer-Policy = "no-referrer"
-    X-Content-Type-Options = "nosniff"
-
-# Treści mają być widoczne od razu po zmianie, bez czekania na cache.
-[[headers]]
-  for = "/tresci/*"
-  [headers.values]
-    Cache-Control = "no-cache"
+# Nagłówki HTTP są w pliku _headers (ten sam format działa na Netlify i Cloudflare Pages).

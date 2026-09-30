@@ -2,6 +2,8 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+<script>/* Adres katalogu bez końcowego „/” (np. …/fortum) psułby ścieżki względne – dopisz go. */
+if(!/(\/|\.html?|\/index)$/.test(location.pathname))location.replace(location.pathname+'/'+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Odporni i gotowi – diagnoza Deep Dive | Lyra Polska</title>
@@ -237,7 +239,8 @@ const CONFIG = {
   contactName: 'Jarosław Chybicki',
   contactEmail: 'jaroslaw.chybicki@lyrapolska.pl',
   mailSubject: 'Raport',
-  storageKey: 'lyra_deepdive_v1'
+  storageKey: 'fortum_deepdive_v1',
+  oldStorageKey: 'lyra_deepdive_v1'   // wcześniejsza nazwa klucza – odczytywana, jeśli nowej brak
 };
 
 /* ============================================================
@@ -496,8 +499,8 @@ const TIMES = [{k:'m',n:'Rano',d:'pierwsza godzina pracy'},{k:'d',n:'Środek dni
 let S = freshState();
 function freshState(){return {v:CONFIG.version, step:0, ans:{}, traj:{}, started:null, finished:null};}
 function save(){try{localStorage.setItem(CONFIG.storageKey, JSON.stringify(S));}catch(e){}}
-function load(){try{const r=localStorage.getItem(CONFIG.storageKey); if(r){const o=JSON.parse(r); if(o&&o.v===CONFIG.version) return o;}}catch(e){} return null;}
-function clearSaved(){try{localStorage.removeItem(CONFIG.storageKey);}catch(e){}}
+function load(){try{const r=localStorage.getItem(CONFIG.storageKey)||localStorage.getItem(CONFIG.oldStorageKey); if(r){const o=JSON.parse(r); if(o&&o.v===CONFIG.version) return o;}}catch(e){} return null;}
+function clearSaved(){try{localStorage.removeItem(CONFIG.storageKey);localStorage.removeItem(CONFIG.oldStorageKey);}catch(e){}}
 const $ = s=>document.querySelector(s);
 const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
