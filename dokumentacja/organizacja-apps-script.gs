@@ -25,6 +25,7 @@ const KARTA = 'Uczestnicy';  // nazwa karty z danymi; gdy jej brak – pierwsza 
 const UKRYTE = /has[łl]o|adres strony/i;
 const CZAS_SESJI_MIN = 60;   // długość wydarzenia w kalendarzu
 const TYTUL_SESJI = 'Fortum · Sesja';
+const STREFA = 'Europe/Warsaw';   // strefa czasowa terminów (arkusz po konwersji z .xlsx bywa ustawiony na inną)
 const MAKS_BLEDOW = 8;       // tyle błędnych haseł…
 const BLOKADA_S = 15 * 60;   // …blokuje logowanie na 15 minut
 
@@ -264,12 +265,19 @@ function synchronizujKalendarz() {
   const lock = LockService.getScriptLock();
   lock.waitLock(25000);
   try {
-    const ss = SpreadsheetApp.getActive(), sh = karta(), u = uklad(sh), url = ss.getUrl(), tz = ss.getSpreadsheetTimeZone();
+    const ss = SpreadsheetApp.getActive();
+    const wynik = { nowe: 0, zmienione: 0, usuniete: 0, zKalendarza: 0, wyczyszczone: 0, razem: 0, uwagi: [] };
+    // Godziny w arkuszu to godziny polskie: inna strefa arkusza przesunęłaby wydarzenia w kalendarzu.
+    if (ss.getSpreadsheetTimeZone() !== STREFA) {
+      wynik.uwagi.push(`Strefa czasowa arkusza zmieniona z ${ss.getSpreadsheetTimeZone()} na ${STREFA} – godziny sesji są teraz liczone jako polskie.`);
+      ss.setSpreadsheetTimeZone(STREFA);
+      SpreadsheetApp.flush();
+    }
+    const sh = karta(), u = uklad(sh), url = ss.getUrl(), tz = ss.getSpreadsheetTimeZone();
     const props = PropertiesService.getScriptProperties();
     const mapa = {};   // „lp|sesja” → { id, t } (t = termin w minutach przy ostatniej synchronizacji)
     Object.entries(JSON.parse(props.getProperty('KAL_MAPA') || '{}')).forEach(([k, v]) => { mapa[k] = typeof v === 'string' ? { id: v, t: null } : v; });
     const kal = CalendarApp.getDefaultCalendar();
-    const wynik = { nowe: 0, zmienione: 0, usuniete: 0, zKalendarza: 0, wyczyszczone: 0, razem: 0, uwagi: [] };
 
     // --- arkusz ---
     const kol = (re) => u.kolumny.findIndex((k) => re.test(k));
