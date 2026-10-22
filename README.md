@@ -121,6 +121,13 @@ Po zmianie kodu skryptu: *Wdróż → Zarządzaj wdrożeniami → ołówek → W
 z kolorami statusów i etapami programu (warsztaty) z `organizacja/konfiguracja.js` (`etapy`). Kliknięcie sesji przenosi do jej terminu w karcie uczestnika.
 Widok buduje się z danych arkusza – świadomie nie osadzamy Kalendarza Google, który pokazałby prywatne spotkania każdemu, kto zna hasło.
 
+**Zaproszenia Microsoft Teams (Gmail → arkusz → kalendarz):** poczta z lyrapolska.pl trafia do Gmaila; co 15 minut skrypt szuka
+(60 dni wstecz) wiadomości od `@fortum.com` z częścią `text/calendar` i bierze z niej termin, organizatora, uczestników, tytuł i link Teams.
+Uczestnika rozpoznaje po e-mailu z arkusza (organizator pomijany, gdy zaprasza kogoś innego, np. HR); sesja: numer z tytułu → ten sam termin →
+pierwsza bez terminu. Każda wersja zaproszenia (UID + SEQUENCE) przetwarzana raz – ręczne zmiany w arkuszu nie są nadpisywane do czasu
+nowej wersji; odwołanie usuwa termin. Link Teams trafia do opisu wydarzenia i na stronę („Teams ↗” przy sesji). Strefy Outlooka
+(„Central European Standard Time” itd.) liczone jak Warszawa. Zaproszeń nie trzeba dodawać ręcznie do Kalendarza Google.
+
 **Raporty Deep Dive (folder na Dysku → arkusz):** co godzinę skrypt sprawdza folder „Raporty Deep Dive (poufne)” (`FOLDER_RAPORTOW` w skrypcie)
 i wpisuje do pustej kolumny „Raport Deep Dive (data)” datę z nazwy pliku `RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf` (polskie znaki opcjonalne).
 Czyta wyłącznie nazwy plików, nie treść; daty wpisanej ręcznie nie zmienia; nierozpoznane nazwy trafiają do „Do uzupełnienia”.

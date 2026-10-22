@@ -80,6 +80,13 @@
       <span class="org-ctrl">${ctrl}${link}</span><span class="org-stan" aria-live="polite"></span></label>`;
   }
 
+  // Link do spotkania Teams (z zaproszenia w Gmailu), jeśli skrypt go zna.
+  function teamsLink(lp, s) {
+    const url = dane && dane.teams && dane.teams[lp + '|' + s];
+    return url && /^https:\/\/teams\.microsoft\.com\//.test(url)
+      ? ` <a class="org-teams" href="${esc(url)}" target="_blank" rel="noopener" title="Dołącz do spotkania w Microsoft Teams">Teams ↗</a>` : '';
+  }
+
   function klasaStatusu(s) {
     s = (s || '').toLowerCase();
     return s.startsWith('odbyt') ? 'ok' : s.includes('przełoż') || s.includes('przeloz') ? 'uwaga' : s ? 'plan' : '';
@@ -88,7 +95,7 @@
   function karta(o) {
     const sesje = Object.keys(o.sesje).sort((a, b) => a - b).map((s) => {
       const x = o.sesje[s], st = x.status ? x.status.wart : '';
-      return `<div class="org-sesja ${klasaStatusu(st)}"><span class="org-sn">Sesja ${esc(s)}</span>
+      return `<div class="org-sesja ${klasaStatusu(st)}"><span class="org-sn">Sesja ${esc(s)}${teamsLink(o.lp, s)}</span>
         ${pole(o.lp, x.termin, 'Termin')}${pole(o.lp, x.status, 'Status')}</div>`;
     }).join('');
     return `<article class="org-karta${o.imie ? '' : ' nowa'}" data-lp="${esc(o.lp)}">
@@ -119,7 +126,7 @@
         if (/^odbyt/i.test(st)) odbyte++;
         if (/prze[łl]o[żz]/i.test(st)) { przel++; zaleg.push(`${esc(o.imie)} – sesja ${s} do przełożenia`); }
         const d = x.termin && x.termin.iso ? doDaty(x.termin.iso) : null;
-        if (d && d.getTime() >= teraz - 2 * 3600e3 && !/^odbyt/i.test(st)) najbl.push({ d, t: `${esc(o.imie)} · sesja ${s}`, st });
+        if (d && d.getTime() >= teraz - 2 * 3600e3 && !/^odbyt/i.test(st)) najbl.push({ d, t: `${esc(o.imie)} · sesja ${s}${teamsLink(o.lp, s)}`, st });
         if (d && d.getTime() < teraz - 2 * 3600e3 && !/^odbyt|prze[łl]o[żz]/i.test(st)) zaleg.push(`${esc(o.imie)} – sesja ${s} (${esc(x.termin.wart)}): uzupełnij status`);
       });
     });

@@ -21,6 +21,10 @@
  *
  * Raporty Deep Dive: co godzinę skrypt sprawdza folder FOLDER_RAPORTOW i wpisuje do pustej kolumny
  * „Raport Deep Dive (data)” datę z nazwy pliku „RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf”. Treści raportów nie otwiera.
+ *
+ * Zaproszenia Teams: co 15 minut skrypt szuka w Gmailu zaproszeń z adresów @fortum.com (poczta z lyrapolska.pl
+ * trafia do Gmaila), rozpoznaje uczestnika po adresie e-mail i wpisuje termin do arkusza; przesunięcie
+ * zaproszenia zmienia termin, odwołanie – usuwa go. Link Teams trafia do opisu wydarzenia i na stronę.
  */
 
 const KARTA = 'Uczestnicy';  // nazwa karty z danymi; gdy jej brak – pierwsza karta arkusza
@@ -30,7 +34,8 @@ const CZAS_SESJI_MIN = 60;   // długość wydarzenia w kalendarzu
 const TYTUL_SESJI = 'Fortum · Sesja';
 // Folder z raportami Deep Dive; nazwy plików: RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf. Skrypt czyta WYŁĄCZNIE nazwy plików.
 const FOLDER_RAPORTOW = '1TE8K1Xk2RiBsfOkcElO_jwVo0tjxNvK-';
-const STREFA = 'Europe/Warsaw';   // strefa czasowa terminów (arkusz po konwersji z .xlsx bywa ustawiony na inną)
+const STREFA = 'Europe/Warsaw';
+const ZAPROSZENIA_DNI = 60;   // jak daleko wstecz szukać zaproszeń Teams w Gmailu   // strefa czasowa terminów (arkusz po konwersji z .xlsx bywa ustawiony na inną)
 const MAKS_BLEDOW = 8;       // tyle błędnych haseł…
 const BLOKADA_S = 15 * 60;   // …blokuje logowanie na 15 minut
 
@@ -44,6 +49,7 @@ function onOpen() {
     .addItem('Wyłącz synchronizację z kalendarzem', 'wylaczKalendarz')
     .addSeparator()
     .addItem('Sprawdź raporty Deep Dive teraz', 'sprawdzRaportyZMenu')
+    .addItem('Sprawdź zaproszenia Teams teraz', 'sprawdzZaproszeniaZMenu')
     .addToUi();
 }
 
@@ -150,6 +156,7 @@ function pobierz() {
     ok: true, kolumny: tylko(u.kolumny), wiersze, daty,
     statusy: statusy(sh, u), arkusz: sh.getParent().getUrl(), czas: new Date().toISOString(),
     kalendarz: kalendarzWlaczony() ? { uwagi: uwagiKalendarza() } : null,
+    teams: JSON.parse(PropertiesService.getScriptProperties().getProperty('TEAMS_LINKI') || '{}'),
   };
 }
 
@@ -216,7 +223,7 @@ const bezOgonkow = (t) => String(t).toLowerCase().normalize('NFD').replace(/[\u0
 
 function usunWyzwalacze() {
   ScriptApp.getProjectTriggers()
-    .filter((t) => ['poEdycji', 'synchronizujKalendarz', 'sprawdzRaporty'].includes(t.getHandlerFunction()))
+    .filter((t) => ['poEdycji', 'synchronizujKalendarz', 'sprawdzRaporty', 'sprawdzZaproszenia'].includes(t.getHandlerFunction()))
     .forEach((t) => ScriptApp.deleteTrigger(t));
 }
 
@@ -227,10 +234,12 @@ function wlaczKalendarz() {
   ScriptApp.newTrigger('synchronizujKalendarz').timeBased().everyMinutes(15).create();
   ScriptApp.newTrigger('synchronizujKalendarz').forUserCalendar(Session.getEffectiveUser().getEmail()).onEventUpdated().create();
   ScriptApp.newTrigger('sprawdzRaporty').timeBased().everyHours(1).create();
+  ScriptApp.newTrigger('sprawdzZaproszenia').timeBased().everyMinutes(15).create();
   PropertiesService.getScriptProperties().setProperty('KAL_WLACZONA', '1');
   const rr = sprawdzRaporty();
+  const rz = sprawdzZaproszenia(true);
   const r = synchronizujKalendarz();
-  ui.alert('Synchronizacja z kalendarzem włączona (w obie strony).', podsumujWynik(r) + '\n\n' + podsumujRaporty(rr) + '\n\n' +
+  ui.alert('Synchronizacja z kalendarzem włączona (w obie strony).', podsumujWynik(r) + '\n\n' + podsumujRaporty(rr) + '\n\n' + podsumujZaproszenia(rz) + '\n\n' +
     'Kalendarz aktualizuje się po każdej zmianie w arkuszu i na stronie, arkusz – po każdej zmianie w kalendarzu; dodatkowo co 15 minut.\n' +
     'Nową sesję w kalendarzu dodasz tytułem w rodzaju „Fortum S2 Domańska”.\n' +
     'Pamiętaj o nowej wersji wdrożenia (Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa).', ui.ButtonSet.OK);
@@ -284,6 +293,7 @@ function synchronizujKalendarz() {
     }
     const sh = karta(), u = uklad(sh), url = ss.getUrl(), tz = ss.getSpreadsheetTimeZone();
     const props = PropertiesService.getScriptProperties();
+    const linki = JSON.parse(props.getProperty('TEAMS_LINKI') || '{}');   // „lp|sesja” → link do spotkania Teams
     const mapa = {};   // „lp|sesja” → { id, t } (t = termin w minutach przy ostatniej synchronizacji)
     Object.entries(JSON.parse(props.getProperty('KAL_MAPA') || '{}')).forEach(([k, v]) => { mapa[k] = typeof v === 'string' ? { id: v, t: null } : v; });
     const kal = CalendarApp.getDefaultCalendar();
@@ -388,19 +398,23 @@ function synchronizujKalendarz() {
       const a = arkusz[klucz];
       if (!a.start) return;
       const tytul = `${TYTUL_SESJI} ${a.s.nr} · ${a.imie}` + (/prze[łl]o[żz]/i.test(a.status) ? ' (do przełożenia)' : '');
-      const opis = [`Odporni i gotowi – sesja coachingowa ${a.s.nr}.`, a.mail ? 'E-mail: ' + a.mail : '', a.tel ? 'Telefon: ' + a.tel : '',
+      const teams = linki[klucz] || '';
+      const opis = [`Odporni i gotowi – sesja coachingowa ${a.s.nr}.`, teams ? 'Dołącz (Microsoft Teams): ' + teams : '',
+        a.mail ? 'E-mail: ' + a.mail : '', a.tel ? 'Telefon: ' + a.tel : '',
         a.status ? 'Status: ' + a.status : '', '', 'Termin możesz zmieniać tutaj, w arkuszu albo na stronie organizacyjnej:', url]
         .filter((x, i, t) => x !== '' || (i > 0 && t[i - 1] !== '')).join('\n');
       let ev = mapa[klucz] ? obecne[mapa[klucz].id] || kal.getEventById(mapa[klucz].id) : null;
       if (!ev) {
         ev = kal.createEvent(tytul, a.start, new Date(a.start.getTime() + CZAS_SESJI_MIN * 60000), { description: opis });
         ev.setVisibility(CalendarApp.Visibility.PRIVATE); ev.setTag('odporni-i-gotowi', klucz);
+        if (teams) ev.setLocation('Microsoft Teams');
         mapa[klucz] = { id: ev.getId(), t: minuty(a.start) };
         wynik.nowe++;
       } else {
         let zmiana = false;   // długość wydarzenia zmieniona ręcznie w kalendarzu zostaje
         if (ev.getTitle() !== tytul) { ev.setTitle(tytul); zmiana = true; }
         if (ev.getDescription() !== opis) { ev.setDescription(opis); zmiana = true; }
+        if (teams && ev.getLocation() !== 'Microsoft Teams') { ev.setLocation('Microsoft Teams'); zmiana = true; }
         if (zmiana) wynik.zmienione++;
       }
       wynik.razem++;
@@ -468,4 +482,194 @@ function sprawdzRaporty() {
   } finally {
     lock.releaseLock();
   }
+}
+
+/* ---------------- Zaproszenia Microsoft Teams (Gmail → arkusz → kalendarz) ---------------- */
+// Poczta z lyrapolska.pl trafia do Gmaila. Skrypt czyta wyłącznie wiadomości od nadawców @fortum.com, które zawierają
+// zaproszenie kalendarza (część text/calendar), i bierze z nich: termin, organizatora, uczestników, tytuł i link Teams.
+// Uczestnika rozpoznaje po adresie e-mail z arkusza (organizator jest pomijany, gdy zaprasza kogoś innego – np. HR).
+// Numer sesji: z tytułu („1 sesja”, „sesja 2”, „S3”), inaczej sesja z tym samym terminem, inaczej pierwsza bez terminu.
+// Każde zaproszenie (UID) przetwarzane jest raz na wersję: późniejsze ręczne zmiany w arkuszu nie są nadpisywane,
+// dopóki organizator nie wyśle nowej wersji (przesunięcie) albo odwołania.
+
+function sprawdzZaproszeniaZMenu() {
+  SpreadsheetApp.getUi().alert(podsumujZaproszenia(sprawdzZaproszenia()));
+}
+
+function podsumujZaproszenia(r) {
+  return `Zaproszenia Teams: nowe terminy ${r.nowe}, zmienione ${r.zmienione}, odwołane ${r.odwolane}.` + (r.uwagi.length ? '\n• ' + r.uwagi.join('\n• ') : '');
+}
+
+// bezSynchronizacji: true, gdy wywołujący sam za chwilę synchronizuje kalendarz.
+function sprawdzZaproszenia(bezSynchronizacji) {
+  const wynik = { nowe: 0, zmienione: 0, odwolane: 0, uwagi: [] };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(25000);
+  try {
+    const ss = SpreadsheetApp.getActive(), sh = karta(), u = uklad(sh), tz = ss.getSpreadsheetTimeZone();
+    const props = PropertiesService.getScriptProperties();
+    const stan = JSON.parse(props.getProperty('TEAMS_STAN') || '{}');     // UID → { sygn, klucz }
+    const linki = JSON.parse(props.getProperty('TEAMS_LINKI') || '{}');   // „lp|sesja” → link Teams
+    const kImie = u.kolumny.findIndex((k) => /imi/i.test(k)), kMail = u.kolumny.findIndex((k) => /mail/i.test(k));
+    if (kImie < 0 || kMail < 0 || !u.liczba) return wynik;
+    const sesje = [];
+    u.kolumny.forEach((k, i) => { const m = k.match(/sesja\s*(\d+).*termin/i); if (m) sesje.push({ nr: m[1], termin: i }); });
+    const zakres = sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length);
+    const wart = zakres.getValues(), wysw = zakres.getDisplayValues();
+    const poMailu = {};
+    wysw.forEach((w, r) => {
+      const imie = String(w[kImie]).trim(), mail = String(w[kMail]).trim().toLowerCase();
+      if (imie && mail) poMailu[mail] = { lp: String(w[0]).trim(), imie, r };
+    });
+
+    // Najnowsza wersja każdego zaproszenia (wg SEQUENCE, potem daty wiadomości).
+    const najnowsze = {};
+    GmailApp.search(`from:fortum.com newer_than:${ZAPROSZENIA_DNI}d`, 0, 100).forEach((watek) => watek.getMessages().forEach((msg) => {
+      if (!/@fortum\.com/i.test(msg.getFrom())) return;
+      const ics = wyciagnijIcs(msg.getRawContent());
+      const z = ics && parsujIcs(ics, tz);
+      if (!z || !z.uid) return;
+      z.data = msg.getDate().getTime();
+      const p = najnowsze[z.uid];
+      if (!p || z.seq > p.seq || (z.seq === p.seq && z.data >= p.data)) najnowsze[z.uid] = z;
+    }));
+
+    Object.values(najnowsze).sort((a, b) => a.data - b.data).forEach((z) => {
+      const sygn = `${z.metoda}|${z.seq}|${z.start ? z.start.getTime() : ''}`;
+      const poprz = stan[z.uid];
+      if (poprz && poprz.sygn === sygn) return;                         // ta wersja już przetworzona
+      const kiedy = z.start ? Utilities.formatDate(z.start, tz, 'dd.MM.yyyy HH:mm') : '?';
+      const opisZ = `Zaproszenie Teams „${z.tytul}” (${kiedy})`;
+
+      // Uczestnik: zaproszeni z arkusza bez organizatora; gdy brak – organizator (uczestnik zaprasza sam).
+      const unik = (lista) => lista.filter((o, i, t) => o && t.findIndex((x) => x && x.lp === o.lp) === i);
+      let osoby = unik(z.uczestnicy.filter((e) => e !== z.organizator).map((e) => poMailu[e]));
+      if (!osoby.length && poMailu[z.organizator]) osoby = [poMailu[z.organizator]];
+      if (osoby.length !== 1) {
+        if (z.metoda !== 'CANCEL') wynik.uwagi.push(`${opisZ}: ${osoby.length ? 'kilku uczestników programu – wpisz termin ręcznie' : 'nie rozpoznano uczestnika (adres e-mail spoza arkusza)'}.`);
+        stan[z.uid] = { sygn };
+        return;
+      }
+      const o = osoby[0];
+      const wpisz = (s, data) => {
+        const kom = sh.getRange(u.pierwszy + o.r, s.termin + 1);
+        if (data) kom.setValue(data).setNumberFormat('dd.mm.yyyy hh:mm'); else kom.clearContent();
+        wart[o.r][s.termin] = data || '';
+      };
+      const terminS = (s) => (wart[o.r][s.termin] instanceof Date ? wart[o.r][s.termin] : null);
+
+      if (z.metoda === 'CANCEL') {
+        const s = poprz && poprz.klucz ? sesje.find((x) => poprz.klucz === o.lp + '|' + x.nr) : null;
+        if (s && terminS(s) && poprz.start && terminS(s).getTime() === poprz.start) {
+          wpisz(s, null); wynik.odwolane++;
+          wynik.uwagi.push(`${o.imie}, sesja ${s.nr}: spotkanie odwołane w Teams – termin usunięto z arkusza.`);
+        }
+        stan[z.uid] = { sygn, klucz: poprz && poprz.klucz };
+        return;
+      }
+      if (!z.start) { stan[z.uid] = { sygn }; return; }
+
+      // Sesja: ta sama co poprzednio → numer z tytułu → sesja z tym terminem → pierwsza bez terminu.
+      let s = poprz && poprz.klucz ? sesje.find((x) => poprz.klucz === o.lp + '|' + x.nr) : null;
+      const nrT = (z.tytul.match(/(\d+)\s*\.?\s*sesj|sesj\w*\s*(?:nr\.?\s*)?(\d+)|\bS\s?(\d)\b/i) || []).slice(1).find(Boolean);
+      if (!s && nrT) s = sesje.find((x) => x.nr === String(nrT));
+      if (!s) s = sesje.find((x) => terminS(x) && terminS(x).getTime() === z.start.getTime());
+      if (!s) s = sesje.find((x) => !terminS(x));
+      if (!s) { wynik.uwagi.push(`${opisZ}: ${o.imie} ma już terminy wszystkich sesji – wpisz ręcznie.`); stan[z.uid] = { sygn }; return; }
+
+      const klucz = o.lp + '|' + s.nr, obecny = terminS(s);
+      if (z.link) linki[klucz] = z.link;
+      if (!obecny || obecny.getTime() !== z.start.getTime()) {
+        if (obecny && !(poprz && poprz.klucz === klucz)) {
+          wynik.uwagi.push(`${o.imie}, sesja ${s.nr}: termin z arkusza (${Utilities.formatDate(obecny, tz, 'dd.MM.yyyy HH:mm')}) zastąpiono terminem z zaproszenia Teams (${kiedy}).`);
+        }
+        wpisz(s, z.start);
+        if (obecny) wynik.zmienione++; else wynik.nowe++;
+      }
+      stan[z.uid] = { sygn, klucz, start: z.start.getTime() };
+    });
+
+    props.setProperty('TEAMS_STAN', JSON.stringify(stan));
+    props.setProperty('TEAMS_LINKI', JSON.stringify(linki));
+    if (wynik.uwagi.length) zapiszUwagi(wynik.uwagi);
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+  if (!bezSynchronizacji && kalendarzWlaczony() && wynik.nowe + wynik.zmienione + wynik.odwolane > 0) synchronizujKalendarz();
+  return wynik;
+}
+
+// Część text/calendar z surowej wiadomości (base64, quoted-printable albo zwykły tekst).
+function wyciagnijIcs(raw) {
+  const i = raw.search(/Content-Type:\s*text\/calendar/i);
+  if (i < 0) return null;
+  const reszta = raw.slice(i);
+  const podzial = reszta.search(/\r?\n\r?\n/);
+  if (podzial < 0) return null;
+  const naglowki = reszta.slice(0, podzial);
+  let cialo = reszta.slice(podzial).replace(/^\s+/, '');
+  const koniec = cialo.search(/\r?\n--/);
+  if (koniec >= 0) cialo = cialo.slice(0, koniec);
+  const kod = (naglowki.match(/Content-Transfer-Encoding:\s*([\w-]+)/i) || [])[1] || '';
+  if (/base64/i.test(kod)) cialo = Utilities.newBlob(Utilities.base64Decode(cialo.replace(/\s+/g, ''))).getDataAsString('UTF-8');
+  else if (/quoted/i.test(kod)) cialo = dekodujQP(cialo);
+  return /BEGIN:VCALENDAR/i.test(cialo) ? cialo : null;
+}
+
+function dekodujQP(t) {
+  t = t.replace(/=\r?\n/g, '');
+  const bajty = [];
+  for (let i = 0; i < t.length; i++) {
+    if (t[i] === '=' && /^[0-9A-F]{2}$/i.test(t.substr(i + 1, 2))) { bajty.push(parseInt(t.substr(i + 1, 2), 16)); i += 2; }
+    else if (t.charCodeAt(i) < 128) bajty.push(t.charCodeAt(i));
+    else Utilities.newBlob(t[i]).getBytes().forEach((b) => bajty.push(b & 255));
+  }
+  return Utilities.newBlob(bajty.map((b) => (b > 127 ? b - 256 : b))).getDataAsString('UTF-8');
+}
+
+function parsujIcs(ics, tz) {
+  const linie = ics.replace(/\r?\n[ \t]/g, '').split(/\r?\n/);
+  const metoda = ((linie.find((l) => /^METHOD:/i.test(l)) || '').split(':')[1] || 'REQUEST').trim().toUpperCase();
+  const od = linie.findIndex((l) => /^BEGIN:VEVENT/i.test(l));
+  if (od < 0) return null;
+  const ev = linie.slice(od, linie.findIndex((l, i) => i > od && /^END:VEVENT/i.test(l)));
+  const pole = (n) => ev.find((l) => new RegExp('^' + n + '[;:]', 'i').test(l));
+  // Wartość po pierwszym dwukropku spoza cudzysłowu (parametry bywają w cudzysłowie, np. TZID="(UTC+01:00) …").
+  const wartosc = (l) => {
+    if (!l) return '';
+    let cudz = false;
+    for (let i = 0; i < l.length; i++) {
+      if (l[i] === '"') cudz = !cudz;
+      else if (l[i] === ':' && !cudz) return l.slice(i + 1).trim();
+    }
+    return '';
+  };
+  const mail = (l) => ((l || '').match(/mailto:([^;\s]+)/i) || [])[1];
+  const dt = pole('DTSTART');
+  const tekst = (v) => v.replace(/\\n/gi, ' ').replace(/\\([,;\\])/g, '$1').trim();
+  const status = wartosc(pole('STATUS')).toUpperCase();
+  const link = (ics.replace(/\r?\n[ \t]/g, '').match(/https:\/\/teams\.microsoft\.com\/(?:l\/meetup-join|meet)\/[^\s"<>\\]+/i) || [])[0] || '';
+  return {
+    uid: wartosc(pole('UID')),
+    seq: Number(wartosc(pole('SEQUENCE'))) || 0,
+    metoda: metoda === 'CANCEL' || status === 'CANCELLED' ? 'CANCEL' : 'REQUEST',
+    tytul: tekst(wartosc(pole('SUMMARY'))),
+    start: dt ? dataIcs(wartosc(dt), (dt.match(/TZID="?([^;:"]+)/i) || [])[1], tz) : null,
+    organizator: (mail(pole('ORGANIZER')) || '').toLowerCase(),
+    uczestnicy: ev.filter((l) => /^ATTENDEE[;:]/i.test(l)).map((l) => (mail(l) || '').toLowerCase()).filter(Boolean),
+    link: link.replace(/[.,;)]+$/, ''),
+  };
+}
+
+// Data z ICS: UTC (…Z), strefa IANA (Europe/Warsaw) albo nazwa Windows z Outlooka (Central European Standard Time).
+function dataIcs(v, tzid, tz) {
+  const m = v.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?/);
+  if (!m) return null;
+  let strefa = tz || STREFA;
+  if (m[7]) strefa = 'UTC';
+  else if (tzid && /\//.test(tzid)) strefa = tzid;
+  else if (tzid && /GMT Standard|Greenwich|^UTC$/i.test(tzid)) strefa = 'Europe/London';
+  // „Central European / Central Europe / W. Europe / Romance Standard Time” mają ten sam czas co Warszawa.
+  return Utilities.parseDate(`${m[1]}-${m[2]}-${m[3]} ${m[4] || '00'}:${m[5] || '00'}`, strefa, 'yyyy-MM-dd HH:mm');
 }
