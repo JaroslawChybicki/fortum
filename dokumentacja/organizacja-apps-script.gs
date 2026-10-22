@@ -204,7 +204,7 @@ const OKNO_WSTECZ_DNI = 90, OKNO_NAPRZOD_DNI = 240;   // zakres kalendarza spraw
 
 const kalendarzWlaczony = () => PropertiesService.getScriptProperties().getProperty('KAL_WLACZONA') === '1';
 const minuty = (d) => (d ? Math.round(d.getTime() / 60000) : null);
-const bezOgonkow = (t) => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+const bezOgonkow = (t) => String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l');
 
 function usunWyzwalacze() {
   ScriptApp.getProjectTriggers()
