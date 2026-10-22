@@ -20,6 +20,8 @@ gra-zespol.html       gra decyzyjna „Pomyłka w zespole” (scenariusz: tresci
 gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scenariusz: tresci/gra-sezon.json)
 kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
+organizacja/          strona organizacyjna (hasło; dane z arkusza Google, nie z repozytorium)
+dokumentacja/         kod zaplecza Apps Script dla strony organizacyjnej
 narzedzia/            narzędzia coachingowe – karty pracy do sesji 1:1 (osobna mini-aplikacja)
 tresci/               ← TREŚCI (edytowane w CMS)
   sekcje.json         kafelki + treść każdej podstrony (Markdown)
@@ -92,6 +94,27 @@ nowe narzędzie = plik HTML na wzór istniejącego + wpis w tablicy `CATALOG` w 
 Kafelek na stronie głównej: „Narzędzia coachingowe” w CMS (link `narzedzia/`).
 Przewodnik prowadzącego (`przewodnik-coacha.md`) jest materiałem wewnętrznym i celowo NIE trafia do repozytorium –
 wszystko w repo jest publikowane na stronie.
+
+## Strona organizacyjna (`organizacja/`)
+Adres: `…/organizacja/` (np. `lyraedu.pl/fortum/organizacja/`). Nie jest podlinkowana ze strony.
+Uczestnicy, daty raportów Deep Dive, terminy i statusy 3 sesji. **Dane nie są w repozytorium** – strona po podaniu hasła
+czyta i zapisuje arkusz Google przez skrypt Apps Script (`dokumentacja/organizacja-apps-script.gs`).
+Arkusz jest jedynym źródłem danych: edycja w arkuszu albo na stronie zmienia te same komórki.
+- Strona zapisuje każde pole osobno i wysyła poprzednią wartość – jeśli w międzyczasie ktoś zmienił ją w arkuszu,
+  zapis jest odrzucany, a strona wczytuje aktualne dane. Odświeża się co minutę i po powrocie do karty.
+- Kolumny rozpoznawane są po nagłówkach (wiersz z „Lp.” w kolumnie A): imię, e-mail, telefon, raport Deep Dive,
+  „Sesja N – termin”, „Sesja N – status”. Lista statusów = lista rozwijana w arkuszu. Inne kolumny – zwykłe pola tekstowe.
+- Kolumny z „hasło” lub „adres strony” w nagłówku (hasła i adresy stref uczestników) nigdy nie trafiają na stronę.
+- Hasło: tylko skrót SHA-256 we właściwościach skryptu; 8 błędnych prób blokuje logowanie na 15 minut.
+
+Uruchomienie (raz, na komputerze):
+1. Otwórz arkusz Google **„Fortum – uczestnicy i terminy”** (zakładka „Uczestnicy”). Skrypt nie działa w plikach `.xlsx` –
+   gdyby trzeba było zacząć od `.xlsx`: *Plik → Zapisz jako Arkusz Google*.
+2. *Rozszerzenia → Apps Script* → wklej `dokumentacja/organizacja-apps-script.gs` → Zapisz.
+3. Odśwież arkusz → menu *Strona organizacyjna → Ustaw lub zmień hasło* (zatwierdź uprawnienia skryptu).
+4. Apps Script: *Wdróż → Nowe wdrożenie → Aplikacja internetowa*, Wykonaj jako: *Ja*, Kto ma dostęp: *Każdy* → Wdróż.
+5. Adres kończący się na `/exec` wpisz w `organizacja/konfiguracja.js`.
+Po zmianie kodu skryptu: *Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa* (adres się nie zmienia).
 
 ## Logo i favicon
 Źródło: logo wygenerowane w Gemini (JPG). Pliki:
