@@ -31,6 +31,7 @@
     if (/imi/i.test(k)) return { pole: 'imie', typ: 'tekst' };
     if (/mail/i.test(k)) return { pole: 'email', typ: 'tekst', input: 'email' };
     if (/telefon/i.test(k)) return { pole: 'telefon', typ: 'tekst', input: 'tel' };
+    if (/stanowisk|job title/i.test(k)) return { pole: 'stanowisko', typ: 'tekst' };
     if (/deep\s*dive|raport/i.test(k)) return { pole: 'raport', typ: 'data' };
     let m = k.match(/sesja\s*(\d+).*termin/i);
     if (m) return { pole: 'termin', sesja: +m[1], typ: 'datagodz' };
@@ -71,7 +72,7 @@
       if (c.wart && !opcje.includes(c.wart)) opcje.push(c.wart);
       ctrl = `<select ${atr} aria-label="${esc(k.nazwa)}">${opcje.map((o) => `<option value="${esc(o)}"${o === c.wart ? ' selected' : ''}>${esc(o || '—')}</option>`).join('')}</select>`;
     } else {
-      ctrl = `<input type="${input}" ${atr} value="${esc(wart)}" aria-label="${esc(k.nazwa)}"${k.pole === 'imie' ? ' placeholder="Imię i nazwisko"' : ''}>`;
+      ctrl = `<input type="${input}" ${atr} value="${esc(wart)}" aria-label="${esc(k.nazwa)}"${k.pole === 'imie' ? ' placeholder="Imię i nazwisko"' : k.pole === 'stanowisko' ? ' placeholder="Stanowisko"' : ''}>`;
     }
     const link = k.pole === 'email' && c.wart ? `<a class="org-ikon" href="mailto:${esc(c.wart)}" title="Napisz e-mail">✉</a>`
       : k.pole === 'telefon' && c.wart ? `<a class="org-ikon" href="tel:${esc(c.wart.replace(/[^\d+]/g, ''))}" title="Zadzwoń">☎</a>` : '';
@@ -92,6 +93,7 @@
     }).join('');
     return `<article class="org-karta${o.imie ? '' : ' nowa'}" data-lp="${esc(o.lp)}">
       <div class="org-kh"><span class="org-lp">${esc(o.lp)}</span>${pole(o.lp, o.komorki.imie, '', 'org-imie')}</div>
+      ${pole(o.lp, o.komorki.stanowisko, '', 'org-stanowisko')}
       <div class="org-kontakt">${pole(o.lp, o.komorki.email, 'E-mail')}${pole(o.lp, o.komorki.telefon, 'Telefon')}</div>
       ${pole(o.lp, o.komorki.raport, 'Raport Deep Dive')}
       <div class="org-sesje">${sesje}</div>
