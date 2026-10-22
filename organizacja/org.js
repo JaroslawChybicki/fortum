@@ -142,6 +142,11 @@
     $('#b-dodaj').hidden = puste.length <= pokazPuste;
     $('#b-arkusz').href = dane.arkusz || '#';
     $('#b-arkusz').hidden = !dane.arkusz;
+    // Stan synchronizacji z Kalendarzem Google: nowa wersja skryptu zawsze zwraca pole „kalendarz” (null = wyłączona).
+    const ks = $('.org-kalstan');
+    if (!('kalendarz' in dane)) { ks.className = 'org-kalstan uwaga'; ks.textContent = 'Kalendarz Google: wdrożona jest starsza wersja skryptu (Apps Script → Wdróż → Zarządzaj wdrożeniami → Nowa wersja).'; }
+    else if (!dane.kalendarz) { ks.className = 'org-kalstan uwaga'; ks.textContent = 'Kalendarz Google: synchronizacja wyłączona (arkusz → menu „Strona organizacyjna” → „Włącz synchronizację z kalendarzem”).'; }
+    else { ks.className = 'org-kalstan ok'; ks.textContent = 'Kalendarz Google: synchronizacja włączona'; }
     $('.org-czas').textContent = 'Dane z arkusza: ' + new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     pochodne(lista);
   }

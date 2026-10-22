@@ -105,10 +105,11 @@ Arkusz jest jedynym źródłem danych: edycja w arkuszu albo na stronie zmienia 
 - Kolumny rozpoznawane są po nagłówkach (wiersz z „Lp.” w kolumnie A): imię, e-mail, telefon, raport Deep Dive,
   „Sesja N – termin”, „Sesja N – status”. Lista statusów = lista rozwijana w arkuszu. Inne kolumny – zwykłe pola tekstowe.
 - Kolumny z „hasło” lub „adres strony” w nagłówku (hasła i adresy stref uczestników) nigdy nie trafiają na stronę.
+- Na stronie pod przyciskami widać stan Kalendarza Google: włączony / wyłączony / starsza wersja skryptu we wdrożeniu.
 - Hasło: tylko skrót SHA-256 we właściwościach skryptu; 8 błędnych prób blokuje logowanie na 15 minut.
 
 Uruchomienie (raz, na komputerze):
-1. Otwórz arkusz Google **„Fortum – uczestnicy i terminy”** (zakładka „Uczestnicy”). Skrypt nie działa w plikach `.xlsx` –
+1. Otwórz arkusz Google **„Fortum_uczestnicy_terminy”** (folder „Claude projects”, id `1liI7grzM9QDaVOHY6NsoKilmzu1LM-joEZnKUuEQvSQ`; to w nim działa skrypt od 22.10.2026). Skrypt nie działa w plikach `.xlsx` –
    gdyby trzeba było zacząć od `.xlsx`: *Plik → Zapisz jako Arkusz Google*.
 2. *Rozszerzenia → Apps Script* → wklej `dokumentacja/organizacja-apps-script.gs` → Zapisz.
 3. Odśwież arkusz → menu *Strona organizacyjna → Ustaw lub zmień hasło* (zatwierdź uprawnienia skryptu).

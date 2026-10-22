@@ -143,3 +143,8 @@ button.kal-ev:hover{filter:brightness(.96)}
   .kal-tyg-lista .kal-agenda{margin-top:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 }
 @media (prefers-reduced-motion:reduce){.org-sesja.podswietl{animation:none;background:rgba(95,168,175,.2)}}
+
+.org-kalstan{font-size:.82rem;border-radius:99px;padding:3px 10px;flex-basis:100%;order:3}
+.org-kalstan:empty{display:none}
+.org-kalstan.ok{background:#e3f1ea;color:#1f6b45;flex-basis:auto;order:0}
+.org-kalstan.uwaga{background:#fff4dc;color:#7a4e00;border-radius:var(--r-m)}
