@@ -19,8 +19,9 @@
  * lub usunięcie wydarzenia w kalendarzu zmienia arkusz; nową sesję dodasz w kalendarzu tytułem „Fortum S2 Nazwisko”.
  * Skrypt zmienia wyłącznie wydarzenia sesji (utworzone przez siebie albo z tytułem zaczynającym się od „Fortum”).
  *
- * Raporty Deep Dive: co godzinę skrypt sprawdza folder FOLDER_RAPORTOW i wpisuje do pustej kolumny
- * „Raport Deep Dive (data)” datę z nazwy pliku „RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf”. Treści raportów nie otwiera.
+ * Raporty Deep Dive: co godzinę skrypt zapisuje do folderu FOLDER_RAPORTOW raporty PDF z Gmaila (załącznik
+ * „…DeepDive….pdf” od uczestnika z arkusza) jako „RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf”, a potem wpisuje do pustej
+ * kolumny „Raport Deep Dive (data)” datę z nazwy pliku. Treści raportów nie otwiera (plik jest tylko kopiowany).
  *
  * Zaproszenia Teams: co 15 minut skrypt szuka w Gmailu zaproszeń z adresów @fortum.com (poczta z lyrapolska.pl
  * trafia do Gmaila), rozpoznaje uczestnika po adresie e-mail i wpisuje termin do arkusza; przesunięcie
@@ -438,7 +439,7 @@ function sprawdzRaportyZMenu() {
 }
 
 function podsumujRaporty(r) {
-  return `Raporty Deep Dive: w folderze ${r.pliki}, nowe daty w arkuszu: ${r.wpisane}.` + (r.uwagi.length ? '\n• ' + r.uwagi.join('\n• ') : '');
+  return `Raporty Deep Dive: z Gmaila zapisane do folderu ${r.zapisane || 0}, w folderze ${r.pliki}, nowe daty w arkuszu: ${r.wpisane}.` + (r.uwagi.length ? '\n• ' + r.uwagi.join('\n• ') : '');
 }
 
 function sprawdzRaporty() {
@@ -446,16 +447,23 @@ function sprawdzRaporty() {
   lock.waitLock(25000);
   try {
     const ss = SpreadsheetApp.getActive(), sh = karta(), u = uklad(sh), tz = ss.getSpreadsheetTimeZone();
-    const wynik = { pliki: 0, wpisane: 0, uwagi: [] };
+    const wynik = { pliki: 0, wpisane: 0, zapisane: 0, uwagi: [] };
     const kRaport = u.kolumny.findIndex((k) => /deep\s*dive|raport/i.test(k));
     const kImie = u.kolumny.findIndex((k) => /imi/i.test(k));
+    const kMail = u.kolumny.findIndex((k) => /mail/i.test(k));
     if (kRaport < 0 || kImie < 0 || !u.liczba) return wynik;
     const zakres = sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length);
     const wysw = zakres.getDisplayValues();
     const osoby = wysw.map((w, r) => ({ r, imie: String(w[kImie]).trim(), slowa: bezOgonkow(w[kImie]).split(/\s+/).filter(Boolean), raport: String(w[kRaport]).trim() }))
       .filter((o) => o.imie);
 
-    const pliki = DriveApp.getFolderById(FOLDER_RAPORTOW).getFiles();
+    const folder = DriveApp.getFolderById(FOLDER_RAPORTOW);
+    if (kMail >= 0) {
+      const poMailu = {};
+      wysw.forEach((w) => { const m = String(w[kMail]).trim().toLowerCase(); if (String(w[kImie]).trim() && m) poMailu[m] = String(w[kImie]).trim(); });
+      raportyZGmaila(folder, poMailu, tz, wynik);
+    }
+    const pliki = folder.getFiles();
     while (pliki.hasNext()) {
       const plik = pliki.next();
       if (plik.isTrashed()) continue;
@@ -672,4 +680,49 @@ function dataIcs(v, tzid, tz) {
   else if (tzid && /GMT Standard|Greenwich|^UTC$/i.test(tzid)) strefa = 'Europe/London';
   // „Central European / Central Europe / W. Europe / Romance Standard Time” mają ten sam czas co Warszawa.
   return Utilities.parseDate(`${m[1]}-${m[2]}-${m[3]} ${m[4] || '00'}:${m[5] || '00'}`, strefa, 'yyyy-MM-dd HH:mm');
+}
+
+/* ---------------- Raporty Deep Dive z Gmaila → folder ---------------- */
+// Badanie wysyła raport jako załącznik „Raport_DeepDive_RRRR-MM-DD.pdf” z adresu uczestnika na lyrapolska.pl (→ Gmail).
+// Skrypt kopiuje taki załącznik do folderu raportów pod nazwą „RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf”
+// (data z nazwy załącznika, inaczej data wiadomości). Pliku o tej nazwie już w folderze – nie zapisuje ponownie.
+// Treści raportów nie czyta; przetworzone wiadomości zapamiętuje (bez ponownego pobierania załączników).
+
+const doNazwyPliku = (t) => String(t).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'L').replace(/[^A-Za-z0-9-]/g, '');
+
+function raportyZGmaila(folder, poMailu, tz, wynik) {
+  const props = PropertiesService.getScriptProperties();
+  const zrobione = JSON.parse(props.getProperty('RAPORTY_MAILE') || '[]');
+  const istnieja = {};
+  const it = folder.getFiles();
+  while (it.hasNext()) { const f = it.next(); if (!f.isTrashed()) istnieja[f.getName().toLowerCase()] = true; }
+  const moje = [Session.getEffectiveUser().getEmail(), 'jaroslaw.chybicki@lyrapolska.pl'].map((e) => String(e).toLowerCase());
+
+  GmailApp.search(`(filename:DeepDive OR subject:raport OR from:fortum.com) has:attachment filename:pdf newer_than:${ZAPROSZENIA_DNI}d -from:me`, 0, 100)
+    .forEach((watek) => watek.getMessages().forEach((msg) => {
+      const id = msg.getId();
+      if (zrobione.indexOf(id) >= 0) return;
+      const od = msg.getFrom(), nadawca = ((od.match(/<([^>]+)>/) || [])[1] || od).trim().toLowerCase();
+      if (moje.indexOf(nadawca) >= 0) { zrobione.push(id); return; }
+      const pdf = msg.getAttachments({ includeInlineImages: false })
+        .filter((a) => /deep[\s_-]*dive/i.test(a.getName()) && /\.pdf$/i.test(a.getName()))[0];
+      if (!pdf) { zrobione.push(id); return; }
+      const kiedy = Utilities.formatDate(msg.getDate(), tz, 'yyyy-MM-dd');
+      const imieNazwisko = poMailu[nadawca];
+      if (!imieNazwisko) {
+        wynik.uwagi.push(`Raport Deep Dive od ${nadawca} (${kiedy}): adres spoza arkusza – zapisz plik do folderu ręcznie.`);
+        zrobione.push(id);
+        return;
+      }
+      const data = (pdf.getName().match(/(\d{4}-\d{2}-\d{2})/) || [])[1] || kiedy;
+      const czesci = imieNazwisko.split(/\s+/);
+      const nazwa = `${data}_${doNazwyPliku(czesci.slice(1).join('-'))}_${doNazwyPliku(czesci[0])}_DeepDive.pdf`;
+      if (!istnieja[nazwa.toLowerCase()]) {
+        folder.createFile(pdf.copyBlob().setName(nazwa));
+        istnieja[nazwa.toLowerCase()] = true;
+        wynik.zapisane++;
+      }
+      zrobione.push(id);
+    }));
+  props.setProperty('RAPORTY_MAILE', JSON.stringify(zrobione.slice(-500)));
 }

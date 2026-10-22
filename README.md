@@ -128,6 +128,11 @@ pierwsza bez terminu. Każda wersja zaproszenia (UID + SEQUENCE) przetwarzana ra
 nowej wersji; odwołanie usuwa termin. Link Teams trafia do opisu wydarzenia i na stronę („Teams ↗” przy sesji). Strefy Outlooka
 („Central European Standard Time” itd.) liczone jak Warszawa. Zaproszeń nie trzeba dodawać ręcznie do Kalendarza Google.
 
+**Raporty Deep Dive z Gmaila → folder:** co godzinę skrypt szuka w Gmailu (60 dni) wiadomości z załącznikiem PDF zawierającym
+„DeepDive” w nazwie (badanie nadaje `Raport_DeepDive_RRRR-MM-DD.pdf`), rozpoznaje nadawcę po e-mailu z arkusza i kopiuje plik do folderu
+jako `RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf` (bez polskich znaków). Plików już istniejących nie dubluje, treści nie czyta,
+własne wiadomości pomija; raport z adresu spoza arkusza → uwaga na stronie. Przetworzone wiadomości: właściwość `RAPORTY_MAILE`.
+
 **Raporty Deep Dive (folder na Dysku → arkusz):** co godzinę skrypt sprawdza folder „Raporty Deep Dive (poufne)” (`FOLDER_RAPORTOW` w skrypcie)
 i wpisuje do pustej kolumny „Raport Deep Dive (data)” datę z nazwy pliku `RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf` (polskie znaki opcjonalne).
 Czyta wyłącznie nazwy plików, nie treść; daty wpisanej ręcznie nie zmienia; nierozpoznane nazwy trafiają do „Do uzupełnienia”.
