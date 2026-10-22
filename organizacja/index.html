@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<script>/* Adres katalogu bez końcowego „/” psułby ścieżki względne – dopisz go. */
+if(!/(\/|\.html?|\/index)$/.test(location.pathname))location.replace(location.pathname+'/'+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Organizacja programu | Odporni i gotowi</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../favicon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styl.css">
+<style>
+  .org-h { margin: 8px 0 6px; font-size: clamp(1.7rem, 4vw, 2.3rem); color: var(--deep); letter-spacing: -.01em; text-wrap: balance; }
+  .org-lead { color: var(--muted); max-width: 64ch; margin: 0 0 28px; }
+  .org-sec { margin: 0 0 36px; }
+  .org-sec h2 { font-size: 1.15rem; margin: 0 0 14px; }
+
+  /* oś programu */
+  .track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--line); list-style: none; margin: 0; padding: 0; }
+  .stage { padding: 16px 16px 0 0; display: grid; gap: 2px; position: relative; }
+  .stage::before { content: ""; position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--paper); border: 2px solid var(--mist-2); }
+  .stage.done::before { background: var(--teal); border-color: var(--teal); }
+  .stage.now::before { border-color: var(--teal); box-shadow: 0 0 0 4px var(--mist); }
+  .stage .when { font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stage .what { font-weight: 700; line-height: 1.3; }
+  .stage .state { font-size: .88rem; color: var(--muted); }
+  @media (max-width: 720px) {
+    .track { grid-template-columns: 1fr; border-top: 0; border-left: 2px solid var(--line); margin-left: 7px; }
+    .stage { padding: 0 0 18px 22px; } .stage::before { top: 4px; left: -8px; }
+  }
+
+  /* liczniki */
+  .counts { display: flex; flex-wrap: wrap; gap: 32px; }
+  .count { display: grid; gap: 4px; }
+  .count b { font-size: 2rem; font-weight: 700; color: var(--deep); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .count b small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  .count span { font-size: .88rem; color: var(--muted); }
+  .bar { height: 6px; width: 170px; background: var(--mist); border-radius: 3px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--teal); }
+
+  /* tabela */
+  .scroll { overflow-x: auto; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-m); }
+  table.uczestnicy { width: 100%; border-collapse: collapse; min-width: 760px; font-size: .95rem; }
+  .uczestnicy th { text-align: left; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .uczestnicy td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .uczestnicy tr:last-child td { border-bottom: 0; }
+  .uczestnicy .who { font-weight: 600; }
+  .uczestnicy .dt { font-variant-numeric: tabular-nums; font-size: .88rem; }
+  .cell { display: grid; gap: 4px; justify-items: start; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: .78rem; font-weight: 700; white-space: nowrap; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip.ok { background: #E3F2EA; color: #1D6B45; }
+  .chip.plan { background: var(--mist); color: var(--deep); }
+  .chip.wait { color: var(--muted); border: 1px dashed var(--mist-2); }
+  .chip.moved { background: #FBE7E6; color: #A82B26; }
+  .placeholder td { color: var(--muted); font-style: italic; }
+  .info { padding: 24px 16px; color: var(--muted); text-align: center; }
+  .meta { font-size: .82rem; color: var(--muted); margin-top: 10px; }
+
+  .note { font-size: .92rem; color: var(--muted); border-left: 3px solid var(--teal); padding: 4px 0 4px 14px; max-width: 70ch; }
+  .note b { color: var(--ink); }
+  @media (prefers-reduced-motion: no-preference) { .bar i { transition: width .4s ease; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="../"><img class="znak" src="../assets/znak-jasny.png" alt=""><span>Odporni i gotowi</span><img class="lyra" src="../logo.png" alt="Lyra Polska"></a>
+</div></header>
+<svg class="ridge" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1200V18L1080 40 980 22 860 48 760 26 640 44 560 30 430 50 330 24 220 42 120 28 0 44Z" fill="currentColor"/></svg>
+
+<!--
+  Dane pochodzą z arkusza Google „Fortum – uczestnicy i terminy”, zakładka „Strona”
+  (Plik → Udostępnij → Opublikuj w internecie → tylko zakładka „Strona” → CSV).
+  Wklej opublikowany adres CSV do atrybutu data-csv poniżej.
+-->
+<main class="wrap" id="org" data-csv="">
+  <nav class="okruszki" aria-label="Jesteś tutaj"><ol><li><a href="../">Strona główna</a></li><li aria-current="page">Organizacja programu</li></ol></nav>
+  <h1 class="org-h">Organizacja programu</h1>
+  <p class="org-lead">Postęp organizacyjny programu „Odporni i gotowi” dla zespołu zarządzającego Fortum: diagnozy Deep Dive i terminy sesji coachingowych. Dane odświeżają się automatycznie.</p>
+
+  <section class="org-sec" aria-label="Etapy programu"><ol class="track" id="track"></ol></section>
+  <section class="org-sec counts" id="counts" aria-label="Podsumowanie"></section>
+
+  <section class="org-sec">
+    <h2>Uczestnicy</h2>
+    <div class="scroll">
+      <table class="uczestnicy">
+        <thead><tr><th>Uczestnik</th><th>Diagnoza Deep Dive</th><th>Sesja 1</th><th>Sesja 2</th><th>Sesja 3</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="5" class="info">Wczytuję dane…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="meta" id="meta"></p>
+  </section>
+
+  <p class="note"><b>Poufność.</b> Strona zawiera wyłącznie dane organizacyjne: daty i statusy. Wyniki diagnozy Deep Dive oraz treść sesji coachingowych są poufne i nie są tu publikowane ani przekazywane organizacji.</p>
+</main>
+
+<footer id="stopka"><div class="wrap"><span>© 2026 Jarosław Chybicki · Lyra Polska</span><span class="flinks"><a href="../#napisz">Napisz wiadomość</a></span></div></footer>
+<script>
+(function () {
+  const TOTAL = 11;             // 10 członków PLT + Executive Assistant
+  const SESSIONS = TOTAL * 3;   // 33 sesje
+  const ODSWIEZ_MS = 60 * 1000;
+  const csvUrl = document.getElementById('org').dataset.csv;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let people = [];
+
+  // Prosty parser CSV (cudzysłowy, przecinki i nowe linie w polach).
+  function parseCsv(text) {
+    const rows = []; let row = [], f = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+      else if (c === '"') q = true;
+      else if (c === ',') { row.push(f); f = ''; }
+      else if (c === '\n') { row.push(f); rows.push(row); row = []; f = ''; }
+      else if (c !== '\r') f += c;
+    }
+    if (f !== '' || row.length) { row.push(f); rows.push(row); }
+    return rows;
+  }
+
+  // Akceptuje „2026-11-05 10:00”, „2026-11-05” oraz „05.11.2026 10:00”.
+  function parseDate(s) {
+    s = (s || '').trim(); if (!s) return null;
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2}))?/);
+    if (m) return { y: m[1], mo: m[2], d: m[3], t: m[4] ? m[4].padStart(2, '0') + ':' + m[5] : '' };
+    m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+    if (m) return { y: m[3], mo: m[2].padStart(2, '0'), d: m[1].padStart(2, '0'), t: m[4] ? m[4].padStart(2, '0') + ':' + m[5] : '' };
+    return { raw: s };
+  }
+  const fmt = (p, withTime) => !p ? '' : p.raw ? p.raw : `${p.d}.${p.mo}.${p.y}` + (withTime && p.t ? ' · ' + p.t : '');
+  const iso = (p) => p && !p.raw ? `${p.y}-${p.mo}-${p.d}` : '';
+
+  function status(s) {
+    const v = (s || '').toLowerCase();
+    if (v.startsWith('odbyt')) return ['ok', 'Odbyta'];
+    if (v.includes('przełoż') || v.includes('przeloz') || v.includes('odwoł')) return ['moved', 'Do przełożenia'];
+    return ['plan', 'Zaplanowana'];
+  }
+
+  function fromCsv(text) {
+    const rows = parseCsv(text);
+    const head = (rows.shift() || []).map((h) => h.trim().toLowerCase());
+    const col = (r, name) => r[head.indexOf(name)] || '';
+    return rows.map((r) => ({
+      name: col(r, 'uczestnik').trim(),
+      report: parseDate(col(r, 'raport')),
+      sessions: [1, 2, 3].map((n) => ({ at: parseDate(col(r, 's' + n)), status: col(r, 's' + n + '_status') })),
+    })).filter((p) => p.name);
+  }
+
+  function render() {
+    const today = new Date().toISOString().slice(0, 10);
+    const reports = people.filter((p) => p.report).length;
+    const all = people.flatMap((p) => p.sessions.filter((s) => s.at));
+    const planned = all.length;
+    const done = all.filter((s) => status(s.status)[0] === 'ok').length;
+
+    const stages = [
+      { when: '20.10.2026', what: 'Warsztat otwierający (4 h)', state: today >= '2026-10-20' ? 'Zrealizowany' : 'Zaplanowany', cls: today >= '2026-10-20' ? 'done' : '' },
+      { when: 'od 21.10.2026', what: 'Diagnoza Deep Dive', state: `${reports} z ${TOTAL} raportów`, cls: reports >= TOTAL ? 'done' : 'now' },
+      { when: 'listopad 2026 – styczeń 2027', what: 'Coaching indywidualny (3 sesje)', state: `${done} z ${SESSIONS} sesji odbytych`, cls: done >= SESSIONS ? 'done' : (planned ? 'now' : '') },
+      { when: '10.12.2026', what: 'Warsztat zamykający (8 h)', state: today >= '2026-12-10' ? 'Zrealizowany' : 'Zaplanowany', cls: today >= '2026-12-10' ? 'done' : '' },
+    ];
+    $('track').innerHTML = stages.map((s) => `<li class="stage ${s.cls}"><span class="when">${s.when}</span><span class="what">${s.what}</span><span class="state">${s.state}</span></li>`).join('');
+
+    const item = (n, of, label) => `<div class="count"><b>${n}<small> / ${of}</small></b><div class="bar"><i style="width:${Math.min(100, (n / of) * 100)}%"></i></div><span>${label}</span></div>`;
+    $('counts').innerHTML = item(reports, TOTAL, 'przesłanych raportów Deep Dive') + item(planned, SESSIONS, 'sesji z ustalonym terminem') + item(done, SESSIONS, 'sesji odbytych');
+
+    const sess = (s) => {
+      if (!s.at) return '<span class="chip wait">Termin do ustalenia</span>';
+      const [cls, label] = status(s.status);
+      return `<div class="cell"><span class="dt">${esc(fmt(s.at, true))}</span><span class="chip ${cls}">${label}</span></div>`;
+    };
+    const rows = people.map((p) => `<tr>
+      <td class="who">${esc(p.name)}</td>
+      <td>${p.report ? `<div class="cell"><span class="dt">${esc(fmt(p.report))}</span><span class="chip ok">Otrzymany</span></div>` : '<span class="chip wait">Oczekuje</span>'}</td>
+      ${p.sessions.map((s) => `<td>${sess(s)}</td>`).join('')}
+    </tr>`);
+    const missing = Math.max(0, TOTAL - people.length);
+    if (missing) rows.push(`<tr class="placeholder"><td colspan="5">Pozostali uczestnicy (${missing}) – zostaną dopisani po przesłaniu danych.</td></tr>`);
+    $('rows').innerHTML = rows.join('');
+  }
+
+  async function load() {
+    if (!csvUrl) {
+      render();
+      $('rows').innerHTML = '<tr><td colspan="5" class="info">Arkusz z danymi nie jest jeszcze podłączony.</td></tr>';
+      return;
+    }
+    try {
+      const res = await fetch(csvUrl + (csvUrl.includes('?') ? '&' : '?') + '_=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error(res.status);
+      people = fromCsv(await res.text());
+      render();
+      $('meta').textContent = 'Stan na ' + new Date().toLocaleString('pl-PL', { dateStyle: 'short', timeStyle: 'short' }) + '. Zmiany w arkuszu pojawiają się tu w ciągu kilku minut.';
+    } catch (e) {
+      if (!people.length) $('rows').innerHTML = '<tr><td colspan="5" class="info">Nie udało się wczytać danych. Odśwież stronę za chwilę.</td></tr>';
+    }
+  }
+
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, ODSWIEZ_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+
+})();
+</script>
+</body>
+</html>

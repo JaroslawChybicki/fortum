@@ -21,6 +21,7 @@ gra-sezon.html        gra decyzyjna „Tydzień przed sezonem grzewczym” (scen
 kalkulator.html       kalkulator kosztów (wartości domyślne w assets/kalkulator.js)
 badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku CONFIG)
 narzedzia/            narzędzia coachingowe – karty pracy do sesji 1:1 (osobna mini-aplikacja)
+organizacja/          postęp programu dla organizatorów (dane z arkusza Google, patrz niżej)
 tresci/               ← TREŚCI (edytowane w CMS)
   sekcje.json         kafelki + treść każdej podstrony (Markdown)
   strona.json         nagłówek, wstęp, dane kontaktowe, link do Lyry
@@ -92,6 +93,13 @@ nowe narzędzie = plik HTML na wzór istniejącego + wpis w tablicy `CATALOG` w 
 Kafelek na stronie głównej: „Narzędzia coachingowe” w CMS (link `narzedzia/`).
 Przewodnik prowadzącego (`przewodnik-coacha.md`) jest materiałem wewnętrznym i celowo NIE trafia do repozytorium –
 wszystko w repo jest publikowane na stronie.
+
+## Organizacja programu (`organizacja/`)
+Strona dla organizatorów (lyraedu.pl/fortum/organizacja): etapy programu, liczba raportów Deep Dive, terminy i statusy sesji.
+Nie jest podlinkowana ze strony głównej. Dane czyta na żywo z arkusza Google „Fortum – uczestnicy i terminy”
+(zakładka „Strona”, opublikowana w internecie jako CSV) – adres CSV jest w atrybucie `data-csv` w `organizacja/index.html`.
+Edytujesz tylko zakładkę „Uczestnicy”; strona odświeża dane co minutę, Google aktualizuje opublikowany CSV w ciągu kilku minut.
+Zakładka „Strona” celowo nie zawiera e-maili, telefonów ani haseł – tylko te dane są publiczne.
 
 ## Logo i favicon
 Źródło: logo wygenerowane w Gemini (JPG). Pliki:
