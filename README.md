@@ -116,6 +116,10 @@ Uruchomienie (raz, na komputerze):
 5. Adres kończący się na `/exec` wpisz w `organizacja/konfiguracja.js`.
 Po zmianie kodu skryptu: *Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa* (adres się nie zmienia).
 
+**Kalendarz sesji na stronie:** widok tygodnia (siatka godzin; na telefonie lista dni) i miesiąca (na telefonie kropki + lista wybranego dnia),
+z kolorami statusów i etapami programu (warsztaty) z `organizacja/konfiguracja.js` (`etapy`). Kliknięcie sesji przenosi do jej terminu w karcie uczestnika.
+Widok buduje się z danych arkusza – świadomie nie osadzamy Kalendarza Google, który pokazałby prywatne spotkania każdemu, kto zna hasło.
+
 **Kalendarz Google** (jednokierunkowo: arkusz → kalendarz): menu arkusza *Strona organizacyjna → Włącz synchronizację z kalendarzem*.
 Terminy sesji trafiają do głównego kalendarza właściciela skryptu jako **prywatne** wydarzenia (60 min, bez zaproszeń, w opisie e-mail i telefon
 uczestnika). Synchronizacja po każdym zapisie na stronie, po edycji arkusza (wyzwalacz instalowany) i co 15 minut. Skrypt zmienia tylko wydarzenia,

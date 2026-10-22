@@ -62,6 +62,22 @@ if(!/(\/|\.html?|\/index)$/.test(location.pathname))location.replace(location.pa
       <section class="org-box"><h2>Najbliższe sesje</h2><ol id="najblizsze" class="org-lista"></ol></section>
       <section class="org-box"><h2>Do uzupełnienia</h2><ul id="zalegle" class="org-lista"></ul></section>
     </div>
+    <section class="org-box kal" aria-labelledby="kal-h">
+      <div class="kal-bar">
+        <h2 id="kal-h">Kalendarz sesji</h2>
+        <div class="kal-widok" role="group" aria-label="Widok kalendarza">
+          <button type="button" data-widok="tydzien">Tydzień</button><button type="button" data-widok="miesiac">Miesiąc</button>
+        </div>
+      </div>
+      <div class="kal-nav">
+        <button type="button" class="btn ghost" data-krok="-1" aria-label="Poprzedni">‹</button>
+        <button type="button" class="btn ghost" data-krok="0">Dziś</button>
+        <button type="button" class="btn ghost" data-krok="1" aria-label="Następny">›</button>
+        <span class="kal-tytul" aria-live="polite"></span>
+      </div>
+      <div id="kalendarz"></div>
+      <p class="kal-legenda"><span class="kal-ev plan">zaplanowana</span><span class="kal-ev ok">odbyta</span><span class="kal-ev uwaga">do przełożenia</span><span class="kal-ev bez">bez statusu</span><span class="kal-ev etap">etap programu</span></p>
+    </section>
     <h2 class="org-h2">Uczestnicy</h2>
     <div id="uczestnicy" class="org-karty"></div>
     <p><button type="button" class="btn ghost" id="b-dodaj">+ Dodaj uczestnika</button></p>

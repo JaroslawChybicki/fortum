@@ -141,7 +141,119 @@
     $('#b-arkusz').href = dane.arkusz || '#';
     $('#b-arkusz').hidden = !dane.arkusz;
     $('.org-czas').textContent = 'Dane z arkusza: ' + new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    podsumowanie(lista);
+    pochodne(lista);
+  }
+
+  function pochodne(lista) { podsumowanie(lista); kalendarz(lista); }
+
+  /* ---------- kalendarz sesji (tydzień / miesiąc) ---------- */
+  const DNI = ['pon.', 'wt.', 'śr.', 'czw.', 'pt.', 'sob.', 'niedz.'];
+  const GODZ_OD = 8, GODZ_DO = 19, H = 44;      // siatka tygodnia: godziny i wysokość godziny w px
+  const kal = { widok: 'miesiac', kursor: new Date(), wybrany: null };
+  try { kal.widok = localStorage.getItem('fortum_org_widok') || kal.widok; } catch (e) {}
+  const dzien = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const klucz = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const dodajDni = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const poniedzialek = (d) => dodajDni(dzien(d), -((d.getDay() + 6) % 7));
+  const hhmm = (d) => d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+
+  function wydarzenia(lista) {
+    const ev = [];
+    lista.filter((o) => o.imie).forEach((o) => Object.keys(o.sesje).forEach((s) => {
+      const x = o.sesje[s], d = x.termin && x.termin.iso ? doDaty(x.termin.iso) : null;
+      if (!d) return;
+      const st = (x.status && x.status.wart || '').trim();
+      const minela = d.getTime() < Date.now();
+      ev.push({ d, koniec: new Date(d.getTime() + 3600e3), lp: o.lp, sesja: s, imie: o.imie, status: st,
+        klasa: klasaStatusu(st) || (minela ? 'bez' : 'plan') });
+    }));
+    ((window.ORG && window.ORG.etapy) || []).forEach((e) => {
+      const m = String(e.data || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);
+      if (m) ev.push({ d: new Date(+m[1], m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0)), etap: true, caly: !m[4], tytul: e.tytul || 'Etap programu', klasa: 'etap' });
+    });
+    return ev.sort((a, b) => a.d - b.d);
+  }
+
+  function chip(e, krotko) {
+    if (e.etap) return `<span class="kal-ev etap" title="${esc(e.tytul)}">${e.caly ? '' : `<b>${hhmm(e.d)}</b> `}${esc(e.tytul)}</span>`;
+    const opis = `${hhmm(e.d)} ${e.imie} · sesja ${e.sesja}${e.status ? ' · ' + e.status : ''}`;
+    return `<button type="button" class="kal-ev ${e.klasa}" data-lp="${esc(e.lp)}" data-sesja="${esc(e.sesja)}" title="${esc(opis)}">` +
+      `<b>${hhmm(e.d)}</b> ${esc(krotko ? e.imie.split(' ')[0] : e.imie)} <small>S${esc(e.sesja)}</small></button>`;
+  }
+
+  function agenda(d, ev) {
+    const dnia = ev.filter((e) => klucz(e.d) === klucz(d));
+    const tytul = d.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+    return `<div class="kal-agenda"><h3>${esc(tytul)}</h3>${dnia.length ? `<ul>${dnia.map((e) => `<li>${chip(e)}</li>`).join('')}</ul>`
+      : '<p class="org-pusto">Brak sesji tego dnia.</p>'}</div>`;
+  }
+
+  function kalendarz(lista) {
+    const host = $('#kalendarz');
+    if (!host || !dane) return;
+    const ev = wydarzenia(lista || model());
+    const dzis = klucz(new Date());
+    document.querySelectorAll('.kal-widok button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.widok === kal.widok));
+    let html = '', tytul = '';
+    if (kal.widok === 'miesiac') {
+      const k = kal.kursor, pierwszy = new Date(k.getFullYear(), k.getMonth(), 1);
+      const start = poniedzialek(pierwszy);
+      const tyg = Math.ceil(((pierwszy.getDay() + 6) % 7 + new Date(k.getFullYear(), k.getMonth() + 1, 0).getDate()) / 7);
+      tytul = pierwszy.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+      if (!kal.wybrany || kal.wybrany.getMonth() !== k.getMonth()) {
+        kal.wybrany = new Date().getMonth() === k.getMonth() && new Date().getFullYear() === k.getFullYear()
+          ? dzien(new Date()) : ((ev.find((e) => e.d.getMonth() === k.getMonth() && e.d.getFullYear() === k.getFullYear()) || {}).d || pierwszy);
+        kal.wybrany = dzien(kal.wybrany);
+      }
+      html = `<div class="kal-mies" role="grid">${DNI.map((n) => `<div class="kal-dn" role="columnheader">${n}</div>`).join('')}` +
+        Array.from({ length: tyg * 7 }, (_, i) => {
+          const d = dodajDni(start, i), kk = klucz(d), dnia = ev.filter((e) => klucz(e.d) === kk);
+          const kl = ['kal-dzien', d.getMonth() !== k.getMonth() ? 'inny' : '', kk === dzis ? 'dzis' : '', kk === klucz(kal.wybrany) ? 'wybrany' : ''].join(' ');
+          return `<div class="${kl}" role="gridcell" data-d="${kk}" tabindex="0" aria-label="${esc(d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' }))}: ${dnia.length} wydarzeń">` +
+            `<span class="kal-nr">${d.getDate()}</span><div class="kal-lista">${dnia.map((e) => chip(e, true)).join('')}</div>` +
+            `<div class="kal-kropki">${dnia.map((e) => `<i class="${e.klasa}"></i>`).join('')}</div></div>`;
+        }).join('') + '</div>' + agenda(kal.wybrany, ev);
+    } else {
+      const start = poniedzialek(kal.kursor), dni = Array.from({ length: 7 }, (_, i) => dodajDni(start, i));
+      const koniec = dni[6];
+      tytul = start.getMonth() === koniec.getMonth()
+        ? `${start.getDate()}–${koniec.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })}`
+        : `${start.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })} – ${koniec.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+      const wTyg = ev.filter((e) => e.d >= start && e.d < dodajDni(start, 7));
+      let od = GODZ_OD, doG = GODZ_DO;
+      wTyg.filter((e) => !e.caly).forEach((e) => { od = Math.min(od, e.d.getHours()); doG = Math.max(doG, Math.min(24, e.d.getHours() + 2)); });
+      const godziny = Array.from({ length: doG - od }, (_, i) => od + i);
+      const kolumna = (d) => {
+        const dnia = wTyg.filter((e) => klucz(e.d) === klucz(d) && !e.caly);
+        const pasy = [];   // nakładające się sesje obok siebie
+        dnia.forEach((e) => { let p = pasy.findIndex((k) => k <= e.d.getTime()); if (p < 0) { p = pasy.length; pasy.push(0); } pasy[p] = e.koniec ? e.koniec.getTime() : e.d.getTime() + 3600e3; e.pas = p; });
+        return dnia.map((e) => {
+          const top = ((e.d.getHours() - od) * 60 + e.d.getMinutes()) / 60 * H;
+          const w = 100 / Math.max(1, pasy.length);
+          return `<div class="kal-blok" style="top:${top}px;height:${H - 2}px;left:${e.pas * w}%;width:${w}%">${chip(e, pasy.length > 1)}</div>`;
+        }).join('');
+      };
+      html = `<div class="kal-tyg" style="--h:${H}px">
+        <div class="kal-tg-glowa"><div></div>${dni.map((d) => `<div class="kal-dn${klucz(d) === dzis ? ' dzis' : ''}">${DNI[(d.getDay() + 6) % 7]} <b>${d.getDate()}</b></div>`).join('')}</div>
+        <div class="kal-tg-caly"><div class="kal-h">cały dzień</div>${dni.map((d) => `<div>${wTyg.filter((e) => e.caly && klucz(e.d) === klucz(d)).map((e) => chip(e)).join('')}</div>`).join('')}</div>
+        <div class="kal-tg-siatka" style="height:${godziny.length * H}px"><div class="kal-h">${godziny.map((g) => `<span style="height:${H}px">${g}:00</span>`).join('')}</div>
+          ${dni.map((d) => `<div class="kal-kol${klucz(d) === dzis ? ' dzis' : ''}">${kolumna(d)}</div>`).join('')}</div>
+      </div>
+      <div class="kal-tyg-lista">${dni.map((d) => agenda(d, ev)).join('')}</div>`;
+    }
+    $('.kal-tytul').textContent = tytul;
+    host.innerHTML = html;
+  }
+
+  // Kliknięcie sesji w kalendarzu: przejście do jej terminu w karcie uczestnika.
+  function pokazSesje(lp, sesja) {
+    const karta = document.querySelector(`.org-karta[data-lp="${CSS.escape(lp)}"]`);
+    if (!karta) return;
+    const nr = [...karta.querySelectorAll('.org-sn')].findIndex((s) => s.textContent.trim() === 'Sesja ' + sesja);
+    const el = nr >= 0 ? karta.querySelectorAll('.org-sesja')[nr] : karta;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('podswietl'); setTimeout(() => el.classList.remove('podswietl'), 1800);
+    const inp = el.querySelector('input'); if (inp) inp.focus({ preventScroll: true });
   }
 
   function komunikat(el, tekst, blad) {
@@ -184,8 +296,8 @@
         setTimeout(() => { if (stan.textContent === '✓ Zapisano') { stan.textContent = ''; stan.className = 'org-stan'; } }, 2500);
         if (/imi/i.test(el.dataset.kol) || /status/i.test(el.dataset.kol)) {
           // imię i status zmieniają wygląd karty i listy – przerysuj, gdy nic nie jest edytowane
-          setTimeout(() => { if (!doZapisu && !document.activeElement.closest('.org-pole')) rysuj(); else podsumowanie(model()); }, 50);
-        } else podsumowanie(model());
+          setTimeout(() => { if (!doZapisu && !document.activeElement.closest('.org-pole')) rysuj(); else pochodne(model()); }, 50);
+        } else pochodne(model());
       } else if (r.kod === 'konflikt') {
         doZapisu--; await pobierz(true); doZapisu++;
         komunikat($('.org-msg-glob'), `Pole „${el.dataset.kol}” zmieniło się w międzyczasie w arkuszu (teraz: „${r.teraz || 'puste'}”). Wczytałem aktualne dane – wprowadź zmianę ponownie, jeśli nadal jest potrzebna.`, true);
@@ -231,6 +343,28 @@
     b.disabled = false;
   });
   $('#b-wyloguj').addEventListener('click', () => wyloguj());
+  document.querySelectorAll('.kal-widok button').forEach((b) => b.addEventListener('click', () => {
+    kal.widok = b.dataset.widok;
+    try { localStorage.setItem('fortum_org_widok', kal.widok); } catch (e) {}
+    if (kal.widok === 'miesiac' && kal.wybrany) kal.kursor = kal.wybrany;
+    kalendarz();
+  }));
+  document.querySelectorAll('.kal-nav button').forEach((b) => b.addEventListener('click', () => {
+    const n = +b.dataset.krok, k = kal.kursor;
+    if (!n) { kal.kursor = new Date(); kal.wybrany = dzien(new Date()); }
+    else if (kal.widok === 'miesiac') { kal.kursor = new Date(k.getFullYear(), k.getMonth() + n, 1); kal.wybrany = null; }
+    else kal.kursor = dodajDni(k, 7 * n);
+    kalendarz();
+  }));
+  $('#kalendarz').addEventListener('click', (e) => {
+    const s = e.target.closest('button.kal-ev[data-lp]');
+    if (s) { pokazSesje(s.dataset.lp, s.dataset.sesja); return; }
+    const d = e.target.closest('.kal-dzien');
+    if (d) { const [y, m, dd] = d.dataset.d.split('-').map(Number); kal.wybrany = new Date(y, m - 1, dd); kal.kursor = kal.wybrany; kalendarz(); }
+  });
+  $('#kalendarz').addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('kal-dzien')) { e.preventDefault(); e.target.click(); }
+  });
   $('#b-odswiez').addEventListener('click', () => pobierz());
   $('#b-dodaj').addEventListener('click', () => {
     pokazPuste++; rysuj();

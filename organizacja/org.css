@@ -74,3 +74,72 @@
   .org-box{padding:16px}
   .org-karta{padding:14px}
 }
+
+/* kalendarz sesji */
+.kal-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.kal-bar h2{margin:0}
+.kal-widok{display:inline-flex;border:1.5px solid var(--mist-2);border-radius:999px;padding:3px;background:var(--paper)}
+.kal-widok button{font:inherit;font-size:.9rem;font-weight:600;border:0;background:transparent;color:var(--deep);padding:6px 14px;border-radius:999px;cursor:pointer}
+.kal-widok button[aria-pressed="true"]{background:var(--deep);color:#fff}
+.kal-nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+.kal-nav .btn{padding:6px 12px;min-width:40px;justify-content:center}
+.kal-tytul{font-weight:700;color:var(--navy);margin-left:6px;display:inline-block}
+.kal-tytul::first-letter,.kal-agenda h3::first-letter{text-transform:uppercase}
+
+.kal-ev{display:block;width:100%;text-align:left;font:inherit;font-size:.78rem;line-height:1.3;border:0;border-left:3px solid var(--teal-2);
+  background:var(--mist);color:var(--ink);border-radius:6px;padding:2px 6px;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.kal-ev small{color:var(--muted);font-weight:600}
+.kal-ev.ok{border-left-color:#3a9a6a;background:#e3f1ea}
+.kal-ev.uwaga{border-left-color:var(--red);background:#fdecea}
+.kal-ev.bez{border-left-color:#c98a12;background:#fff4dc}
+.kal-ev.etap{border-left-color:var(--navy);background:var(--peach);cursor:default;font-weight:600}
+button.kal-ev:hover{filter:brightness(.96)}
+.kal-legenda{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.kal-legenda .kal-ev{display:inline-block;width:auto;cursor:default;margin:0}
+
+.kal-mies{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.kal-dn{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;padding:6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper)}
+.kal-dzien{min-height:96px;padding:4px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer;min-width:0}
+.kal-dzien.inny{background:#f6f7f7}
+.kal-dzien.inny .kal-nr{color:#a8b3b8}
+.kal-dzien.wybrany{box-shadow:inset 0 0 0 2px var(--teal)}
+.kal-nr{display:inline-grid;place-items:center;min-width:24px;height:24px;font-size:.82rem;font-weight:700;border-radius:50%;margin-bottom:2px}
+.kal-dzien.dzis .kal-nr{background:var(--deep);color:#fff}
+.kal-kropki{display:none}
+.kal-agenda{margin-top:14px}
+.kal-agenda h3{font-size:.95rem;margin:0 0 6px;color:var(--navy)}
+.kal-agenda ul{list-style:none;margin:0;padding:0;max-width:520px}
+.kal-agenda .kal-ev{font-size:.88rem;padding:6px 10px;white-space:normal}
+
+.kal-tyg{display:block}
+.kal-tg-glowa,.kal-tg-caly,.kal-tg-siatka{display:grid;grid-template-columns:52px repeat(7,minmax(0,1fr))}
+.kal-tg-glowa .kal-dn{text-align:center;border:0;background:transparent}
+.kal-tg-glowa .kal-dn b{display:block;font-size:1.1rem;color:var(--navy)}
+.kal-tg-glowa .kal-dn.dzis b{color:#fff;background:var(--deep);border-radius:50%;width:30px;height:30px;line-height:30px;margin:0 auto}
+.kal-tg-caly{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kal-tg-caly > div{padding:3px;border-left:1px solid var(--line);min-height:26px;min-width:0}
+.kal-h{font-size:.72rem;color:var(--muted);text-align:right;padding-right:6px;border:0 !important}
+.kal-tg-siatka{position:relative;margin-top:10px}
+.kal-tg-siatka .kal-h span{display:block;transform:translateY(-.6em)}
+.kal-kol{position:relative;border-left:1px solid var(--line);min-width:0;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--h) - 1px),var(--line) calc(var(--h) - 1px),var(--line) var(--h))}
+.kal-kol.dzis{background-color:rgba(230,240,241,.55)}
+.kal-blok{position:absolute;padding:1px 2px}
+.kal-blok .kal-ev{height:100%;white-space:normal;margin:0}
+.kal-tyg-lista{display:none}
+
+.org-sesja.podswietl{animation:podswietl 1.8s ease}
+@keyframes podswietl{0%,60%{background:rgba(95,168,175,.25)}100%{background:transparent}}
+
+@media (max-width:640px){
+  .kal-dzien{min-height:48px;padding:2px;text-align:center}
+  .kal-lista{display:none}
+  .kal-kropki{display:flex;flex-wrap:wrap;justify-content:center;gap:3px}
+  .kal-kropki i{width:7px;height:7px;border-radius:50%;background:var(--teal-2)}
+  .kal-kropki i.ok{background:#3a9a6a}.kal-kropki i.uwaga{background:var(--red)}.kal-kropki i.bez{background:#c98a12}.kal-kropki i.etap{background:var(--navy)}
+  .kal-dn{padding:4px 0;text-align:center;font-size:.68rem}
+  .kal-tyg{display:none}
+  .kal-tyg-lista{display:block}
+  .kal-tyg-lista .kal-agenda{margin-top:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+}
+@media (prefers-reduced-motion:reduce){.org-sesja.podswietl{animation:none;background:rgba(95,168,175,.2)}}
