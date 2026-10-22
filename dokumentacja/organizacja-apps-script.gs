@@ -13,11 +13,18 @@
  *      Wykonaj jako: Ja; Kto ma dostęp: Każdy → Wdróż → skopiuj adres URL kończący się na /exec.
  *   4. Adres wpisz w pliku organizacja/konfiguracja.js na stronie.
  * Zmiana kodu wymaga nowej wersji wdrożenia: Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa.
+ *
+ * Kalendarz Google (jednokierunkowo: arkusz → kalendarz): menu „Strona organizacyjna” →
+ * „Włącz synchronizację z kalendarzem”. Terminy sesji trafiają do Twojego głównego kalendarza jako prywatne
+ * wydarzenia, bez zaproszeń. Zmiana terminu (w arkuszu lub na stronie) przesuwa wydarzenie, usunięcie terminu
+ * usuwa wydarzenie. Skrypt zmienia wyłącznie wydarzenia, które sam utworzył.
  */
 
 const KARTA = 'Uczestnicy';  // nazwa karty z danymi; gdy jej brak – pierwsza karta arkusza
 // Kolumny, które NIGDY nie trafiają na stronę i nie mogą być z niej zmienione (np. hasła do stref uczestników).
 const UKRYTE = /has[łl]o|adres strony/i;
+const CZAS_SESJI_MIN = 60;   // długość wydarzenia w kalendarzu
+const TYTUL_SESJI = 'Fortum · Sesja';
 const MAKS_BLEDOW = 8;       // tyle błędnych haseł…
 const BLOKADA_S = 15 * 60;   // …blokuje logowanie na 15 minut
 
@@ -25,6 +32,10 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('Strona organizacyjna')
     .addItem('Ustaw lub zmień hasło', 'ustawHaslo')
     .addItem('Odblokuj logowanie', 'odblokuj')
+    .addSeparator()
+    .addItem('Włącz synchronizację z kalendarzem', 'wlaczKalendarz')
+    .addItem('Synchronizuj kalendarz teraz', 'synchronizujZMenu')
+    .addItem('Wyłącz synchronizację z kalendarzem', 'wylaczKalendarz')
     .addToUi();
 }
 
@@ -76,7 +87,13 @@ function doPost(e) {
 
   try {
     if (z.akcja === 'pobierz') return json(pobierz());
-    if (z.akcja === 'zapisz') return json(zapisz(z));
+    if (z.akcja === 'zapisz') {
+      const w = zapisz(z);
+      if (w.ok && kalendarzWlaczony()) {
+        try { synchronizujKalendarz(); w.kalendarz = 'ok'; } catch (x) { w.kalendarz = x.message; }
+      }
+      return json(w);
+    }
     return json({ ok: false, blad: 'Nieznana akcja.' });
   } catch (x) {
     return json({ ok: false, blad: 'Błąd arkusza: ' + x.message });
@@ -168,6 +185,115 @@ function zapisz(z) {
     }
     SpreadsheetApp.flush();
     return { ok: true, wartosc: kom.getDisplayValue(), iso: iso(kom.getValue(), tz) };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* ---------------- Kalendarz Google (arkusz → kalendarz) ---------------- */
+
+const kalendarzWlaczony = () => PropertiesService.getScriptProperties().getProperty('KAL_WLACZONA') === '1';
+
+function wlaczKalendarz() {
+  const ui = SpreadsheetApp.getUi();
+  ScriptApp.getProjectTriggers()
+    .filter((t) => ['poEdycji', 'synchronizujKalendarz'].includes(t.getHandlerFunction()))
+    .forEach((t) => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('poEdycji').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
+  ScriptApp.newTrigger('synchronizujKalendarz').timeBased().everyMinutes(15).create();
+  PropertiesService.getScriptProperties().setProperty('KAL_WLACZONA', '1');
+  const r = synchronizujKalendarz();
+  ui.alert('Synchronizacja z kalendarzem włączona.',
+    `Wydarzeń w kalendarzu: ${r.razem} (nowe: ${r.nowe}, zmienione: ${r.zmienione}, usunięte: ${r.usuniete}).\n\n` +
+    'Kalendarz aktualizuje się po każdej zmianie w arkuszu i na stronie, a dodatkowo co 15 minut.\n' +
+    'Pamiętaj o nowej wersji wdrożenia (Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa).', ui.ButtonSet.OK);
+}
+
+function wylaczKalendarz() {
+  ScriptApp.getProjectTriggers()
+    .filter((t) => ['poEdycji', 'synchronizujKalendarz'].includes(t.getHandlerFunction()))
+    .forEach((t) => ScriptApp.deleteTrigger(t));
+  PropertiesService.getScriptProperties().deleteProperty('KAL_WLACZONA');
+  SpreadsheetApp.getUi().alert('Synchronizacja wyłączona. Istniejące wydarzenia zostają w kalendarzu.');
+}
+
+function synchronizujZMenu() {
+  const r = synchronizujKalendarz();
+  SpreadsheetApp.getUi().alert(`Kalendarz zsynchronizowany: ${r.razem} wydarzeń (nowe: ${r.nowe}, zmienione: ${r.zmienione}, usunięte: ${r.usuniete}).`);
+}
+
+// Wyzwalacz instalowany przy edycji arkusza (prosty onEdit nie ma dostępu do kalendarza).
+function poEdycji(e) {
+  if (!kalendarzWlaczony()) return;
+  if (e && e.range && e.range.getSheet().getName() !== karta().getName()) return;
+  synchronizujKalendarz();
+}
+
+function synchronizujKalendarz() {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sh = karta(), u = uklad(sh), url = sh.getParent().getUrl();
+    const props = PropertiesService.getScriptProperties();
+    const mapa = JSON.parse(props.getProperty('KAL_MAPA') || '{}');   // „lp|sesja” → id wydarzenia
+    const kal = CalendarApp.getDefaultCalendar();
+    const kol = (re) => u.kolumny.findIndex((k) => re.test(k));
+    const kImie = kol(/imi/i), kMail = kol(/mail/i), kTel = kol(/telefon/i);
+    const sesje = [];
+    u.kolumny.forEach((k, i) => {
+      const m = k.match(/sesja\s*(\d+).*termin/i);
+      if (m) sesje.push({ nr: m[1], termin: i, status: u.kolumny.findIndex((x) => new RegExp('sesja\\s*' + m[1] + '\\b.*status', 'i').test(x)) });
+    });
+
+    const wart = u.liczba ? sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length).getValues() : [];
+    const wysw = u.liczba ? sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length).getDisplayValues() : [];
+    const docelowe = {};
+    wart.forEach((w, r) => {
+      const imie = kImie >= 0 ? String(wysw[r][kImie]).trim() : '';
+      if (!imie) return;
+      sesje.forEach((s) => {
+        const start = w[s.termin];
+        if (!(start instanceof Date)) return;
+        const status = s.status >= 0 ? String(wysw[r][s.status]).trim() : '';
+        docelowe[String(wysw[r][0]).trim() + '|' + s.nr] = {
+          start, koniec: new Date(start.getTime() + CZAS_SESJI_MIN * 60000),
+          tytul: `${TYTUL_SESJI} ${s.nr} · ${imie}` + (/prze[łl]o[żz]/i.test(status) ? ' (do przełożenia)' : ''),
+          opis: [`Odporni i gotowi – sesja coachingowa ${s.nr}.`,
+            kMail >= 0 && wysw[r][kMail] ? 'E-mail: ' + wysw[r][kMail] : '',
+            kTel >= 0 && wysw[r][kTel] ? 'Telefon: ' + wysw[r][kTel] : '',
+            status ? 'Status: ' + status : '', '', 'Zmieniaj termin w arkuszu lub na stronie organizacyjnej, nie w kalendarzu:', url,
+          ].filter((x, i, a) => x !== '' || (i > 0 && a[i - 1] !== '')).join('\n'),
+        };
+      });
+    });
+
+    const wynik = { nowe: 0, zmienione: 0, usuniete: 0, razem: 0 };
+    Object.keys(mapa).forEach((klucz) => {
+      if (docelowe[klucz]) return;
+      const ev = kal.getEventById(mapa[klucz]);
+      if (ev) { ev.deleteEvent(); wynik.usuniete++; }
+      delete mapa[klucz];
+    });
+    Object.keys(docelowe).forEach((klucz) => {
+      const d = docelowe[klucz];
+      let ev = mapa[klucz] ? kal.getEventById(mapa[klucz]) : null;
+      if (!ev) {
+        ev = kal.createEvent(d.tytul, d.start, d.koniec, { description: d.opis });
+        ev.setVisibility(CalendarApp.Visibility.PRIVATE);
+        ev.setTag('odporni-i-gotowi', klucz);
+        mapa[klucz] = ev.getId();
+        wynik.nowe++;
+      } else {
+        let zmiana = false;
+        if (ev.getStartTime().getTime() !== d.start.getTime() || ev.getEndTime().getTime() !== d.koniec.getTime()) { ev.setTime(d.start, d.koniec); zmiana = true; }
+        if (ev.getTitle() !== d.tytul) { ev.setTitle(d.tytul); zmiana = true; }
+        if (ev.getDescription() !== d.opis) { ev.setDescription(d.opis); zmiana = true; }
+        if (zmiana) wynik.zmienione++;
+      }
+      wynik.razem++;
+    });
+    props.setProperty('KAL_MAPA', JSON.stringify(mapa));
+    return wynik;
   } finally {
     lock.releaseLock();
   }

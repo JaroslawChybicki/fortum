@@ -180,6 +180,7 @@
         el.dataset.stara = r.wartosc;
         aktualizujModel(el.dataset.lp, el.dataset.kol, r.wartosc, r.iso);
         stan.className = 'org-stan ok'; stan.textContent = '✓ Zapisano';
+        if (r.kalendarz && r.kalendarz !== 'ok') komunikat($('.org-msg-glob'), 'Zapisano w arkuszu, ale kalendarz Google się nie zaktualizował (' + r.kalendarz + '). Kalendarz nadrobi zmiany przy następnej synchronizacji (co 15 minut).', true);
         setTimeout(() => { if (stan.textContent === '✓ Zapisano') { stan.textContent = ''; stan.className = 'org-stan'; } }, 2500);
         if (/imi/i.test(el.dataset.kol) || /status/i.test(el.dataset.kol)) {
           // imię i status zmieniają wygląd karty i listy – przerysuj, gdy nic nie jest edytowane

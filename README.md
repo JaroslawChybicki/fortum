@@ -116,6 +116,12 @@ Uruchomienie (raz, na komputerze):
 5. Adres kończący się na `/exec` wpisz w `organizacja/konfiguracja.js`.
 Po zmianie kodu skryptu: *Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa* (adres się nie zmienia).
 
+**Kalendarz Google** (jednokierunkowo: arkusz → kalendarz): menu arkusza *Strona organizacyjna → Włącz synchronizację z kalendarzem*.
+Terminy sesji trafiają do głównego kalendarza właściciela skryptu jako **prywatne** wydarzenia (60 min, bez zaproszeń, w opisie e-mail i telefon
+uczestnika). Synchronizacja po każdym zapisie na stronie, po edycji arkusza (wyzwalacz instalowany) i co 15 minut. Skrypt zmienia tylko wydarzenia,
+które sam utworzył (mapa „Lp|sesja → id wydarzenia” we właściwościach skryptu). Termin zmieniaj w arkuszu lub na stronie – zmiana w kalendarzu
+zostanie nadpisana. Długość i tytuł: stałe `CZAS_SESJI_MIN`, `TYTUL_SESJI` na początku skryptu.
+
 ## Logo i favicon
 Źródło: logo wygenerowane w Gemini (JPG). Pliki:
 - `assets/znak-jasny.png` – znak w nagłówku (wersja na ciemne tło),
