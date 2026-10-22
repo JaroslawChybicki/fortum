@@ -130,7 +130,7 @@
       ? najbl.slice(0, 10).map((x) => `<li><time>${fmt.format(x.d)}</time> ${x.t}${x.st ? ` <span class="org-tag ${klasaStatusu(x.st)}">${esc(x.st)}</span>` : ''}</li>`).join('')
       : '<li class="org-pusto">Brak zaplanowanych sesji.</li>';
     ((dane.kalendarz && dane.kalendarz.uwagi) || []).slice().reverse().forEach((u) =>
-      zaleg.push(`<span class="org-tag">kalendarz ${esc(new Date(u.czas).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' }))}</span> ${esc(u.tekst)}`));
+      zaleg.push(`<span class="org-tag">automat ${esc(new Date(u.czas).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' }))}</span> ${esc(u.tekst)}`));
     $('#zalegle').innerHTML = zaleg.length ? zaleg.map((t) => `<li>${t}</li>`).join('') : '<li class="org-pusto">Wszystko aktualne.</li>';
   }
 

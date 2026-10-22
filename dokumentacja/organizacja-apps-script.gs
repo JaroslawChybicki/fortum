@@ -18,6 +18,9 @@
  * Terminy sesji trafiają do Twojego głównego kalendarza jako prywatne wydarzenia, bez zaproszeń. Przesunięcie
  * lub usunięcie wydarzenia w kalendarzu zmienia arkusz; nową sesję dodasz w kalendarzu tytułem „Fortum S2 Nazwisko”.
  * Skrypt zmienia wyłącznie wydarzenia sesji (utworzone przez siebie albo z tytułem zaczynającym się od „Fortum”).
+ *
+ * Raporty Deep Dive: co godzinę skrypt sprawdza folder FOLDER_RAPORTOW i wpisuje do pustej kolumny
+ * „Raport Deep Dive (data)” datę z nazwy pliku „RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf”. Treści raportów nie otwiera.
  */
 
 const KARTA = 'Uczestnicy';  // nazwa karty z danymi; gdy jej brak – pierwsza karta arkusza
@@ -25,6 +28,8 @@ const KARTA = 'Uczestnicy';  // nazwa karty z danymi; gdy jej brak – pierwsza 
 const UKRYTE = /has[łl]o|adres strony/i;
 const CZAS_SESJI_MIN = 60;   // długość wydarzenia w kalendarzu
 const TYTUL_SESJI = 'Fortum · Sesja';
+// Folder z raportami Deep Dive; nazwy plików: RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf. Skrypt czyta WYŁĄCZNIE nazwy plików.
+const FOLDER_RAPORTOW = '1TE8K1Xk2RiBsfOkcElO_jwVo0tjxNvK-';
 const STREFA = 'Europe/Warsaw';   // strefa czasowa terminów (arkusz po konwersji z .xlsx bywa ustawiony na inną)
 const MAKS_BLEDOW = 8;       // tyle błędnych haseł…
 const BLOKADA_S = 15 * 60;   // …blokuje logowanie na 15 minut
@@ -37,6 +42,8 @@ function onOpen() {
     .addItem('Włącz synchronizację z kalendarzem', 'wlaczKalendarz')
     .addItem('Synchronizuj kalendarz teraz', 'synchronizujZMenu')
     .addItem('Wyłącz synchronizację z kalendarzem', 'wylaczKalendarz')
+    .addSeparator()
+    .addItem('Sprawdź raporty Deep Dive teraz', 'sprawdzRaportyZMenu')
     .addToUi();
 }
 
@@ -209,7 +216,7 @@ const bezOgonkow = (t) => String(t).toLowerCase().normalize('NFD').replace(/[\u0
 
 function usunWyzwalacze() {
   ScriptApp.getProjectTriggers()
-    .filter((t) => ['poEdycji', 'synchronizujKalendarz'].includes(t.getHandlerFunction()))
+    .filter((t) => ['poEdycji', 'synchronizujKalendarz', 'sprawdzRaporty'].includes(t.getHandlerFunction()))
     .forEach((t) => ScriptApp.deleteTrigger(t));
 }
 
@@ -219,9 +226,11 @@ function wlaczKalendarz() {
   ScriptApp.newTrigger('poEdycji').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
   ScriptApp.newTrigger('synchronizujKalendarz').timeBased().everyMinutes(15).create();
   ScriptApp.newTrigger('synchronizujKalendarz').forUserCalendar(Session.getEffectiveUser().getEmail()).onEventUpdated().create();
+  ScriptApp.newTrigger('sprawdzRaporty').timeBased().everyHours(1).create();
   PropertiesService.getScriptProperties().setProperty('KAL_WLACZONA', '1');
+  const rr = sprawdzRaporty();
   const r = synchronizujKalendarz();
-  ui.alert('Synchronizacja z kalendarzem włączona (w obie strony).', podsumujWynik(r) + '\n\n' +
+  ui.alert('Synchronizacja z kalendarzem włączona (w obie strony).', podsumujWynik(r) + '\n\n' + podsumujRaporty(rr) + '\n\n' +
     'Kalendarz aktualizuje się po każdej zmianie w arkuszu i na stronie, arkusz – po każdej zmianie w kalendarzu; dodatkowo co 15 minut.\n' +
     'Nową sesję w kalendarzu dodasz tytułem w rodzaju „Fortum S2 Domańska”.\n' +
     'Pamiętaj o nowej wersji wdrożenia (Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa).', ui.ButtonSet.OK);
@@ -398,6 +407,61 @@ function synchronizujKalendarz() {
     });
 
     props.setProperty('KAL_MAPA', JSON.stringify(mapa));
+    if (wynik.uwagi.length) zapiszUwagi(wynik.uwagi);
+    SpreadsheetApp.flush();
+    return wynik;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* ---------------- Raporty Deep Dive (folder na Dysku → arkusz) ---------------- */
+// Skrypt czyta wyłącznie NAZWY plików w folderze; treści raportów nie otwiera i nigdzie nie kopiuje.
+// Wpisuje datę tylko do pustej komórki – daty wpisanej ręcznie nie zmienia.
+
+function sprawdzRaportyZMenu() {
+  SpreadsheetApp.getUi().alert(podsumujRaporty(sprawdzRaporty()));
+}
+
+function podsumujRaporty(r) {
+  return `Raporty Deep Dive: w folderze ${r.pliki}, nowe daty w arkuszu: ${r.wpisane}.` + (r.uwagi.length ? '\n• ' + r.uwagi.join('\n• ') : '');
+}
+
+function sprawdzRaporty() {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(25000);
+  try {
+    const ss = SpreadsheetApp.getActive(), sh = karta(), u = uklad(sh), tz = ss.getSpreadsheetTimeZone();
+    const wynik = { pliki: 0, wpisane: 0, uwagi: [] };
+    const kRaport = u.kolumny.findIndex((k) => /deep\s*dive|raport/i.test(k));
+    const kImie = u.kolumny.findIndex((k) => /imi/i.test(k));
+    if (kRaport < 0 || kImie < 0 || !u.liczba) return wynik;
+    const zakres = sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length);
+    const wysw = zakres.getDisplayValues();
+    const osoby = wysw.map((w, r) => ({ r, imie: String(w[kImie]).trim(), slowa: bezOgonkow(w[kImie]).split(/\s+/).filter(Boolean), raport: String(w[kRaport]).trim() }))
+      .filter((o) => o.imie);
+
+    const pliki = DriveApp.getFolderById(FOLDER_RAPORTOW).getFiles();
+    while (pliki.hasNext()) {
+      const plik = pliki.next();
+      if (plik.isTrashed()) continue;
+      const nazwa = plik.getName();
+      wynik.pliki++;
+      const m = nazwa.match(/^(\d{4})-(\d{2})-(\d{2})_([^_]+)_([^_]+)_deep\s*dive/i);
+      if (!m) { wynik.uwagi.push(`Raport „${nazwa}”: nazwa niezgodna ze wzorem RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf.`); continue; }
+      const nazwisko = bezOgonkow(m[4]), imie = bezOgonkow(m[5]);
+      const pasuje = osoby.filter((o) => o.slowa.includes(nazwisko) && o.slowa.includes(imie));
+      if (pasuje.length !== 1) {
+        wynik.uwagi.push(`Raport „${nazwa}”: ${pasuje.length ? 'pasuje do kilku osób' : 'nie ma takiej osoby w arkuszu'}.`);
+        continue;
+      }
+      const o = pasuje[0];
+      if (o.raport) continue;                                   // data już wpisana – nie zmieniamy
+      const data = Utilities.parseDate(`${m[1]}-${m[2]}-${m[3]}`, tz, 'yyyy-MM-dd');
+      sh.getRange(u.pierwszy + o.r, kRaport + 1).setValue(data).setNumberFormat('dd.mm.yyyy');
+      o.raport = `${m[3]}.${m[2]}.${m[1]}`;
+      wynik.wpisane++;
+    }
     if (wynik.uwagi.length) zapiszUwagi(wynik.uwagi);
     SpreadsheetApp.flush();
     return wynik;

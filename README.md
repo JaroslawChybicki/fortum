@@ -121,6 +121,11 @@ Po zmianie kodu skryptu: *Wdróż → Zarządzaj wdrożeniami → ołówek → W
 z kolorami statusów i etapami programu (warsztaty) z `organizacja/konfiguracja.js` (`etapy`). Kliknięcie sesji przenosi do jej terminu w karcie uczestnika.
 Widok buduje się z danych arkusza – świadomie nie osadzamy Kalendarza Google, który pokazałby prywatne spotkania każdemu, kto zna hasło.
 
+**Raporty Deep Dive (folder na Dysku → arkusz):** co godzinę skrypt sprawdza folder „Raporty Deep Dive (poufne)” (`FOLDER_RAPORTOW` w skrypcie)
+i wpisuje do pustej kolumny „Raport Deep Dive (data)” datę z nazwy pliku `RRRR-MM-DD_Nazwisko_Imię_DeepDive.pdf` (polskie znaki opcjonalne).
+Czyta wyłącznie nazwy plików, nie treść; daty wpisanej ręcznie nie zmienia; nierozpoznane nazwy trafiają do „Do uzupełnienia”.
+Wyzwalacz tworzy „Włącz synchronizację z kalendarzem”; ręcznie: menu *Sprawdź raporty Deep Dive teraz*.
+
 **Kalendarz Google – synchronizacja w obie strony** (menu arkusza *Strona organizacyjna → Włącz synchronizację z kalendarzem*):
 - termin w arkuszu/na stronie → prywatne wydarzenie w głównym kalendarzu (60 min, bez zaproszeń, w opisie e-mail i telefon);
 - przesunięcie wydarzenia w kalendarzu → nowy termin w arkuszu; usunięcie wydarzenia → termin znika z arkusza (status zostaje);
