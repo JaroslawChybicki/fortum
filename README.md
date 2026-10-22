@@ -120,11 +120,15 @@ Po zmianie kodu skryptu: *Wdróż → Zarządzaj wdrożeniami → ołówek → W
 z kolorami statusów i etapami programu (warsztaty) z `organizacja/konfiguracja.js` (`etapy`). Kliknięcie sesji przenosi do jej terminu w karcie uczestnika.
 Widok buduje się z danych arkusza – świadomie nie osadzamy Kalendarza Google, który pokazałby prywatne spotkania każdemu, kto zna hasło.
 
-**Kalendarz Google** (jednokierunkowo: arkusz → kalendarz): menu arkusza *Strona organizacyjna → Włącz synchronizację z kalendarzem*.
-Terminy sesji trafiają do głównego kalendarza właściciela skryptu jako **prywatne** wydarzenia (60 min, bez zaproszeń, w opisie e-mail i telefon
-uczestnika). Synchronizacja po każdym zapisie na stronie, po edycji arkusza (wyzwalacz instalowany) i co 15 minut. Skrypt zmienia tylko wydarzenia,
-które sam utworzył (mapa „Lp|sesja → id wydarzenia” we właściwościach skryptu). Termin zmieniaj w arkuszu lub na stronie – zmiana w kalendarzu
-zostanie nadpisana. Długość i tytuł: stałe `CZAS_SESJI_MIN`, `TYTUL_SESJI` na początku skryptu.
+**Kalendarz Google – synchronizacja w obie strony** (menu arkusza *Strona organizacyjna → Włącz synchronizację z kalendarzem*):
+- termin w arkuszu/na stronie → prywatne wydarzenie w głównym kalendarzu (60 min, bez zaproszeń, w opisie e-mail i telefon);
+- przesunięcie wydarzenia w kalendarzu → nowy termin w arkuszu; usunięcie wydarzenia → termin znika z arkusza (status zostaje);
+- nowe wydarzenie z tytułem zaczynającym się od „Fortum” i numerem sesji, np. „Fortum S2 Domańska” → termin w arkuszu
+  (osoba rozpoznawana po imieniu lub nazwisku; tytuł zostaje ujednolicony); „Fortum – warsztat” bez numeru jest pomijane;
+- zmiana po obu stronach naraz → wygrywa arkusz; konflikty, nierozpoznane wydarzenia i usunięcia są na stronie w „Do uzupełnienia” (7 dni);
+- zabezpieczenie: gdy naraz znika ponad połowa sesji, arkusz nie jest czyszczony (ostrzeżenie);
+- wyzwalacze: edycja arkusza, zmiana w kalendarzu, co 15 minut; sprawdzany zakres kalendarza: 90 dni wstecz, 240 naprzód.
+Skrypt zmienia tylko wydarzenia sesji (mapa „Lp|sesja → id wydarzenia i ostatni termin” we właściwościach skryptu, znacznik `odporni-i-gotowi`).
 
 ## Logo i favicon
 Źródło: logo wygenerowane w Gemini (JPG). Pliki:

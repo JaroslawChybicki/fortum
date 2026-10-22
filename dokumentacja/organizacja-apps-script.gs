@@ -14,10 +14,10 @@
  *   4. Adres wpisz w pliku organizacja/konfiguracja.js na stronie.
  * Zmiana kodu wymaga nowej wersji wdrożenia: Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa.
  *
- * Kalendarz Google (jednokierunkowo: arkusz → kalendarz): menu „Strona organizacyjna” →
- * „Włącz synchronizację z kalendarzem”. Terminy sesji trafiają do Twojego głównego kalendarza jako prywatne
- * wydarzenia, bez zaproszeń. Zmiana terminu (w arkuszu lub na stronie) przesuwa wydarzenie, usunięcie terminu
- * usuwa wydarzenie. Skrypt zmienia wyłącznie wydarzenia, które sam utworzył.
+ * Kalendarz Google (w obie strony): menu „Strona organizacyjna” → „Włącz synchronizację z kalendarzem”.
+ * Terminy sesji trafiają do Twojego głównego kalendarza jako prywatne wydarzenia, bez zaproszeń. Przesunięcie
+ * lub usunięcie wydarzenia w kalendarzu zmienia arkusz; nową sesję dodasz w kalendarzu tytułem „Fortum S2 Nazwisko”.
+ * Skrypt zmienia wyłącznie wydarzenia sesji (utworzone przez siebie albo z tytułem zaczynającym się od „Fortum”).
  */
 
 const KARTA = 'Uczestnicy';  // nazwa karty z danymi; gdy jej brak – pierwsza karta arkusza
@@ -141,6 +141,7 @@ function pobierz() {
   return {
     ok: true, kolumny: tylko(u.kolumny), wiersze, daty,
     statusy: statusy(sh, u), arkusz: sh.getParent().getUrl(), czas: new Date().toISOString(),
+    kalendarz: kalendarzWlaczony() ? { uwagi: uwagiKalendarza() } : null,
   };
 }
 
@@ -190,36 +191,54 @@ function zapisz(z) {
   }
 }
 
-/* ---------------- Kalendarz Google (arkusz → kalendarz) ---------------- */
+/* ---------------- Kalendarz Google (synchronizacja w obie strony) ---------------- */
+// Zasady (decyzja właściciela 22.10.2026):
+// • nowy lub zmieniony termin w arkuszu/na stronie → wydarzenie w głównym kalendarzu (prywatne, bez zaproszeń);
+// • przesunięcie wydarzenia sesji w kalendarzu → nowy termin w arkuszu;
+// • nowe wydarzenie z tytułem „Fortum … S2 … Nazwisko” → termin w arkuszu (skrypt rozpoznaje sesję i osobę);
+// • usunięcie wydarzenia w kalendarzu → termin znika z arkusza; usunięcie terminu w arkuszu → wydarzenie znika;
+// • zmiana po obu stronach naraz → wygrywa arkusz (z uwagą na stronie).
+// Skrypt zmienia tylko wydarzenia sesji: utworzone przez siebie albo przejęte z tytułem „Fortum…”.
+
+const OKNO_WSTECZ_DNI = 90, OKNO_NAPRZOD_DNI = 240;   // zakres kalendarza sprawdzany przy synchronizacji
 
 const kalendarzWlaczony = () => PropertiesService.getScriptProperties().getProperty('KAL_WLACZONA') === '1';
+const minuty = (d) => (d ? Math.round(d.getTime() / 60000) : null);
+const bezOgonkow = (t) => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
 
-function wlaczKalendarz() {
-  const ui = SpreadsheetApp.getUi();
+function usunWyzwalacze() {
   ScriptApp.getProjectTriggers()
     .filter((t) => ['poEdycji', 'synchronizujKalendarz'].includes(t.getHandlerFunction()))
     .forEach((t) => ScriptApp.deleteTrigger(t));
+}
+
+function wlaczKalendarz() {
+  const ui = SpreadsheetApp.getUi();
+  usunWyzwalacze();
   ScriptApp.newTrigger('poEdycji').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
   ScriptApp.newTrigger('synchronizujKalendarz').timeBased().everyMinutes(15).create();
+  ScriptApp.newTrigger('synchronizujKalendarz').forUserCalendar(Session.getEffectiveUser().getEmail()).onEventUpdated().create();
   PropertiesService.getScriptProperties().setProperty('KAL_WLACZONA', '1');
   const r = synchronizujKalendarz();
-  ui.alert('Synchronizacja z kalendarzem włączona.',
-    `Wydarzeń w kalendarzu: ${r.razem} (nowe: ${r.nowe}, zmienione: ${r.zmienione}, usunięte: ${r.usuniete}).\n\n` +
-    'Kalendarz aktualizuje się po każdej zmianie w arkuszu i na stronie, a dodatkowo co 15 minut.\n' +
+  ui.alert('Synchronizacja z kalendarzem włączona (w obie strony).', podsumujWynik(r) + '\n\n' +
+    'Kalendarz aktualizuje się po każdej zmianie w arkuszu i na stronie, arkusz – po każdej zmianie w kalendarzu; dodatkowo co 15 minut.\n' +
+    'Nową sesję w kalendarzu dodasz tytułem w rodzaju „Fortum S2 Domańska”.\n' +
     'Pamiętaj o nowej wersji wdrożenia (Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: nowa).', ui.ButtonSet.OK);
 }
 
 function wylaczKalendarz() {
-  ScriptApp.getProjectTriggers()
-    .filter((t) => ['poEdycji', 'synchronizujKalendarz'].includes(t.getHandlerFunction()))
-    .forEach((t) => ScriptApp.deleteTrigger(t));
+  usunWyzwalacze();
   PropertiesService.getScriptProperties().deleteProperty('KAL_WLACZONA');
   SpreadsheetApp.getUi().alert('Synchronizacja wyłączona. Istniejące wydarzenia zostają w kalendarzu.');
 }
 
 function synchronizujZMenu() {
-  const r = synchronizujKalendarz();
-  SpreadsheetApp.getUi().alert(`Kalendarz zsynchronizowany: ${r.razem} wydarzeń (nowe: ${r.nowe}, zmienione: ${r.zmienione}, usunięte: ${r.usuniete}).`);
+  SpreadsheetApp.getUi().alert('Kalendarz zsynchronizowany.\n\n' + podsumujWynik(synchronizujKalendarz()));
+}
+
+function podsumujWynik(r) {
+  return `Sesji w kalendarzu: ${r.razem}. Kalendarz: nowe ${r.nowe}, zmienione ${r.zmienione}, usunięte ${r.usuniete}. ` +
+    `Arkusz: terminy z kalendarza ${r.zKalendarza}, usunięte ${r.wyczyszczone}.` + (r.uwagi.length ? '\n\nUwagi:\n• ' + r.uwagi.join('\n• ') : '');
 }
 
 // Wyzwalacz instalowany przy edycji arkusza (prosty onEdit nie ma dostępu do kalendarza).
@@ -229,14 +248,30 @@ function poEdycji(e) {
   synchronizujKalendarz();
 }
 
+// Uwagi z synchronizacji (np. konflikt, nierozpoznane wydarzenie) – strona pokazuje te z ostatnich 7 dni.
+function zapiszUwagi(nowe) {
+  const props = PropertiesService.getScriptProperties();
+  const tydzien = Date.now() - 7 * 864e5;
+  const stare = JSON.parse(props.getProperty('KAL_UWAGI') || '[]').filter((u) => u.czas > tydzien && !nowe.some((n) => n.tekst === u.tekst));
+  props.setProperty('KAL_UWAGI', JSON.stringify(stare.concat(nowe.map((t) => ({ czas: Date.now(), tekst: t.tekst || t }))).slice(-20)));
+}
+function uwagiKalendarza() {
+  const tydzien = Date.now() - 7 * 864e5;
+  return JSON.parse(PropertiesService.getScriptProperties().getProperty('KAL_UWAGI') || '[]').filter((u) => u.czas > tydzien);
+}
+
 function synchronizujKalendarz() {
   const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
+  lock.waitLock(25000);
   try {
-    const sh = karta(), u = uklad(sh), url = sh.getParent().getUrl();
+    const ss = SpreadsheetApp.getActive(), sh = karta(), u = uklad(sh), url = ss.getUrl(), tz = ss.getSpreadsheetTimeZone();
     const props = PropertiesService.getScriptProperties();
-    const mapa = JSON.parse(props.getProperty('KAL_MAPA') || '{}');   // „lp|sesja” → id wydarzenia
+    const mapa = {};   // „lp|sesja” → { id, t } (t = termin w minutach przy ostatniej synchronizacji)
+    Object.entries(JSON.parse(props.getProperty('KAL_MAPA') || '{}')).forEach(([k, v]) => { mapa[k] = typeof v === 'string' ? { id: v, t: null } : v; });
     const kal = CalendarApp.getDefaultCalendar();
+    const wynik = { nowe: 0, zmienione: 0, usuniete: 0, zKalendarza: 0, wyczyszczone: 0, razem: 0, uwagi: [] };
+
+    // --- arkusz ---
     const kol = (re) => u.kolumny.findIndex((k) => re.test(k));
     const kImie = kol(/imi/i), kMail = kol(/mail/i), kTel = kol(/telefon/i);
     const sesje = [];
@@ -244,55 +279,119 @@ function synchronizujKalendarz() {
       const m = k.match(/sesja\s*(\d+).*termin/i);
       if (m) sesje.push({ nr: m[1], termin: i, status: u.kolumny.findIndex((x) => new RegExp('sesja\\s*' + m[1] + '\\b.*status', 'i').test(x)) });
     });
-
-    const wart = u.liczba ? sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length).getValues() : [];
-    const wysw = u.liczba ? sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length).getDisplayValues() : [];
-    const docelowe = {};
+    const zakres = u.liczba ? sh.getRange(u.pierwszy, 1, u.liczba, u.kolumny.length) : null;
+    const wart = zakres ? zakres.getValues() : [], wysw = zakres ? zakres.getDisplayValues() : [];
+    const osoby = [], arkusz = {};
     wart.forEach((w, r) => {
       const imie = kImie >= 0 ? String(wysw[r][kImie]).trim() : '';
+      const lp = String(wysw[r][0]).trim();
       if (!imie) return;
+      osoby.push({ lp, imie, r });
       sesje.forEach((s) => {
-        const start = w[s.termin];
-        if (!(start instanceof Date)) return;
-        const status = s.status >= 0 ? String(wysw[r][s.status]).trim() : '';
-        docelowe[String(wysw[r][0]).trim() + '|' + s.nr] = {
-          start, koniec: new Date(start.getTime() + CZAS_SESJI_MIN * 60000),
-          tytul: `${TYTUL_SESJI} ${s.nr} · ${imie}` + (/prze[łl]o[żz]/i.test(status) ? ' (do przełożenia)' : ''),
-          opis: [`Odporni i gotowi – sesja coachingowa ${s.nr}.`,
-            kMail >= 0 && wysw[r][kMail] ? 'E-mail: ' + wysw[r][kMail] : '',
-            kTel >= 0 && wysw[r][kTel] ? 'Telefon: ' + wysw[r][kTel] : '',
-            status ? 'Status: ' + status : '', '', 'Zmieniaj termin w arkuszu lub na stronie organizacyjnej, nie w kalendarzu:', url,
-          ].filter((x, i, a) => x !== '' || (i > 0 && a[i - 1] !== '')).join('\n'),
-        };
+        arkusz[lp + '|' + s.nr] = { lp, r, s, imie, start: w[s.termin] instanceof Date ? w[s.termin] : null,
+          status: s.status >= 0 ? String(wysw[r][s.status]).trim() : '',
+          mail: kMail >= 0 ? wysw[r][kMail] : '', tel: kTel >= 0 ? wysw[r][kTel] : '' };
       });
     });
+    const wpiszTermin = (a, data) => {
+      const kom = sh.getRange(u.pierwszy + a.r, a.s.termin + 1);
+      if (data) kom.setValue(data).setNumberFormat('dd.mm.yyyy hh:mm'); else kom.clearContent();
+      a.start = data;
+    };
 
-    const wynik = { nowe: 0, zmienione: 0, usuniete: 0, razem: 0 };
-    Object.keys(mapa).forEach((klucz) => {
-      if (docelowe[klucz]) return;
-      const ev = kal.getEventById(mapa[klucz]);
-      if (ev) { ev.deleteEvent(); wynik.usuniete++; }
-      delete mapa[klucz];
+    // --- kalendarz: wydarzenia w oknie czasowym (usunięte nie są zwracane) ---
+    const od = new Date(Date.now() - OKNO_WSTECZ_DNI * 864e5), doD = new Date(Date.now() + OKNO_NAPRZOD_DNI * 864e5);
+    const obecne = {};
+    kal.getEvents(od, doD).forEach((ev) => { obecne[ev.getId()] = ev; });
+    const wOknie = (min) => min != null && min * 60000 >= od.getTime() && min * 60000 <= doD.getTime();
+    const przypisane = new Set(Object.values(mapa).map((m) => m.id));
+
+    // 1) Przejęcie wydarzeń z kalendarza: z naszym znacznikiem (np. po utracie mapy) albo z tytułem „Fortum … S2 … Nazwisko”.
+    Object.values(obecne).forEach((ev) => {
+      if (przypisane.has(ev.getId())) return;
+      const tag = ev.getTag('odporni-i-gotowi');
+      if (tag && arkusz[tag] && !mapa[tag]) { mapa[tag] = { id: ev.getId(), t: null }; przypisane.add(ev.getId()); return; }
+      const tytul = ev.getTitle() || '';
+      if (!/^\s*fortum\b/i.test(tytul)) return;
+      const nr = (tytul.match(/\b(?:s|sesja)\s*\.?\s*(\d+)\b/i) || [])[1];
+      if (!nr) return;   // np. „Fortum – warsztat”: to nie sesja
+      const kiedy = Utilities.formatDate(ev.getStartTime(), tz, 'dd.MM.yyyy HH:mm');
+      const slowa = bezOgonkow(tytul.replace(/^\s*fortum\b/i, '').replace(/\b(?:s|sesja)\s*\.?\s*\d+\b/i, '')).split(/[^a-z0-9-]+/).filter((x) => x.length >= 3);
+      const pasuje = osoby.filter((o) => bezOgonkow(o.imie).split(/[^a-z0-9-]+/).some((cz) => cz.length >= 3 && slowa.includes(cz)));
+      if (pasuje.length !== 1) {
+        wynik.uwagi.push(`Wydarzenie „${tytul}” (${kiedy}): ${pasuje.length ? 'pasuje do kilku osób' : 'nie rozpoznano uczestnika'} – dopisz w tytule nazwisko.`);
+        return;
+      }
+      const klucz = pasuje[0].lp + '|' + nr, a = arkusz[klucz];
+      if (!a) { wynik.uwagi.push(`Wydarzenie „${tytul}” (${kiedy}): w arkuszu nie ma sesji ${nr}.`); return; }
+      if (mapa[klucz] || a.start) {
+        wynik.uwagi.push(`Wydarzenie „${tytul}” (${kiedy}): sesja ${nr} – ${a.imie} ma już termin. Usuń zbędne wydarzenie albo termin w arkuszu.`);
+        return;
+      }
+      wpiszTermin(a, ev.getStartTime());
+      ev.setVisibility(CalendarApp.Visibility.PRIVATE); ev.setTag('odporni-i-gotowi', klucz);
+      mapa[klucz] = { id: ev.getId(), t: minuty(ev.getStartTime()) };
+      przypisane.add(ev.getId());
+      wynik.zKalendarza++;
     });
-    Object.keys(docelowe).forEach((klucz) => {
-      const d = docelowe[klucz];
-      let ev = mapa[klucz] ? kal.getEventById(mapa[klucz]) : null;
+
+    // 2) Zabezpieczenie: jeśli naraz „zniknęła” ponad połowa sesji, nie czyścimy arkusza (to raczej błąd niż decyzja).
+    const zniknely = Object.keys(mapa).filter((k) => !obecne[mapa[k].id] && wOknie(mapa[k].t));
+    const masowe = zniknely.length > 2 && zniknely.length > Object.keys(mapa).length / 2;
+    if (masowe) wynik.uwagi.push(`Z kalendarza zniknęło naraz ${zniknely.length} sesji – arkusza nie zmieniono. Sprawdź kalendarz; jeśli to celowe, usuń terminy w arkuszu.`);
+
+    // 3) Uzgodnienie przypisanych wydarzeń.
+    Object.keys(mapa).forEach((klucz) => {
+      const m = mapa[klucz], a = arkusz[klucz], ev = obecne[m.id];
+      const wArk = a ? minuty(a.start) : null;
       if (!ev) {
-        ev = kal.createEvent(d.tytul, d.start, d.koniec, { description: d.opis });
-        ev.setVisibility(CalendarApp.Visibility.PRIVATE);
-        ev.setTag('odporni-i-gotowi', klucz);
-        mapa[klucz] = ev.getId();
+        if (!wOknie(m.t) || masowe) return;                     // poza oknem albo podejrzane – nie ruszamy
+        if (a && wArk != null && (m.t == null || wArk === m.t)) { // usunięte w kalendarzu → usuwamy termin w arkuszu
+          wpiszTermin(a, null); wynik.wyczyszczone++;
+          wynik.uwagi.push(`${a.imie}, sesja ${a.s.nr}: wydarzenie usunięte w kalendarzu – termin usunięto z arkusza.`);
+        }
+        delete mapa[klucz];                                     // gdy arkusz też się zmienił, krok 4 utworzy nowe wydarzenie
+        return;
+      }
+      const wKal = minuty(ev.getStartTime());
+      if (wArk == null) { ev.deleteEvent(); delete mapa[klucz]; wynik.usuniete++; return; }   // termin usunięty w arkuszu
+      if (wArk === wKal) { m.t = wArk; return; }
+      if (m.t != null && wArk === m.t && wKal !== m.t) {      // przesunięte w kalendarzu → arkusz
+        wpiszTermin(a, ev.getStartTime()); m.t = wKal; wynik.zKalendarza++;
+        return;
+      }
+      if (m.t != null && wArk !== m.t && wKal !== m.t) {
+        wynik.uwagi.push(`${a.imie}, sesja ${a.s.nr}: termin zmieniono i w arkuszu, i w kalendarzu – zostawiono termin z arkusza.`);
+      }
+      ev.setTime(a.start, new Date(a.start.getTime() + CZAS_SESJI_MIN * 60000)); m.t = wArk; wynik.zmienione++;   // arkusz → kalendarz
+    });
+
+    // 4) Terminy z arkusza bez wydarzenia → nowe wydarzenia; tytuły i opisy według arkusza.
+    Object.keys(arkusz).forEach((klucz) => {
+      const a = arkusz[klucz];
+      if (!a.start) return;
+      const tytul = `${TYTUL_SESJI} ${a.s.nr} · ${a.imie}` + (/prze[łl]o[żz]/i.test(a.status) ? ' (do przełożenia)' : '');
+      const opis = [`Odporni i gotowi – sesja coachingowa ${a.s.nr}.`, a.mail ? 'E-mail: ' + a.mail : '', a.tel ? 'Telefon: ' + a.tel : '',
+        a.status ? 'Status: ' + a.status : '', '', 'Termin możesz zmieniać tutaj, w arkuszu albo na stronie organizacyjnej:', url]
+        .filter((x, i, t) => x !== '' || (i > 0 && t[i - 1] !== '')).join('\n');
+      let ev = mapa[klucz] ? obecne[mapa[klucz].id] || kal.getEventById(mapa[klucz].id) : null;
+      if (!ev) {
+        ev = kal.createEvent(tytul, a.start, new Date(a.start.getTime() + CZAS_SESJI_MIN * 60000), { description: opis });
+        ev.setVisibility(CalendarApp.Visibility.PRIVATE); ev.setTag('odporni-i-gotowi', klucz);
+        mapa[klucz] = { id: ev.getId(), t: minuty(a.start) };
         wynik.nowe++;
       } else {
-        let zmiana = false;
-        if (ev.getStartTime().getTime() !== d.start.getTime() || ev.getEndTime().getTime() !== d.koniec.getTime()) { ev.setTime(d.start, d.koniec); zmiana = true; }
-        if (ev.getTitle() !== d.tytul) { ev.setTitle(d.tytul); zmiana = true; }
-        if (ev.getDescription() !== d.opis) { ev.setDescription(d.opis); zmiana = true; }
+        let zmiana = false;   // długość wydarzenia zmieniona ręcznie w kalendarzu zostaje
+        if (ev.getTitle() !== tytul) { ev.setTitle(tytul); zmiana = true; }
+        if (ev.getDescription() !== opis) { ev.setDescription(opis); zmiana = true; }
         if (zmiana) wynik.zmienione++;
       }
       wynik.razem++;
     });
+
     props.setProperty('KAL_MAPA', JSON.stringify(mapa));
+    if (wynik.uwagi.length) zapiszUwagi(wynik.uwagi);
+    SpreadsheetApp.flush();
     return wynik;
   } finally {
     lock.releaseLock();
