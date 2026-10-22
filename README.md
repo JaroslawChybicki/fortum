@@ -23,6 +23,7 @@ badanie/index.html    diagnoza Deep Dive (osobna aplikacja, ustawienia w bloku C
 organizacja/          strona organizacyjna (hasło; dane z arkusza Google, nie z repozytorium)
 dokumentacja/         kod zaplecza Apps Script dla strony organizacyjnej
 narzedzia/            narzędzia coachingowe – karty pracy do sesji 1:1 (osobna mini-aplikacja)
+organizacja/          postęp programu dla organizatorów (dane z arkusza Google, patrz niżej)
 tresci/               ← TREŚCI (edytowane w CMS)
   sekcje.json         kafelki + treść każdej podstrony (Markdown)
   strona.json         nagłówek, wstęp, dane kontaktowe, link do Lyry
